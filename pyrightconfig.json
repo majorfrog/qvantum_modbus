@@ -5,6 +5,6 @@
   "extraPaths": [
     "/workspaces/core"
   ],
-  "typeCheckingMode": "basic",
+  "typeCheckingMode": "standard",
   "reportMissingModuleSource": "none"
 }

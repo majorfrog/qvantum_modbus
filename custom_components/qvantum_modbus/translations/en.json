@@ -76,9 +76,51 @@
   },
   "entity": {
     "sensor": {
-      "qvantum_bt1": {
-        "name": "Outdoor temperature"
-      }
+      "qvantum_bt1": { "name": "Outdoor temperature" },
+      "bt2_indoor": { "name": "Indoor temperature" },
+      "filtered_room": { "name": "Filtered room temperature" },
+      "bt4": { "name": "BT4 temperature" },
+      "bt10_condenser_outlet": { "name": "Condenser outlet temperature" },
+      "bt11_supply_addition": { "name": "Heating supply temperature" },
+      "bt12_supply_external": { "name": "External heating supply temperature" },
+      "bt13_condenser_inlet": { "name": "Condenser inlet temperature" },
+      "bt14_source_flow": { "name": "Heat source flow temperature" },
+      "bt15_source_return": { "name": "Heat source return temperature" },
+      "bt20_discharge_line": { "name": "Discharge line temperature" },
+      "bt21_liquid_line": { "name": "Liquid line temperature" },
+      "bt22_evaporator_inlet": { "name": "Evaporator inlet temperature" },
+      "bt23_suction_line": { "name": "Suction line temperature" },
+      "bt24_crank_case": { "name": "Crankcase temperature" },
+      "bt30_dhw_tank": { "name": "Hot water tank temperature" },
+      "bt31_dhw_inlet": { "name": "Hot water inlet temperature" },
+      "bt33_dhw_secondary_inlet": {
+        "name": "Hot water secondary inlet temperature"
+      },
+      "bt34_dhw_secondary_outlet": {
+        "name": "Hot water secondary outlet temperature"
+      },
+      "bt_aux": { "name": "Auxiliary temperature" },
+      "btx": { "name": "BTX temperature" },
+      "calc_supply_heating": {
+        "name": "Calculated heating supply temperature"
+      },
+      "calc_supply_cooling": {
+        "name": "Calculated cooling supply temperature"
+      },
+      "heating_curve_offset": { "name": "Heating curve offset" },
+      "parallel_cooling_offset": { "name": "Parallel cooling offset" },
+      "qgm1_bt10_outlet": { "name": "QGM1 outlet water temperature" },
+      "qgm1_bt13_inlet": { "name": "QGM1 inlet water temperature" },
+      "qgm1_bt14_source_return": { "name": "QGM1 source return temperature" },
+      "qgm1_bt15_source_outlet": { "name": "QGM1 source outlet temperature" },
+      "qgm1_bt20_exhaust": { "name": "QGM1 exhaust temperature" },
+      "qgm1_bt23_suction": { "name": "QGM1 suction temperature" },
+      "qgm2_bt10_outlet": { "name": "QGM2 outlet water temperature" },
+      "qgm2_bt13_inlet": { "name": "QGM2 inlet water temperature" },
+      "qgm2_bt14_source_return": { "name": "QGM2 source return temperature" },
+      "qgm2_bt15_source_outlet": { "name": "QGM2 source outlet temperature" },
+      "qgm2_bt20_exhaust": { "name": "QGM2 exhaust temperature" },
+      "qgm2_bt23_suction": { "name": "QGM2 suction temperature" }
     }
   },
   "exceptions": {

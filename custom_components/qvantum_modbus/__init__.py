@@ -108,6 +108,11 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     return True
 
 
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Migrate old config entry versions to the current schema."""
+    return True
+
+
 async def async_setup_entry(
     hass: HomeAssistant, entry: QvantumModbusConfigEntry
 ) -> bool:

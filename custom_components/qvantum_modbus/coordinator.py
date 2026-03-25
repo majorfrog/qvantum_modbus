@@ -14,6 +14,7 @@ from pymodbus.exceptions import ConnectionException, ModbusException
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
@@ -218,9 +219,30 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
                 )
 
         data: dict[str, float | None] = {}
+        # Poll only sensors that are currently enabled in the entity registry.
+        # On the very first coordinator refresh (before sensor setup completes and
+        # entities are registered), fall back to entity_registry_enabled_default.
+        registry = er.async_get(self.hass)
+        prefix = f"{self.config_entry.entry_id}_"
+        registry_entries = er.async_entries_for_config_entry(
+            registry, self.config_entry.entry_id
+        )
+        if registry_entries:
+            enabled_keys = {
+                entry.unique_id[len(prefix) :]
+                for entry in registry_entries
+                if not entry.disabled
+            }
+        else:
+            enabled_keys = {
+                desc.key
+                for desc in SENSOR_DESCRIPTIONS
+                if desc.entity_registry_enabled_default
+            }
         try:
             for desc in SENSOR_DESCRIPTIONS:
-                data[desc.key] = await self._read_sensor(desc)
+                if desc.key in enabled_keys:
+                    data[desc.key] = await self._read_sensor(desc)
         except ConnectionException as err:
             self._apply_backoff()
             raise UpdateFailed(

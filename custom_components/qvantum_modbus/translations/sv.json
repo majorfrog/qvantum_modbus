@@ -76,9 +76,51 @@
   },
   "entity": {
     "sensor": {
-      "qvantum_bt1": {
-        "name": "Utomhustemperatur"
-      }
+      "qvantum_bt1": { "name": "Utomhustemperatur" },
+      "bt2_indoor": { "name": "Inomhustemperatur" },
+      "filtered_room": { "name": "Filtrerad rumstemperatur" },
+      "bt4": { "name": "BT4-temperatur" },
+      "bt10_condenser_outlet": { "name": "Kondensorns utloppstemperatur" },
+      "bt11_supply_addition": { "name": "Framledningstemperatur" },
+      "bt12_supply_external": { "name": "Extern framledningstemperatur" },
+      "bt13_condenser_inlet": { "name": "Kondensorns inloppstemperatur" },
+      "bt14_source_flow": { "name": "Värmekällans flödestemperatur" },
+      "bt15_source_return": { "name": "Värmekällans returtemperatur" },
+      "bt20_discharge_line": { "name": "Hetgastemperatur" },
+      "bt21_liquid_line": { "name": "Vätskeledningstemperatur" },
+      "bt22_evaporator_inlet": { "name": "Förångarens inloppstemperatur" },
+      "bt23_suction_line": { "name": "Sugsidans temperatur" },
+      "bt24_crank_case": { "name": "Vevhustemperatur" },
+      "bt30_dhw_tank": { "name": "Varmvattentankens temperatur" },
+      "bt31_dhw_inlet": { "name": "Varmvattnets inloppstemperatur" },
+      "bt33_dhw_secondary_inlet": {
+        "name": "Varmvattnets sekundära inloppstemperatur"
+      },
+      "bt34_dhw_secondary_outlet": {
+        "name": "Varmvattnets sekundära utloppstemperatur"
+      },
+      "bt_aux": { "name": "Hjälptemperatur" },
+      "btx": { "name": "BTX-temperatur" },
+      "calc_supply_heating": {
+        "name": "Beräknad framledningstemperatur för värme"
+      },
+      "calc_supply_cooling": {
+        "name": "Beräknad framledningstemperatur för kyla"
+      },
+      "heating_curve_offset": { "name": "Värmekurveivärskjutning" },
+      "parallel_cooling_offset": { "name": "Parallellkylningsförskjutning" },
+      "qgm1_bt10_outlet": { "name": "QGM1 utloppsvattentemperatur" },
+      "qgm1_bt13_inlet": { "name": "QGM1 inloppsvattentemperatur" },
+      "qgm1_bt14_source_return": { "name": "QGM1 källans returtemperatur" },
+      "qgm1_bt15_source_outlet": { "name": "QGM1 källans utloppstemperatur" },
+      "qgm1_bt20_exhaust": { "name": "QGM1 avgastemperatur" },
+      "qgm1_bt23_suction": { "name": "QGM1 sugledningstemperatur" },
+      "qgm2_bt10_outlet": { "name": "QGM2 utloppsvattentemperatur" },
+      "qgm2_bt13_inlet": { "name": "QGM2 inloppsvattentemperatur" },
+      "qgm2_bt14_source_return": { "name": "QGM2 källans returtemperatur" },
+      "qgm2_bt15_source_outlet": { "name": "QGM2 källans utloppstemperatur" },
+      "qgm2_bt20_exhaust": { "name": "QGM2 avgastemperatur" },
+      "qgm2_bt23_suction": { "name": "QGM2 sugledningstemperatur" }
     }
   },
   "exceptions": {

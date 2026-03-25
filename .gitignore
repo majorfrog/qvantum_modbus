@@ -181,5 +181,5 @@ cython_debug/
 .
 
 TODO.md
-qvantum_modbus_def.md
+*registers.md
 quality_scale.yaml
