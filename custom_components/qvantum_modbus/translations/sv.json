@@ -1,0 +1,92 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Konfigurera Qvantum Modbus-enhet",
+        "description": "Välj hur din Modbus-enhet är ansluten.",
+        "data": {
+          "connection_type": "Anslutningstyp"
+        }
+      },
+      "tcp": {
+        "title": "TCP/IP-anslutning",
+        "description": "Ange nätverksinformation för Modbus-gatewayen.",
+        "data": {
+          "host": "Värd",
+          "port": "Port",
+          "unit_id": "Enhets-ID"
+        },
+        "data_description": {
+          "host": "IP-adress eller värdnamn för Modbus TCP-gatewayen.",
+          "port": "TCP-port (standard: 502).",
+          "unit_id": "Modbus-enhetens ID för målenheten (1–247)."
+        }
+      },
+      "rtu": {
+        "title": "RTU-serieanslutning",
+        "description": "Ange seriepportsinställningar för Modbus RTU-bussen.",
+        "data": {
+          "port": "Seriepport",
+          "unit_id": "Enhets-ID",
+          "baudrate": "Baud-hastighet",
+          "bytesize": "Databitar",
+          "parity": "Paritet",
+          "stopbits": "Stoppbitar"
+        },
+        "data_description": {
+          "port": "Seriepportens sökväg, t.ex. `/dev/ttyUSB0` eller `COM3`.",
+          "unit_id": "Modbus-enhetens ID för målenheten (1–247).",
+          "baudrate": "Kommunikationshastighet i bps.",
+          "bytesize": "Antal databitar (vanligtvis 8).",
+          "parity": "Paritetsinställning.",
+          "stopbits": "Antal stoppbitar."
+        }
+      },
+      "reconfigure": {
+        "title": "Konfigurera om Qvantum Modbus",
+        "description": "Uppdatera anslutningsparametrarna för den här enheten.",
+        "data": {
+          "host": "Värd",
+          "port": "Port",
+          "unit_id": "Enhets-ID",
+          "baudrate": "Baud-hastighet",
+          "bytesize": "Databitar",
+          "parity": "Paritet",
+          "stopbits": "Stoppbitar"
+        },
+        "data_description": {
+          "host": "IP-adress eller värdnamn för Modbus TCP-gatewayen.",
+          "port": "TCP-port eller seriepportens sökväg.",
+          "unit_id": "Modbus-enhetens ID för målenheten (1–247).",
+          "baudrate": "Kommunikationshastighet i bps.",
+          "bytesize": "Antal databitar (vanligtvis 8).",
+          "parity": "Paritetsinställning.",
+          "stopbits": "Antal stoppbitar."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Det gick inte att ansluta till Modbus-enheten. Kontrollera dina inställningar och försök igen."
+    },
+    "abort": {
+      "already_configured": "Den här Modbus-enheten är redan konfigurerad.",
+      "yaml_import_failed": "Kunde inte importera konfigurationen från `configuration.yaml`. Kontrollera loggarna för detaljer.",
+      "reconfigure_successful": "Omkonfigurationen lyckades."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "qvantum_bt1": {
+        "name": "Utomhustemperatur"
+      }
+    }
+  },
+  "exceptions": {
+    "cannot_connect": {
+      "message": "Kunde inte upprätta en Modbus-anslutning. Kontrollera värd, port och kablage."
+    },
+    "connection_lost": {
+      "message": "Modbus-anslutning avbröts under avfrågning: {error}"
+    }
+  }
+}

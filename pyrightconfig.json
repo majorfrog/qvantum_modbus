@@ -1,0 +1,10 @@
+{
+  "venvPath": "/home/vscode/.local",
+  "venv": "ha-venv",
+  "pythonVersion": "3.13",
+  "extraPaths": [
+    "/workspaces/core"
+  ],
+  "typeCheckingMode": "basic",
+  "reportMissingModuleSource": "none"
+}

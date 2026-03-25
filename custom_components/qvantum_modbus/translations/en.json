@@ -1,0 +1,92 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Qvantum Modbus device",
+        "description": "Select how your Modbus device is connected.",
+        "data": {
+          "connection_type": "Connection type"
+        }
+      },
+      "tcp": {
+        "title": "TCP/IP connection",
+        "description": "Enter the network details for the Modbus gateway.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Unit ID"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the Modbus TCP gateway.",
+          "port": "TCP port (default: 502).",
+          "unit_id": "Modbus unit ID of the target device (1-247)."
+        }
+      },
+      "rtu": {
+        "title": "RTU serial connection",
+        "description": "Enter the serial port settings for the Modbus RTU bus.",
+        "data": {
+          "port": "Serial port",
+          "unit_id": "Unit ID",
+          "baudrate": "Baud rate",
+          "bytesize": "Data bits",
+          "parity": "Parity",
+          "stopbits": "Stop bits"
+        },
+        "data_description": {
+          "port": "Serial device path, e.g. `/dev/ttyUSB0` or `COM3`.",
+          "unit_id": "Modbus unit ID of the target device (1–247).",
+          "baudrate": "Communication speed in bps.",
+          "bytesize": "Number of data bits (typically 8).",
+          "parity": "Parity bit setting.",
+          "stopbits": "Number of stop bits."
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Qvantum Modbus",
+        "description": "Update the connection parameters for this device.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "unit_id": "Unit ID",
+          "baudrate": "Baud rate",
+          "bytesize": "Data bits",
+          "parity": "Parity",
+          "stopbits": "Stop bits"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the Modbus TCP gateway.",
+          "port": "TCP port or serial device path.",
+          "unit_id": "Modbus unit ID of the target device (1\u2013247).",
+          "baudrate": "Communication speed in bps.",
+          "bytesize": "Number of data bits (typically 8).",
+          "parity": "Parity bit setting.",
+          "stopbits": "Number of stop bits."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the Modbus device. Check your settings and try again."
+    },
+    "abort": {
+      "already_configured": "This Modbus device is already configured.",
+      "yaml_import_failed": "Could not import the configuration from `configuration.yaml`. Check the logs for details.",
+      "reconfigure_successful": "Reconfiguration was successful."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "qvantum_bt1": {
+        "name": "Outdoor temperature"
+      }
+    }
+  },
+  "exceptions": {
+    "cannot_connect": {
+      "message": "Could not establish a Modbus connection. Check your host, port, and wiring."
+    },
+    "connection_lost": {
+      "message": "Modbus connection lost during polling: {error}"
+    }
+  }
+}
