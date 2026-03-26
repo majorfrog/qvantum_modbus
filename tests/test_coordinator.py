@@ -77,7 +77,7 @@ async def test_successful_update(hass: HomeAssistant) -> None:
 
     data = await coordinator._async_update_data()
 
-    assert data["qvantum_bt1"] == pytest.approx(21.5)
+    assert data["bt1_outdoor"] == pytest.approx(21.5)
     assert coordinator._consecutive_failures == 0
     assert coordinator.update_interval == timedelta(seconds=SCAN_INTERVAL_SECONDS)
 
@@ -155,7 +155,7 @@ async def test_backoff_resets_on_success(hass: HomeAssistant) -> None:
 
     data = await coordinator._async_update_data()
 
-    assert data["qvantum_bt1"] == pytest.approx(21.5)
+    assert data["bt1_outdoor"] == pytest.approx(21.5)
     assert coordinator._consecutive_failures == 0
     assert coordinator.update_interval == timedelta(seconds=SCAN_INTERVAL_SECONDS)
 
@@ -192,7 +192,7 @@ async def test_modbus_exception_returns_none(hass: HomeAssistant) -> None:
 
     data = await coordinator._async_update_data()
 
-    assert data["qvantum_bt1"] is None
+    assert data["bt1_outdoor"] is None
     # Coordinator itself did not fail — no backoff applied
     assert coordinator._consecutive_failures == 0
 
@@ -210,7 +210,7 @@ async def test_error_response_returns_none(hass: HomeAssistant) -> None:
 
     data = await coordinator._async_update_data()
 
-    assert data["qvantum_bt1"] is None
+    assert data["bt1_outdoor"] is None
 
 
 # ---------------------------------------------------------------------------
@@ -226,7 +226,7 @@ async def test_empty_registers_returns_none(hass: HomeAssistant) -> None:
 
     data = await coordinator._async_update_data()
 
-    assert data["qvantum_bt1"] is None
+    assert data["bt1_outdoor"] is None
 
 
 # ---------------------------------------------------------------------------

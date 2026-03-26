@@ -29,7 +29,7 @@ from .const import (
 )
 from .coordinator import QvantumModbusCoordinator
 
-PLATFORMS: list[Platform] = [Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR]
 
 type QvantumModbusConfigEntry = ConfigEntry[QvantumModbusCoordinator]
 

@@ -25,6 +25,7 @@ from .const import (
     CONF_UNIT_ID,
     CONF_STOPBITS,
     CONNECTION_TYPE_TCP,
+    DATA_TYPE_ASCII,
     DATA_TYPE_FLOAT32,
     DATA_TYPE_INT16,
     DATA_TYPE_INT32,
@@ -34,7 +35,12 @@ from .const import (
     INPUT_TYPE_INPUT,
     SCAN_INTERVAL_SECONDS,
 )
-from .models import SENSOR_DESCRIPTIONS, ModbusSensorEntityDescription
+from .models import (
+    BINARY_SENSOR_DESCRIPTIONS,
+    COMBINED_SENSOR_DESCRIPTIONS,
+    SENSOR_DESCRIPTIONS,
+    ModbusSensorEntityDescription,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,6 +71,17 @@ def _decode_registers(registers: list[int], data_type: str) -> int | float:
     raise ValueError(f"Unsupported data_type: {data_type!r}")
 
 
+def _decode_ascii_register(register: int) -> str:
+    """Decode a single 16-bit Modbus register as two packed ASCII bytes.
+
+    The high byte is the first character, the low byte is the second.
+    Null bytes and non-printable characters are stripped.
+    """
+    high = (register >> 8) & 0xFF
+    low = register & 0xFF
+    return "".join(chr(b) for b in (high, low) if 0x20 <= b <= 0x7E)
+
+
 def _register_count(data_type: str) -> int:
     """Return how many 16-bit registers a data type occupies."""
     if data_type in (DATA_TYPE_INT32, DATA_TYPE_UINT32, DATA_TYPE_FLOAT32):
@@ -72,7 +89,7 @@ def _register_count(data_type: str) -> int:
     return 1
 
 
-class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
+class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | None]]):
     """Coordinator that polls a Modbus device for all defined sensors."""
 
     def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry) -> None:
@@ -116,25 +133,24 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
             stopbits=data[CONF_STOPBITS],
         )
 
-    async def _read_sensor(self, desc: ModbusSensorEntityDescription) -> float | None:
-        """Read a single sensor register and decode the value.
-
-        Returns None if the device returns an error response or the register
-        cannot be decoded — the entity will become unavailable in that case.
-        ConnectionException is intentionally NOT caught here; the caller
-        converts it to UpdateFailed so the coordinator fails loudly.
-        """
-        count = _register_count(desc.data_type)
+    async def _read_registers(
+        self,
+        key: str,
+        address: int,
+        count: int,
+        input_type: str,
+    ) -> list[int] | None:
+        """Perform the raw Modbus read and return register list, or None on error."""
         try:
-            if desc.input_type == INPUT_TYPE_INPUT:
+            if input_type == INPUT_TYPE_INPUT:
                 result = await self._client.read_input_registers(
-                    address=desc.address,
+                    address=address,
                     count=count,
                     device_id=self._device_id,
                 )
             else:
                 result = await self._client.read_holding_registers(
-                    address=desc.address,
+                    address=address,
                     count=count,
                     device_id=self._device_id,
                 )
@@ -144,8 +160,8 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
         except ModbusException as err:
             _LOGGER.warning(
                 "Modbus protocol error reading %s (address %d): %s",
-                desc.key,
-                desc.address,
+                key,
+                address,
                 err,
             )
             return None
@@ -153,19 +169,39 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
         if result.isError():
             _LOGGER.warning(
                 "Device returned error response for %s (address %d): %s",
-                desc.key,
-                desc.address,
+                key,
+                address,
                 result,
             )
             return None
 
         if not result.registers:
-            _LOGGER.warning(
-                "Empty register data for %s (address %d)", desc.key, desc.address
-            )
+            _LOGGER.warning("Empty register data for %s (address %d)", key, address)
             return None
 
-        raw = _decode_registers(result.registers, desc.data_type)
+        return result.registers
+
+    async def _read_sensor(
+        self, desc: ModbusSensorEntityDescription
+    ) -> float | str | None:
+        """Read a single sensor register and decode the value.
+
+        Returns None if the device returns an error response or the register
+        cannot be decoded — the entity will become unavailable in that case.
+        ConnectionException is intentionally NOT caught here; the caller
+        converts it to UpdateFailed so the coordinator fails loudly.
+        """
+        count = _register_count(desc.data_type)
+        registers = await self._read_registers(
+            desc.key, desc.address, count, desc.input_type
+        )
+        if registers is None:
+            return None
+        if desc.data_type == DATA_TYPE_ASCII:
+            value = _decode_ascii_register(registers[0])
+            _LOGGER.debug("Read %s (address %d): raw=0x%04X → %r", desc.key, desc.address, registers[0], value)
+            return value or None
+        raw = _decode_registers(registers, desc.data_type)
         value = round(raw * desc.scale, desc.precision)
         _LOGGER.debug(
             "Read %s (address %d): raw=%s → %s %s",
@@ -176,6 +212,25 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
             desc.native_unit_of_measurement,
         )
         return value
+
+    async def _read_register_int(
+        self,
+        key: str,
+        address: int,
+        data_type: str,
+        input_type: str,
+    ) -> int | None:
+        """Read a register and return the raw integer value (no scaling).
+
+        Used for binary sensors where only the integer value is needed.
+        """
+        count = _register_count(data_type)
+        registers = await self._read_registers(key, address, count, input_type)
+        if registers is None:
+            return None
+        raw = int(_decode_registers(registers, data_type))
+        _LOGGER.debug("Read raw %s (address %d): %d", key, address, raw)
+        return raw
 
     def _apply_backoff(self) -> None:
         """Double the update interval on failure, capped at 32× the base."""
@@ -218,7 +273,7 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
                     translation_key="cannot_connect",
                 )
 
-        data: dict[str, float | None] = {}
+        data: dict[str, float | str | None] = {}
         # Poll only sensors that are currently enabled in the entity registry.
         # On the very first coordinator refresh (before sensor setup completes and
         # entities are registered), fall back to entity_registry_enabled_default.
@@ -236,13 +291,43 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | None]]):
         else:
             enabled_keys = {
                 desc.key
-                for desc in SENSOR_DESCRIPTIONS
+                for desc in (
+                    *SENSOR_DESCRIPTIONS,
+                    *BINARY_SENSOR_DESCRIPTIONS,
+                    *COMBINED_SENSOR_DESCRIPTIONS,
+                )
                 if desc.entity_registry_enabled_default
             }
         try:
             for desc in SENSOR_DESCRIPTIONS:
                 if desc.key in enabled_keys:
                     data[desc.key] = await self._read_sensor(desc)
+
+            # Poll binary sensors — deduplicate reads by address for bitmask registers.
+            raw_address_cache: dict[int, int | None] = {}
+            for desc in BINARY_SENSOR_DESCRIPTIONS:
+                if desc.key not in enabled_keys:
+                    continue
+                addr = desc.address
+                if addr not in raw_address_cache:
+                    raw_address_cache[addr] = await self._read_register_int(
+                        desc.key, addr, desc.data_type, desc.input_type
+                    )
+                raw = raw_address_cache[addr]
+                if raw is None:
+                    data[desc.key] = None
+                elif desc.bit_position is not None:
+                    data[desc.key] = float((raw >> desc.bit_position) & 1)
+                else:
+                    data[desc.key] = float(raw)
+
+            # Poll component registers for enabled combined sensors.
+            for combined in COMBINED_SENSOR_DESCRIPTIONS:
+                if combined.key not in enabled_keys:
+                    continue
+                for comp in combined.components:
+                    if comp.key not in data:
+                        data[comp.key] = await self._read_sensor(comp)
         except ConnectionException as err:
             self._apply_backoff()
             raise UpdateFailed(

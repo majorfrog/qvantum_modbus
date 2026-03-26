@@ -53,3 +53,5 @@ DATA_TYPE_UINT16: Final = "uint16"
 DATA_TYPE_INT32: Final = "int32"
 DATA_TYPE_UINT32: Final = "uint32"
 DATA_TYPE_FLOAT32: Final = "float32"
+# Two ASCII bytes packed into one register (high byte = first char, low byte = second).
+DATA_TYPE_ASCII: Final = "ascii"

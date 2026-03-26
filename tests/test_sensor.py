@@ -59,7 +59,7 @@ async def test_sensor_entity_created(
     entry = entity_registry.async_get_entity_id(
         "sensor",
         DOMAIN,
-        f"{mock_tcp_config_entry.entry_id}_qvantum_bt1",
+        f"{mock_tcp_config_entry.entry_id}_bt1_outdoor",
     )
     assert entry is not None
 
@@ -83,7 +83,7 @@ async def test_sensor_native_value(
     entry = ent_reg.async_get_entity_id(
         "sensor",
         DOMAIN,
-        f"{mock_tcp_config_entry.entry_id}_qvantum_bt1",
+        f"{mock_tcp_config_entry.entry_id}_bt1_outdoor",
     )
     assert entry is not None
     state = hass.states.get(entry)
@@ -150,7 +150,7 @@ async def test_sensor_unavailable_when_register_is_none(
     entity_id = ent_reg.async_get_entity_id(
         "sensor",
         DOMAIN,
-        f"{mock_tcp_config_entry.entry_id}_qvantum_bt1",
+        f"{mock_tcp_config_entry.entry_id}_bt1_outdoor",
     )
     assert entity_id is not None
     state = hass.states.get(entity_id)

@@ -47,7 +47,7 @@ Safe deployment guidelines:
 
 | Entity ID | Register | Type | Unit | Description |
 |---|---|---|---|---|
-| `sensor.qvantum_bt1` | Input 0 | INT16 (÷10) | °C | BT1 temperature |
+| `sensor.bt1_outdoor` | Input 0 | INT16 (÷10) | °C | BT1 temperature |
 
 ---
 
