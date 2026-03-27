@@ -291,7 +291,161 @@
       "energy_prices_available": { "name": "Energipriser tillg\u00e4ngliga" },
       "wifi_connected": { "name": "Wi-Fi ansluten" },
       "cloud_connected": { "name": "Molnansluten" },
-      "vacation_mode": { "name": "Semesterl\u00e4ge" }
+      "vacation_mode": { "name": "Semesterläge" }
+    },
+    "switch": {
+      "unit_on_off": { "name": "Enhet på/av" },
+      "manual_allow_heating": { "name": "Tillåt uppvärmning (manuellt läge)" },
+      "manual_allow_cooling": { "name": "Tillåt kylning (manuellt läge)" },
+      "manual_allow_addition": {
+        "name": "Tillåt tillsatsvärme (manuellt läge)"
+      },
+      "manual_allow_dhw": { "name": "Tillåt varmvatten (manuellt läge)" },
+      "dew_point_protection": { "name": "Daggpunktsskydd" },
+      "dhw_uninterrupted_cooling": { "name": "VV avbryter ej kylning" },
+      "bt12_mounted": { "name": "BT12-sensor monterad" },
+      "qs_unit_connected": { "name": "QS-enhet ansluten" },
+      "sg_enabled": { "name": "Smart grid aktiverat" },
+      "outdoor_air_mixed": { "name": "Blandad utomhusluft" }
+    },
+    "select": {
+      "operation_mode": {
+        "name": "Driftläge",
+        "state": {
+          "auto": "Auto",
+          "manual": "Manuell",
+          "only_addition": "Endast tillskottsvärme"
+        }
+      },
+      "use_operation_mode_sensor": {
+        "name": "Driftlägesgivare",
+        "state": {
+          "no": "BT1 (Utomhusgivare)",
+          "yes_bt2": "BT2 (Inomhusgivare)",
+          "yes_bt3": "BT3 (Framledningsgivare)",
+          "yes_aux": "AUX",
+          "external": "Extern"
+        }
+      },
+      "desired_indoor_temperature": { "name": "Önskad inomhustemperatur" },
+      "room_compensation_factor": { "name": "Rumskompensationsfaktor" },
+      "heating_curve_parallel_offset": {
+        "name": "Värmekurvans parallellförskjutning"
+      },
+      "curve_type_heating": {
+        "name": "Värmekurvetyp",
+        "state": {
+          "auto": "Auto",
+          "user_defined": "Användardefinierad"
+        }
+      },
+      "cooling_curve_parallel_offset": {
+        "name": "Kylkurvans parallellförskjutning"
+      },
+      "dhw_mode": {
+        "name": "VV-läge",
+        "state": {
+          "eco": "Eko",
+          "normal": "Normal",
+          "extra": "Extra",
+          "smart": "Smart"
+        }
+      },
+      "dhw_outlet_temperature": {
+        "name": "VV-utloppstemperaturläge",
+        "state": {
+          "normal": "Normal",
+          "plus": "+",
+          "plus_plus": "++"
+        }
+      },
+      "ventilation_state": {
+        "name": "Ventilationsläge",
+        "state": {
+          "off": "Av",
+          "normal": "Normal",
+          "extra": "Extra",
+          "reduced": "Reducerad"
+        }
+      },
+      "heating_priority_time": {
+        "name": "Värmeprioritetstid",
+        "state": {
+          "normal_30min": "Normal (30 minuter)",
+          "plus_1h": "+ (1 timme)",
+          "plus_plus_2h": "++ (2 timmar)"
+        }
+      },
+      "cooling_priority_time": {
+        "name": "Kylprioritetstid",
+        "state": {
+          "normal_30min": "Normal (30 minuter)",
+          "plus_1h": "+ (1 timme)",
+          "plus_plus_2h": "++ (2 timmar)"
+        }
+      },
+      "dhw_priority_time": {
+        "name": "VV-prioritetstid",
+        "state": {
+          "normal_30min": "Normal (30 minuter)",
+          "plus_1h": "+ (1 timme)",
+          "plus_plus_2h": "++ (2 timmar)"
+        }
+      }
+    },
+    "number": {
+      "time_between_heating_cooling": {
+        "name": "Tid mellan värme och kylning"
+      },
+      "filtertime_outdoor_sensor": { "name": "Filtertid utomhusgivare" },
+      "allow_addition_temperature": {
+        "name": "Tillåtningstemperatur tillsatsvärme"
+      },
+      "room_temp_external": { "name": "Extern rumstemperatur" },
+      "outdoor_temp_stop_heating": {
+        "name": "Utomhustemperatur — stopp uppvärmning"
+      },
+      "max_heating_supply_temp": {
+        "name": "Maximal framledningstemperatur värme"
+      },
+      "min_heating_supply_temp": {
+        "name": "Minimal framledningstemperatur värme"
+      },
+      "start_cooling_temperature": { "name": "Starttemperatur kylning" },
+      "min_cooling_supply_temp": {
+        "name": "Minimal framledningstemperatur kylning"
+      },
+      "dhw_start_temp_normal": { "name": "VV-starttemperatur (normal)" },
+      "dhw_stop_temp_normal": { "name": "VV-stopptemperatur (normal)" },
+      "dhw_start_temp_extra": { "name": "VV-starttemperatur (extra)" },
+      "dhw_stop_temp_extra": { "name": "VV-stopptemperatur (extra)" },
+      "temp_compensation_curve_heating": {
+        "name": "Temperaturkompensationskurva värme"
+      },
+      "heating_curve_minus30": { "name": "Värmekurva vid −30 °C" },
+      "heating_curve_minus20": { "name": "Värmekurva vid −20 °C" },
+      "heating_curve_minus10": { "name": "Värmekurva vid −10 °C" },
+      "heating_curve_0": { "name": "Värmekurva vid 0 °C" },
+      "heating_curve_10": { "name": "Värmekurva vid 10 °C" },
+      "heating_curve_20": { "name": "Värmekurva vid 20 °C" },
+      "heating_curve_30": { "name": "Värmekurva vid 30 °C" },
+      "pump_speed_heating": { "name": "Pumphastighet värme" },
+      "pump_speed_cooling": { "name": "Pumphastiget kylning" },
+      "dhw_pump_speed": { "name": "VV-pumpens hastighet" },
+      "pump_speed_idle": { "name": "Pumpens vilolägehastighet" },
+      "ventilation_fan_speed_reduced": {
+        "name": "Ventilationsfläktens hastighet (reducerad)"
+      },
+      "ventilation_fan_speed_normal": {
+        "name": "Ventilationsfläktens hastighet (normal)"
+      },
+      "ventilation_fan_speed_extra": {
+        "name": "Ventilationsfläktens hastighet (extra)"
+      },
+      "compressor_fan_speed": { "name": "Kompressorfläktens hastighet" }
+    },
+    "button": {
+      "reset_alarms": { "name": "Återställ larm" }
     }
   },
   "exceptions": {
@@ -300,6 +454,9 @@
     },
     "connection_lost": {
       "message": "Modbus-anslutning avbröts under avfrågning: {error}"
+    },
+    "write_failed": {
+      "message": "Det gick inte att skriva till Modbus-registret. Kontrollera din anslutning."
     }
   }
 }

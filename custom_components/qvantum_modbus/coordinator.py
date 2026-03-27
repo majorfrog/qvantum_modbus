@@ -14,6 +14,7 @@ from pymodbus.exceptions import ConnectionException, ModbusException
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -37,8 +38,12 @@ from .const import (
 )
 from .models import (
     BINARY_SENSOR_DESCRIPTIONS,
+    BUTTON_DESCRIPTIONS,
     COMBINED_SENSOR_DESCRIPTIONS,
+    NUMBER_DESCRIPTIONS,
+    SELECT_DESCRIPTIONS,
     SENSOR_DESCRIPTIONS,
+    SWITCH_DESCRIPTIONS,
     ModbusSensorEntityDescription,
 )
 
@@ -199,7 +204,13 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
             return None
         if desc.data_type == DATA_TYPE_ASCII:
             value = _decode_ascii_register(registers[0])
-            _LOGGER.debug("Read %s (address %d): raw=0x%04X → %r", desc.key, desc.address, registers[0], value)
+            _LOGGER.debug(
+                "Read %s (address %d): raw=0x%04X → %r",
+                desc.key,
+                desc.address,
+                registers[0],
+                value,
+            )
             return value or None
         raw = _decode_registers(registers, desc.data_type)
         value = round(raw * desc.scale, desc.precision)
@@ -254,6 +265,32 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
         """Close the Modbus transport; called on entry unload."""
         self._client.close()
 
+    async def write_holding_register(self, address: int, value: int) -> None:
+        """Write a single value to a holding register using FC6.
+
+        Negative values are converted to unsigned 16-bit two's complement so
+        pymodbus writes them correctly for S16 registers.
+        """
+        if not self._client.connected:
+            if not await self._client.connect():
+                raise HomeAssistantError(
+                    translation_domain=DOMAIN,
+                    translation_key="cannot_connect",
+                )
+        # Two's complement for signed 16-bit registers (e.g. S16 with negative values)
+        if value < 0:
+            value = value & 0xFFFF
+        result = await self._client.write_register(
+            address=address,
+            value=value,
+            device_id=self._device_id,
+        )
+        if result.isError():
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="write_failed",
+            )
+
     # ------------------------------------------------------------------
     # DataUpdateCoordinator interface
     # ------------------------------------------------------------------
@@ -295,6 +332,10 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                     *SENSOR_DESCRIPTIONS,
                     *BINARY_SENSOR_DESCRIPTIONS,
                     *COMBINED_SENSOR_DESCRIPTIONS,
+                    *SWITCH_DESCRIPTIONS,
+                    *SELECT_DESCRIPTIONS,
+                    *NUMBER_DESCRIPTIONS,
+                    *BUTTON_DESCRIPTIONS,
                 )
                 if desc.entity_registry_enabled_default
             }
@@ -328,6 +369,20 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                 for comp in combined.components:
                     if comp.key not in data:
                         data[comp.key] = await self._read_sensor(comp)
+
+            # Poll writable holding registers (switch / select / number).
+            # Raw integer values are stored as float; entities apply their own
+            # interpretation (bool for switch, value_map for select, scale for number).
+            for desc in (
+                *SWITCH_DESCRIPTIONS,
+                *SELECT_DESCRIPTIONS,
+                *NUMBER_DESCRIPTIONS,
+            ):
+                if desc.key in enabled_keys:
+                    raw = await self._read_register_int(
+                        desc.key, desc.address, desc.data_type, desc.input_type
+                    )
+                    data[desc.key] = float(raw) if raw is not None else None
         except ConnectionException as err:
             self._apply_backoff()
             raise UpdateFailed(

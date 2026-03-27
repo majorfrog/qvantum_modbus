@@ -22,11 +22,19 @@ from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntityDescription,
 )
+from homeassistant.components.button import ButtonEntityDescription
+from homeassistant.components.number import (
+    NumberDeviceClass,
+    NumberEntityDescription,
+    NumberMode,
+)
+from homeassistant.components.select import SelectEntityDescription
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntityDescription,
     SensorStateClass,
 )
+from homeassistant.components.switch import SwitchEntityDescription
 from homeassistant.const import (
     EntityCategory,
     PERCENTAGE,
@@ -42,6 +50,7 @@ from .const import (
     DATA_TYPE_ASCII,
     DATA_TYPE_INT16,
     DATA_TYPE_UINT16,
+    INPUT_TYPE_HOLDING,
     INPUT_TYPE_INPUT,
 )
 
@@ -120,6 +129,193 @@ class ModbusCombinedSensorEntityDescription(SensorEntityDescription):
     # Receives the list of float values (same order as components) and returns
     # the string to display.  Called only when all values are non-None.
     format_fn: Callable[[list[float]], str]
+
+
+@dataclass(frozen=True, kw_only=True)
+class ModbusSwitchEntityDescription(SwitchEntityDescription):
+    """Switch entity backed by a Modbus holding register (0=off, 1=on)."""
+
+    key: str
+    translation_key: str | None = None
+    entity_registry_enabled_default: bool = True
+    entity_category: EntityCategory | None = None
+
+    address: int = 0
+    input_type: str = INPUT_TYPE_HOLDING
+    data_type: str = DATA_TYPE_UINT16
+
+
+@dataclass(frozen=True, kw_only=True)
+class ModbusSelectEntityDescription(SelectEntityDescription):
+    """Select entity backed by a Modbus holding register.
+
+    value_map maps raw integer register values → option strings.
+    options must contain the same strings as value_map.values().
+    """
+
+    key: str
+    translation_key: str | None = None
+    entity_registry_enabled_default: bool = True
+    entity_category: EntityCategory | None = None
+
+    options: list[str] | None = None
+    value_map: dict[int, str]
+
+    address: int = 0
+    input_type: str = INPUT_TYPE_HOLDING
+    data_type: str = DATA_TYPE_UINT16
+
+
+@dataclass(frozen=True, kw_only=True)
+class ModbusNumberEntityDescription(NumberEntityDescription):
+    """Number entity backed by a Modbus holding register.
+
+    The coordinator stores the raw register integer as a float.
+    native_value = raw * scale; on write: raw = round(native / scale).
+    """
+
+    key: str
+    translation_key: str | None = None
+    entity_registry_enabled_default: bool = True
+    entity_category: EntityCategory | None = None
+    native_unit_of_measurement: str | None = None
+    device_class: NumberDeviceClass | None = None
+    mode: NumberMode = NumberMode.BOX
+
+    address: int = 0
+    input_type: str = INPUT_TYPE_HOLDING
+    data_type: str = DATA_TYPE_UINT16
+    scale: float = 1.0
+    native_min_value: float = 0.0
+    native_max_value: float = 100.0
+    native_step: float = 1.0
+
+
+@dataclass(frozen=True, kw_only=True)
+class ModbusButtonEntityDescription(ButtonEntityDescription):
+    """Button entity that writes a fixed value to a Modbus holding register."""
+
+    key: str
+    translation_key: str | None = None
+    entity_registry_enabled_default: bool = True
+    entity_category: EntityCategory | None = None
+
+    address: int = 0
+    input_type: str = INPUT_TYPE_HOLDING
+    data_type: str = DATA_TYPE_UINT16
+    # Value written when the button is pressed.
+    write_value: int = 1
+
+
+def _int_range_options(
+    raw_min: int,
+    raw_max: int,
+    scale: float = 1.0,
+    decimal_places: int = 0,
+    step: int = 1,
+) -> tuple[list[str], dict[int, str]]:
+    """Build (options, value_map) for a numeric-range select.
+
+    Each raw integer in [raw_min, raw_max] with the given step maps to a
+    display string with decimal_places after the decimal separator.
+    """
+    value_map: dict[int, str] = {}
+    for raw in range(raw_min, raw_max + 1, step):
+        native = raw * scale
+        opt = (
+            str(int(round(native)))
+            if decimal_places == 0
+            else f"{native:.{decimal_places}f}"
+        )
+        value_map[raw] = opt
+    return list(value_map.values()), value_map
+
+
+def create_number_entity(
+    key: str,
+    address: int,
+    data_type: str = DATA_TYPE_INT16,
+    unit: str | None = UnitOfTemperature.CELSIUS,
+    device_class: NumberDeviceClass | None = NumberDeviceClass.TEMPERATURE,
+    min_value: float = -30.0,
+    max_value: float = 30.0,
+    scale: float = 1.0,
+    step: float = 1.0,
+) -> ModbusNumberEntityDescription:
+    """Create a number entity with CONFIG category."""
+    return ModbusNumberEntityDescription(
+        key=key,
+        translation_key=key,
+        address=address,
+        data_type=data_type,
+        native_unit_of_measurement=unit,
+        device_class=device_class,
+        native_min_value=min_value,
+        native_max_value=max_value,
+        entity_category=EntityCategory.CONFIG,
+        scale=scale,
+        native_step=step,
+    )
+
+
+def create_dhw_temp_number(key: str, address: int) -> ModbusNumberEntityDescription:
+    """Create a DHW temperature setpoint number (UINT16, 20..80 °C, CONFIG)."""
+    return ModbusNumberEntityDescription(
+        key=key,
+        translation_key=key,
+        address=address,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=NumberDeviceClass.TEMPERATURE,
+        native_min_value=20,
+        native_max_value=80,
+        entity_category=EntityCategory.CONFIG,
+    )
+
+
+def create_heating_curve_point(key: str, address: int) -> ModbusNumberEntityDescription:
+    """Create a heating curve supply temperature setpoint (UINT16, 10..80 °C, CONFIG)."""
+    return ModbusNumberEntityDescription(
+        key=key,
+        translation_key=key,
+        address=address,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=NumberDeviceClass.TEMPERATURE,
+        native_min_value=10,
+        native_max_value=80,
+        entity_category=EntityCategory.CONFIG,
+    )
+
+
+def create_percent_number(
+    key: str, address: int, *, min_value: float = 0
+) -> ModbusNumberEntityDescription:
+    """Create a percentage number (UINT16, min..100 %, CONFIG)."""
+    return ModbusNumberEntityDescription(
+        key=key,
+        translation_key=key,
+        address=address,
+        native_unit_of_measurement=PERCENTAGE,
+        native_min_value=min_value,
+        native_max_value=100,
+        entity_category=EntityCategory.CONFIG,
+    )
+
+
+_PRIORITY_TIME_OPTIONS = ["normal_30min", "plus_1h", "plus_plus_2h"]
+_PRIORITY_TIME_MAP = {30: "normal_30min", 60: "plus_1h", 120: "plus_plus_2h"}
+
+
+def create_priority_time_number(
+    key: str, address: int
+) -> ModbusSelectEntityDescription:
+    """Create a priority time select (30 / 60 / 120 minutes, CONFIG)."""
+    return ModbusSelectEntityDescription(
+        key=key,
+        translation_key=key,
+        address=address,
+        options=_PRIORITY_TIME_OPTIONS,
+        value_map=_PRIORITY_TIME_MAP,
+    )
 
 
 def create_temp_sensor(
@@ -596,15 +792,17 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
             5: "paused",
         },
     ),
-    create_generic_sensor(
-        "electricity_price_region",
-        165,
-        data_type=DATA_TYPE_ASCII,
-        state_class=None,
-        scale=1.0,
-        precision=0,
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
+    # Note! This does not work.
+    # This sensor does not work. It will return 2 chars top, but region could be SE4.
+    # create_generic_sensor(
+    #     "electricity_price_region",
+    #     165,
+    #     data_type=DATA_TYPE_ASCII,
+    #     state_class=None,
+    #     scale=1.0,
+    #     precision=0,
+    #     entity_category=EntityCategory.DIAGNOSTIC,
+    # ),
     # -------------------------------------------------------------------------
     # Device info (diagnostic) — Input registers 180–193
     # (wifi_connected, cloud_connected, vacation_mode → binary_sensor platform)
@@ -792,20 +990,20 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
     #     key="qgm1_4way_valve",
     #     translation_key="qgm1_4way_valve",
     #     address=129,
-    #     entity_registry_enabled_default=False,
+    #
     # ),
     # ModbusBinarySensorEntityDescription(
     #     key="qgm1_flow_switch",
     #     translation_key="qgm1_flow_switch",
     #     address=130,
-    #     entity_registry_enabled_default=False,
+    #
     # ),
     # ModbusBinarySensorEntityDescription(
     #     key="qgm1_gp4_pump",
     #     translation_key="qgm1_gp4_pump",
     #     address=131,
     #     device_class=BinarySensorDeviceClass.RUNNING,
-    #     entity_registry_enabled_default=False,
+    #
     # ),
     # -------------------------------------------------------------------------
     # QGM2 binary states — Input registers 144–146
@@ -815,20 +1013,20 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
     #     key="qgm2_4way_valve",
     #     translation_key="qgm2_4way_valve",
     #     address=144,
-    #     entity_registry_enabled_default=False,
+    #
     # ),
     # ModbusBinarySensorEntityDescription(
     #     key="qgm2_flow_switch",
     #     translation_key="qgm2_flow_switch",
     #     address=145,
-    #     entity_registry_enabled_default=False,
+    #
     # ),
     # ModbusBinarySensorEntityDescription(
     #     key="qgm2_gp4_pump",
     #     translation_key="qgm2_gp4_pump",
     #     address=146,
     #     device_class=BinarySensorDeviceClass.RUNNING,
-    #     entity_registry_enabled_default=False,
+    #
     # ),
     # -------------------------------------------------------------------------
     # Smart grid ready — Input registers 158–159
@@ -954,5 +1152,261 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
         ),
         format_fn=lambda vals: str(int(vals[0]))
         + "".join(f"{int(v):03d}" for v in vals[1:]),
+    ),
+)
+
+# ---------------------------------------------------------------------------
+# Pre-computed range options for numeric selects
+# ---------------------------------------------------------------------------
+_TEMP_SELECT_OPTS, _TEMP_SELECT_MAP = _int_range_options(
+    150, 250, scale=0.1, decimal_places=0, step=10
+)
+
+# Room compensation has exactly four discrete values: 0, 0.5, 1, 2
+_ROOM_COMP_OPTS = ["0", "0.5", "1", "2"]
+_ROOM_COMP_MAP = {0: "0", 5: "0.5", 10: "1", 20: "2"}
+_OFFSET_OPTS, _OFFSET_MAP = _int_range_options(
+    -9, 9, scale=1.0, decimal_places=0, step=1
+)
+
+# ---------------------------------------------------------------------------
+# Switch descriptions (holding registers, 0=off 1=on)
+# ---------------------------------------------------------------------------
+SWITCH_DESCRIPTIONS: tuple[ModbusSwitchEntityDescription, ...] = (
+    ModbusSwitchEntityDescription(
+        key="unit_on_off",
+        translation_key="unit_on_off",
+        address=0,
+    ),
+    ModbusSwitchEntityDescription(
+        key="manual_allow_heating",
+        translation_key="manual_allow_heating",
+        address=2,
+    ),
+    ModbusSwitchEntityDescription(
+        key="manual_allow_cooling",
+        translation_key="manual_allow_cooling",
+        address=3,
+    ),
+    ModbusSwitchEntityDescription(
+        key="manual_allow_addition",
+        translation_key="manual_allow_addition",
+        address=4,
+    ),
+    ModbusSwitchEntityDescription(
+        key="manual_allow_dhw",
+        translation_key="manual_allow_dhw",
+        address=5,
+    ),
+    ModbusSwitchEntityDescription(
+        key="dew_point_protection",
+        translation_key="dew_point_protection",
+        address=39,
+        entity_category=EntityCategory.CONFIG,
+    ),
+    ModbusSwitchEntityDescription(
+        key="dhw_uninterrupted_cooling",
+        translation_key="dhw_uninterrupted_cooling",
+        address=61,
+        entity_category=EntityCategory.CONFIG,
+    ),
+    ModbusSwitchEntityDescription(
+        key="bt12_mounted",
+        translation_key="bt12_mounted",
+        address=83,
+        entity_category=EntityCategory.CONFIG,
+    ),
+    ModbusSwitchEntityDescription(
+        key="qs_unit_connected",
+        translation_key="qs_unit_connected",
+        address=84,
+        entity_category=EntityCategory.CONFIG,
+    ),
+    ModbusSwitchEntityDescription(
+        key="sg_enabled",
+        translation_key="sg_enabled",
+        address=88,
+        entity_category=EntityCategory.CONFIG,
+    ),
+    ModbusSwitchEntityDescription(
+        key="outdoor_air_mixed",
+        translation_key="outdoor_air_mixed",
+        address=89,
+        entity_category=EntityCategory.CONFIG,
+    ),
+)
+
+# ---------------------------------------------------------------------------
+# Select descriptions (holding registers, enum or numeric-range options)
+# ---------------------------------------------------------------------------
+SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
+    ModbusSelectEntityDescription(
+        key="operation_mode",
+        translation_key="operation_mode",
+        address=1,
+        options=["auto", "manual", "only_addition"],
+        value_map={0: "auto", 1: "manual", 2: "only_addition"},
+    ),
+    ModbusSelectEntityDescription(
+        key="use_operation_mode_sensor",
+        translation_key="use_operation_mode_sensor",
+        address=9,
+        entity_category=EntityCategory.CONFIG,
+        options=["no", "yes_bt2", "yes_bt3", "yes_aux", "external"],
+        value_map={0: "no", 1: "yes_bt2", 2: "yes_bt3", 3: "yes_aux", 4: "external"},
+    ),
+    ModbusSelectEntityDescription(
+        key="desired_indoor_temperature",
+        translation_key="desired_indoor_temperature",
+        address=12,
+        data_type=DATA_TYPE_INT16,
+        options=_TEMP_SELECT_OPTS,
+        value_map=_TEMP_SELECT_MAP,
+    ),
+    ModbusSelectEntityDescription(
+        key="room_compensation_factor",
+        translation_key="room_compensation_factor",
+        address=13,
+        entity_category=EntityCategory.CONFIG,
+        options=_ROOM_COMP_OPTS,
+        value_map=_ROOM_COMP_MAP,
+    ),
+    ModbusSelectEntityDescription(
+        key="heating_curve_parallel_offset",
+        translation_key="heating_curve_parallel_offset",
+        address=15,
+        data_type=DATA_TYPE_INT16,
+        entity_category=EntityCategory.CONFIG,
+        options=_OFFSET_OPTS,
+        value_map=_OFFSET_MAP,
+    ),
+    ModbusSelectEntityDescription(
+        key="curve_type_heating",
+        translation_key="curve_type_heating",
+        address=22,
+        entity_category=EntityCategory.CONFIG,
+        options=["auto", "user_defined"],
+        value_map={0: "auto", 1: "user_defined"},
+    ),
+    ModbusSelectEntityDescription(
+        key="cooling_curve_parallel_offset",
+        translation_key="cooling_curve_parallel_offset",
+        address=36,
+        data_type=DATA_TYPE_INT16,
+        entity_category=EntityCategory.CONFIG,
+        options=_OFFSET_OPTS,
+        value_map=dict(_OFFSET_MAP),
+    ),
+    ModbusSelectEntityDescription(
+        key="dhw_mode",
+        translation_key="dhw_mode",
+        address=53,
+        options=["eco", "normal", "extra", "smart"],
+        value_map={0: "eco", 1: "normal", 2: "extra", 3: "smart"},
+    ),
+    ModbusSelectEntityDescription(
+        key="dhw_outlet_temperature",
+        translation_key="dhw_outlet_temperature",
+        address=60,
+        entity_category=EntityCategory.CONFIG,
+        options=["normal", "plus", "plus_plus"],
+        value_map={0: "normal", 1: "plus", 2: "plus_plus"},
+    ),
+    ModbusSelectEntityDescription(
+        key="ventilation_state",
+        translation_key="ventilation_state",
+        address=68,
+        options=["off", "normal", "extra", "reduced"],
+        value_map={0: "off", 1: "normal", 2: "extra", 3: "reduced"},
+    ),
+    create_priority_time_number("heating_priority_time", 73),
+    create_priority_time_number("cooling_priority_time", 74),
+    create_priority_time_number("dhw_priority_time", 75),
+)
+
+# ---------------------------------------------------------------------------
+# Number descriptions (holding registers, numeric range)
+# ---------------------------------------------------------------------------
+NUMBER_DESCRIPTIONS: tuple[ModbusNumberEntityDescription, ...] = (
+    # --- Duration (hours) ---
+    ModbusNumberEntityDescription(
+        key="time_between_heating_cooling",
+        translation_key="time_between_heating_cooling",
+        address=6,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        device_class=NumberDeviceClass.DURATION,
+        native_min_value=0,
+        native_max_value=48,
+        entity_category=EntityCategory.CONFIG,
+    ),
+    ModbusNumberEntityDescription(
+        key="filtertime_outdoor_sensor",
+        translation_key="filtertime_outdoor_sensor",
+        address=8,
+        native_unit_of_measurement=UnitOfTime.HOURS,
+        device_class=NumberDeviceClass.DURATION,
+        native_min_value=0,
+        native_max_value=48,
+        entity_category=EntityCategory.CONFIG,
+    ),
+    # --- Temperature setpoints (INT16 °C) ---
+    create_number_entity("allow_addition_temperature", 7, min_value=-29, max_value=30),
+    create_number_entity("outdoor_temp_stop_heating", 18),
+    create_number_entity("start_cooling_temperature", 38),
+    create_number_entity("max_heating_supply_temp", 19, min_value=20, max_value=80),
+    create_number_entity(
+        "min_heating_supply_temp",
+        20,
+        data_type=DATA_TYPE_UINT16,
+        min_value=10,
+        max_value=80,
+    ),
+    create_number_entity("min_cooling_supply_temp", 40, min_value=7, max_value=30),
+    create_number_entity(
+        "room_temp_external", 14, min_value=-5.0, max_value=40.0, scale=0.1, step=0.1
+    ),
+    # --- DHW temperature setpoints (UINT16, 20..80 °C) ---
+    create_dhw_temp_number("dhw_start_temp_normal", 56),
+    create_dhw_temp_number("dhw_stop_temp_normal", 57),
+    create_dhw_temp_number("dhw_start_temp_extra", 58),
+    create_dhw_temp_number("dhw_stop_temp_extra", 59),
+    # --- Heating curve (dimensionless compensation + user-defined points) ---
+    create_number_entity(
+        "temp_compensation_curve_heating",
+        23,
+        data_type=DATA_TYPE_UINT16,
+        unit=None,
+        device_class=None,
+        min_value=1,
+        max_value=50,
+    ),
+    create_heating_curve_point("heating_curve_minus30", 24),
+    create_heating_curve_point("heating_curve_minus20", 25),
+    create_heating_curve_point("heating_curve_minus10", 26),
+    create_heating_curve_point("heating_curve_0", 27),
+    create_heating_curve_point("heating_curve_10", 28),
+    create_heating_curve_point("heating_curve_20", 29),
+    create_heating_curve_point("heating_curve_30", 30),
+    # --- Pump speeds (%, min 1) ---
+    create_percent_number("pump_speed_heating", 63, min_value=1),
+    create_percent_number("pump_speed_cooling", 64, min_value=1),
+    create_percent_number("dhw_pump_speed", 65, min_value=1),
+    create_percent_number("pump_speed_idle", 66, min_value=1),
+    # --- Fan speeds (%, min 0) ---
+    create_percent_number("ventilation_fan_speed_reduced", 69),
+    create_percent_number("ventilation_fan_speed_normal", 70),
+    create_percent_number("ventilation_fan_speed_extra", 71),
+    create_percent_number("compressor_fan_speed", 72),
+)
+
+# ---------------------------------------------------------------------------
+# Button descriptions (holding registers, write-once trigger)
+# ---------------------------------------------------------------------------
+BUTTON_DESCRIPTIONS: tuple[ModbusButtonEntityDescription, ...] = (
+    ModbusButtonEntityDescription(
+        key="reset_alarms",
+        translation_key="reset_alarms",
+        address=99,
+        write_value=1,
     ),
 )

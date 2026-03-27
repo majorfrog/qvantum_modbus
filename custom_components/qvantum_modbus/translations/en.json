@@ -19,7 +19,7 @@
         "data_description": {
           "host": "IP address or hostname of the Modbus TCP gateway.",
           "port": "TCP port (default: 502).",
-          "unit_id": "Modbus unit ID of the target device (1-247)."
+          "unit_id": "Modbus unit ID of the target device (1–247)."
         }
       },
       "rtu": {
@@ -57,7 +57,7 @@
         "data_description": {
           "host": "IP address or hostname of the Modbus TCP gateway.",
           "port": "TCP port or serial device path.",
-          "unit_id": "Modbus unit ID of the target device (1\u2013247).",
+          "unit_id": "Modbus unit ID of the target device (1–247).",
           "baudrate": "Communication speed in bps.",
           "bytesize": "Number of data bits (typically 8).",
           "parity": "Parity bit setting.",
@@ -76,58 +76,138 @@
   },
   "entity": {
     "sensor": {
-      "bt1_outdoor": { "name": "Outdoor temperature" },
-      "bt2_indoor": { "name": "Indoor temperature" },
-      "filtered_room": { "name": "Filtered room temperature" },
-      "bt4": { "name": "BT4 temperature" },
-      "bt10_condenser_outlet": { "name": "Condenser outlet temperature" },
-      "bt11_supply_addition": { "name": "Heating supply temperature" },
-      "bt12_supply_external": { "name": "External heating supply temperature" },
-      "bt13_condenser_inlet": { "name": "Condenser inlet temperature" },
-      "bt14_source_flow": { "name": "Heat source flow temperature" },
-      "bt15_source_return": { "name": "Heat source return temperature" },
-      "bt20_discharge_line": { "name": "Discharge line temperature" },
-      "bt21_liquid_line": { "name": "Liquid line temperature" },
-      "bt22_evaporator_inlet": { "name": "Evaporator inlet temperature" },
-      "bt23_suction_line": { "name": "Suction line temperature" },
-      "bt24_crank_case": { "name": "Crankcase temperature" },
-      "bt30_dhw_tank": { "name": "Hot water tank temperature" },
-      "bt31_dhw_inlet": { "name": "Hot water inlet temperature" },
+      "bt1_outdoor": {
+        "name": "Outdoor temperature"
+      },
+      "bt2_indoor": {
+        "name": "Indoor temperature"
+      },
+      "filtered_room": {
+        "name": "Filtered room temperature"
+      },
+      "bt4": {
+        "name": "BT4 temperature"
+      },
+      "bt10_condenser_outlet": {
+        "name": "Condenser outlet temperature"
+      },
+      "bt11_supply_addition": {
+        "name": "Heating supply temperature"
+      },
+      "bt12_supply_external": {
+        "name": "External heating supply temperature"
+      },
+      "bt13_condenser_inlet": {
+        "name": "Condenser inlet temperature"
+      },
+      "bt14_source_flow": {
+        "name": "Heat source flow temperature"
+      },
+      "bt15_source_return": {
+        "name": "Heat source return temperature"
+      },
+      "bt20_discharge_line": {
+        "name": "Discharge line temperature"
+      },
+      "bt21_liquid_line": {
+        "name": "Liquid line temperature"
+      },
+      "bt22_evaporator_inlet": {
+        "name": "Evaporator inlet temperature"
+      },
+      "bt23_suction_line": {
+        "name": "Suction line temperature"
+      },
+      "bt24_crank_case": {
+        "name": "Crankcase temperature"
+      },
+      "bt30_dhw_tank": {
+        "name": "Hot water tank temperature"
+      },
+      "bt31_dhw_inlet": {
+        "name": "Hot water inlet temperature"
+      },
       "bt33_dhw_secondary_inlet": {
         "name": "Hot water secondary inlet temperature"
       },
       "bt34_dhw_secondary_outlet": {
         "name": "Hot water secondary outlet temperature"
       },
-      "bt_aux": { "name": "Auxiliary temperature" },
-      "btx": { "name": "BTX temperature" },
+      "bt_aux": {
+        "name": "Auxiliary temperature"
+      },
+      "btx": {
+        "name": "BTX temperature"
+      },
       "calc_supply_heating": {
         "name": "Calculated heating supply temperature"
       },
       "calc_supply_cooling": {
         "name": "Calculated cooling supply temperature"
       },
-      "heating_curve_offset": { "name": "Heating curve offset" },
-      "parallel_cooling_offset": { "name": "Parallel cooling offset" },
-      "qgm1_bt10_outlet": { "name": "QGM1 outlet water temperature" },
-      "qgm1_bt13_inlet": { "name": "QGM1 inlet water temperature" },
-      "qgm1_bt14_source_return": { "name": "QGM1 source return temperature" },
-      "qgm1_bt15_source_outlet": { "name": "QGM1 source outlet temperature" },
-      "qgm1_bt20_exhaust": { "name": "QGM1 exhaust temperature" },
-      "qgm1_bt23_suction": { "name": "QGM1 suction temperature" },
-      "qgm2_bt10_outlet": { "name": "QGM2 outlet water temperature" },
-      "qgm2_bt13_inlet": { "name": "QGM2 inlet water temperature" },
-      "qgm2_bt14_source_return": { "name": "QGM2 source return temperature" },
-      "qgm2_bt15_source_outlet": { "name": "QGM2 source outlet temperature" },
-      "qgm2_bt20_exhaust": { "name": "QGM2 exhaust temperature" },
-      "qgm2_bt23_suction": { "name": "QGM2 suction temperature" },
-      "bf1_dhw_flow": { "name": "DHW flow" },
-      "bf1_rpm": { "name": "Hot water pump speed" },
-      "gp1_pump_speed": { "name": "Distribution pump speed" },
-      "gp2_pump_speed": { "name": "DHW circulation pump speed" },
-      "fan_speed": { "name": "Fan speed" },
-      "compressor_speed": { "name": "Compressor speed" },
-      "degree_minute": { "name": "Degree minute" },
+      "heating_curve_offset": {
+        "name": "Heating curve offset"
+      },
+      "parallel_cooling_offset": {
+        "name": "Parallel cooling offset"
+      },
+      "qgm1_bt10_outlet": {
+        "name": "QGM1 outlet water temperature"
+      },
+      "qgm1_bt13_inlet": {
+        "name": "QGM1 inlet water temperature"
+      },
+      "qgm1_bt14_source_return": {
+        "name": "QGM1 source return temperature"
+      },
+      "qgm1_bt15_source_outlet": {
+        "name": "QGM1 source outlet temperature"
+      },
+      "qgm1_bt20_exhaust": {
+        "name": "QGM1 exhaust temperature"
+      },
+      "qgm1_bt23_suction": {
+        "name": "QGM1 suction temperature"
+      },
+      "qgm2_bt10_outlet": {
+        "name": "QGM2 outlet water temperature"
+      },
+      "qgm2_bt13_inlet": {
+        "name": "QGM2 inlet water temperature"
+      },
+      "qgm2_bt14_source_return": {
+        "name": "QGM2 source return temperature"
+      },
+      "qgm2_bt15_source_outlet": {
+        "name": "QGM2 source outlet temperature"
+      },
+      "qgm2_bt20_exhaust": {
+        "name": "QGM2 exhaust temperature"
+      },
+      "qgm2_bt23_suction": {
+        "name": "QGM2 suction temperature"
+      },
+      "bf1_dhw_flow": {
+        "name": "DHW flow"
+      },
+      "bf1_rpm": {
+        "name": "Hot water pump speed"
+      },
+      "gp1_pump_speed": {
+        "name": "Distribution pump speed"
+      },
+      "gp2_pump_speed": {
+        "name": "DHW circulation pump speed"
+      },
+      "fan_speed": {
+        "name": "Fan speed"
+      },
+      "compressor_speed": {
+        "name": "Compressor speed"
+      },
+      "degree_minute": {
+        "name": "Degree minute"
+      },
       "unit_state": {
         "name": "Unit state",
         "state": {
@@ -148,7 +228,7 @@
       "heat_emitter_type": {
         "name": "Heat emitter type",
         "state": {
-          "floor_heating": "Floor heating",
+          "floor_heating": "Underfloor heating",
           "radiators": "Radiators"
         }
       },
@@ -158,7 +238,9 @@
       "cooling_priority_time_left": {
         "name": "Cooling priority time remaining"
       },
-      "dhw_priority_time_left": { "name": "DHW priority time remaining" },
+      "dhw_priority_time_left": {
+        "name": "DHW priority time remaining"
+      },
       "compressor_state": {
         "name": "Compressor state",
         "state": {
@@ -178,37 +260,93 @@
           "defrost_pool_passive": "Defrost pool passive"
         }
       },
-      "compressor_blocked_sec": { "name": "Compressor blocked duration" },
-      "qn8_position": { "name": "QN8 position" },
-      "compressor_run_time": { "name": "Compressor run time" },
-      "compressor_starts": { "name": "Compressor starts" },
-      "ventilation_fan_run_time": { "name": "Ventilation fan run time" },
+      "compressor_blocked_sec": {
+        "name": "Compressor blocked duration"
+      },
+      "qn8_position": {
+        "name": "QN8 position"
+      },
+      "compressor_run_time": {
+        "name": "Compressor run time"
+      },
+      "compressor_starts": {
+        "name": "Compressor starts"
+      },
+      "ventilation_fan_run_time": {
+        "name": "Ventilation fan run time"
+      },
       "ventilation_filter_time_left": {
         "name": "Ventilation filter time remaining"
       },
-      "compressor_power": { "name": "Compressor power" },
-      "compressor_energy_mwh": { "name": "Compressor energy (MWh)" },
-      "compressor_energy_kwh": { "name": "Compressor energy (kWh)" },
-      "additional_energy_mwh": { "name": "Additional heater energy (MWh)" },
-      "additional_energy_kwh": { "name": "Additional heater energy (kWh)" },
-      "heating_energy_mwh": { "name": "Heating energy (MWh)" },
-      "heating_energy_kwh": { "name": "Heating energy (kWh)" },
-      "cooling_energy_mwh": { "name": "Cooling energy (MWh)" },
-      "cooling_energy_kwh": { "name": "Cooling energy (kWh)" },
-      "dhw_energy_mwh": { "name": "DHW energy (MWh)" },
-      "dhw_energy_kwh": { "name": "DHW energy (kWh)" },
-      "qgm1_bp1_low_pressure": { "name": "QGM1 low pressure" },
-      "qgm1_bp2_high_pressure": { "name": "QGM1 high pressure" },
-      "qgm1_compressor_speed": { "name": "QGM1 compressor speed" },
-      "qgm2_bp1_low_pressure": { "name": "QGM2 low pressure" },
-      "qgm2_bp2_high_pressure": { "name": "QGM2 high pressure" },
-      "qgm2_compressor_speed": { "name": "QGM2 compressor speed" },
-      "active_alarm_count": { "name": "Active alarms" },
-      "alarm_1_code": { "name": "Alarm 1 code" },
-      "alarm_2_code": { "name": "Alarm 2 code" },
-      "alarm_3_code": { "name": "Alarm 3 code" },
-      "alarm_4_code": { "name": "Alarm 4 code" },
-      "alarm_5_code": { "name": "Alarm 5 code" },
+      "compressor_power": {
+        "name": "Compressor power"
+      },
+      "compressor_energy_mwh": {
+        "name": "Compressor energy (MWh)"
+      },
+      "compressor_energy_kwh": {
+        "name": "Compressor energy (kWh)"
+      },
+      "additional_energy_mwh": {
+        "name": "Additional heater energy (MWh)"
+      },
+      "additional_energy_kwh": {
+        "name": "Additional heater energy (kWh)"
+      },
+      "heating_energy_mwh": {
+        "name": "Heating energy (MWh)"
+      },
+      "heating_energy_kwh": {
+        "name": "Heating energy (kWh)"
+      },
+      "cooling_energy_mwh": {
+        "name": "Cooling energy (MWh)"
+      },
+      "cooling_energy_kwh": {
+        "name": "Cooling energy (kWh)"
+      },
+      "dhw_energy_mwh": {
+        "name": "DHW energy (MWh)"
+      },
+      "dhw_energy_kwh": {
+        "name": "DHW energy (kWh)"
+      },
+      "qgm1_bp1_low_pressure": {
+        "name": "QGM1 low pressure"
+      },
+      "qgm1_bp2_high_pressure": {
+        "name": "QGM1 high pressure"
+      },
+      "qgm1_compressor_speed": {
+        "name": "QGM1 compressor speed"
+      },
+      "qgm2_bp1_low_pressure": {
+        "name": "QGM2 low pressure"
+      },
+      "qgm2_bp2_high_pressure": {
+        "name": "QGM2 high pressure"
+      },
+      "qgm2_compressor_speed": {
+        "name": "QGM2 compressor speed"
+      },
+      "active_alarm_count": {
+        "name": "Active alarms"
+      },
+      "alarm_1_code": {
+        "name": "Alarm 1 code"
+      },
+      "alarm_2_code": {
+        "name": "Alarm 2 code"
+      },
+      "alarm_3_code": {
+        "name": "Alarm 3 code"
+      },
+      "alarm_4_code": {
+        "name": "Alarm 4 code"
+      },
+      "alarm_5_code": {
+        "name": "Alarm 5 code"
+      },
       "sg_mode": {
         "name": "SG mode",
         "state": {
@@ -239,53 +377,361 @@
           "paused": "Paused"
         }
       },
-      "electricity_price_region": { "name": "Electricity price region" },
-      "serial_number": { "name": "Serial number" },
-      "ip_address": { "name": "IP address" },
-      "fw_version": { "name": "Firmware version" }
+      "electricity_price_region": {
+        "name": "Electricity price region"
+      },
+      "serial_number": {
+        "name": "Serial number"
+      },
+      "ip_address": {
+        "name": "IP address"
+      },
+      "fw_version": {
+        "name": "Firmware version"
+      }
     },
     "binary_sensor": {
-      "relay_l1": { "name": "Relay L1" },
-      "relay_l2": { "name": "Relay L2" },
-      "relay_l3": { "name": "Relay L3" },
-      "relay_gp10": { "name": "Relay GP10" },
-      "relay_qm10": { "name": "Relay QM10" },
-      "relay_qn8_1": { "name": "Relay QN8-1" },
-      "relay_qn8_2": { "name": "Relay QN8-2" },
-      "relay_gp3": { "name": "Relay GP3" },
-      "relay_pump": { "name": "Relay pump" },
-      "relay_ha12": { "name": "Relay HA12" },
-      "heating_released": { "name": "Heating released" },
-      "cooling_released": { "name": "Cooling released" },
-      "compressor_released": { "name": "Compressor released" },
-      "addition_released": { "name": "Addition released" },
-      "heating_demand": { "name": "Heating demand" },
-      "cooling_demand": { "name": "Cooling demand" },
-      "addition_demand": { "name": "Addition demand" },
-      "addition_demand_dhw": { "name": "Addition demand DHW" },
-      "dhw_demand": { "name": "DHW demand" },
-      "heat_priority": { "name": "Heat priority" },
-      "cool_priority": { "name": "Cooling priority" },
-      "dhw_priority": { "name": "DHW priority" },
-      "time_to_defrost": { "name": "Defrost needed" },
-      "compressor_blocked": { "name": "Compressor blocked" },
-      "bt2_detected": { "name": "BT2 sensor detected" },
-      "freeze_protection_active": { "name": "Freeze protection active" },
-      "bbr_locked": { "name": "BBR locked" },
-      "qgm1_4way_valve": { "name": "QGM1 4-way valve" },
-      "qgm1_flow_switch": { "name": "QGM1 flow switch" },
-      "qgm1_gp4_pump": { "name": "QGM1 ground source pump" },
-      "qgm2_4way_valve": { "name": "QGM2 4-way valve" },
-      "qgm2_flow_switch": { "name": "QGM2 flow switch" },
-      "qgm2_gp4_pump": { "name": "QGM2 ground source pump" },
-      "sg_ready_a": { "name": "SG ready A" },
-      "sg_ready_b": { "name": "SG ready B" },
-      "smart_price_dhw_enabled": { "name": "Smart price DHW enabled" },
-      "smart_price_heating_enabled": { "name": "Smart price heating enabled" },
-      "energy_prices_available": { "name": "Energy prices available" },
-      "wifi_connected": { "name": "Wi-Fi connected" },
-      "cloud_connected": { "name": "Cloud connected" },
-      "vacation_mode": { "name": "Vacation mode" }
+      "relay_l1": {
+        "name": "Relay L1"
+      },
+      "relay_l2": {
+        "name": "Relay L2"
+      },
+      "relay_l3": {
+        "name": "Relay L3"
+      },
+      "relay_gp10": {
+        "name": "Relay GP10"
+      },
+      "relay_qm10": {
+        "name": "Relay QM10"
+      },
+      "relay_qn8_1": {
+        "name": "Relay QN8-1"
+      },
+      "relay_qn8_2": {
+        "name": "Relay QN8-2"
+      },
+      "relay_gp3": {
+        "name": "Relay GP3"
+      },
+      "relay_pump": {
+        "name": "Relay pump"
+      },
+      "relay_ha12": {
+        "name": "Relay HA12"
+      },
+      "heating_released": {
+        "name": "Heating released"
+      },
+      "cooling_released": {
+        "name": "Cooling released"
+      },
+      "compressor_released": {
+        "name": "Compressor released"
+      },
+      "addition_released": {
+        "name": "Addition released"
+      },
+      "heating_demand": {
+        "name": "Heating demand"
+      },
+      "cooling_demand": {
+        "name": "Cooling demand"
+      },
+      "addition_demand": {
+        "name": "Addition demand"
+      },
+      "addition_demand_dhw": {
+        "name": "Addition demand DHW"
+      },
+      "dhw_demand": {
+        "name": "DHW demand"
+      },
+      "heat_priority": {
+        "name": "Heat priority"
+      },
+      "cool_priority": {
+        "name": "Cooling priority"
+      },
+      "dhw_priority": {
+        "name": "DHW priority"
+      },
+      "time_to_defrost": {
+        "name": "Defrost needed"
+      },
+      "compressor_blocked": {
+        "name": "Compressor blocked"
+      },
+      "bt2_detected": {
+        "name": "BT2 sensor detected"
+      },
+      "freeze_protection_active": {
+        "name": "Freeze protection active"
+      },
+      "bbr_locked": {
+        "name": "BBR locked"
+      },
+      "qgm1_4way_valve": {
+        "name": "QGM1 4-way valve"
+      },
+      "qgm1_flow_switch": {
+        "name": "QGM1 flow switch"
+      },
+      "qgm1_gp4_pump": {
+        "name": "QGM1 ground source pump"
+      },
+      "qgm2_4way_valve": {
+        "name": "QGM2 4-way valve"
+      },
+      "qgm2_flow_switch": {
+        "name": "QGM2 flow switch"
+      },
+      "qgm2_gp4_pump": {
+        "name": "QGM2 ground source pump"
+      },
+      "sg_ready_a": {
+        "name": "SG ready A"
+      },
+      "sg_ready_b": {
+        "name": "SG ready B"
+      },
+      "smart_price_dhw_enabled": {
+        "name": "Smart price DHW enabled"
+      },
+      "smart_price_heating_enabled": {
+        "name": "Smart price heating enabled"
+      },
+      "energy_prices_available": {
+        "name": "Energy prices available"
+      },
+      "wifi_connected": {
+        "name": "Wi-Fi connected"
+      },
+      "cloud_connected": {
+        "name": "Cloud connected"
+      },
+      "vacation_mode": {
+        "name": "Vacation mode"
+      }
+    },
+    "switch": {
+      "unit_on_off": {
+        "name": "Unit on/off"
+      },
+      "manual_allow_heating": {
+        "name": "Allow heating (manual mode)"
+      },
+      "manual_allow_cooling": {
+        "name": "Allow cooling (manual mode)"
+      },
+      "manual_allow_addition": {
+        "name": "Allow addition heater (manual mode)"
+      },
+      "manual_allow_dhw": {
+        "name": "Allow DHW (manual mode)"
+      },
+      "dew_point_protection": {
+        "name": "Dew point protection"
+      },
+      "dhw_uninterrupted_cooling": {
+        "name": "DHW uninterrupted cooling"
+      },
+      "bt12_mounted": {
+        "name": "BT12 sensor mounted"
+      },
+      "qs_unit_connected": {
+        "name": "QS unit connected"
+      },
+      "sg_enabled": {
+        "name": "Smart grid enabled"
+      },
+      "outdoor_air_mixed": {
+        "name": "Outdoor air mixed"
+      }
+    },
+    "select": {
+      "operation_mode": {
+        "name": "Operation mode",
+        "state": {
+          "auto": "Auto",
+          "manual": "Manual",
+          "only_addition": "Additional heat only"
+        }
+      },
+      "use_operation_mode_sensor": {
+        "name": "Operation mode sensor",
+        "state": {
+          "no": "BT1 (Outdoor sensor)",
+          "yes_bt2": "BT2 (Indoor sensor)",
+          "yes_bt3": "BT3 (Flow sensor)",
+          "yes_aux": "AUX",
+          "external": "External"
+        }
+      },
+      "desired_indoor_temperature": {
+        "name": "Desired indoor temperature"
+      },
+      "room_compensation_factor": {
+        "name": "Room compensation factor"
+      },
+      "heating_curve_parallel_offset": {
+        "name": "Heating curve parallel offset"
+      },
+      "curve_type_heating": {
+        "name": "Heating curve type",
+        "state": {
+          "auto": "Auto",
+          "user_defined": "User defined"
+        }
+      },
+      "cooling_curve_parallel_offset": {
+        "name": "Cooling curve parallel offset"
+      },
+      "dhw_mode": {
+        "name": "DHW mode",
+        "state": {
+          "eco": "Eco",
+          "normal": "Normal",
+          "extra": "Extra",
+          "smart": "Smart"
+        }
+      },
+      "dhw_outlet_temperature": {
+        "name": "DHW outlet temperature boost",
+        "state": {
+          "normal": "Normal",
+          "plus": "+",
+          "plus_plus": "++"
+        }
+      },
+      "ventilation_state": {
+        "name": "Ventilation state",
+        "state": {
+          "off": "Off",
+          "normal": "Normal",
+          "extra": "Extra",
+          "reduced": "Reduced"
+        }
+      },
+      "heating_priority_time": {
+        "name": "Heating priority time",
+        "state": {
+          "normal_30min": "Normal (30 minutes)",
+          "plus_1h": "+ (1 hour)",
+          "plus_plus_2h": "++ (2 hours)"
+        }
+      },
+      "cooling_priority_time": {
+        "name": "Cooling priority time",
+        "state": {
+          "normal_30min": "Normal (30 minutes)",
+          "plus_1h": "+ (1 hour)",
+          "plus_plus_2h": "++ (2 hours)"
+        }
+      },
+      "dhw_priority_time": {
+        "name": "DHW priority time",
+        "state": {
+          "normal_30min": "Normal (30 minutes)",
+          "plus_1h": "+ (1 hour)",
+          "plus_plus_2h": "++ (2 hours)"
+        }
+      }
+    },
+    "number": {
+      "time_between_heating_cooling": {
+        "name": "Time between heating and cooling"
+      },
+      "filtertime_outdoor_sensor": {
+        "name": "Outdoor sensor filter time"
+      },
+      "allow_addition_temperature": {
+        "name": "Allow addition temperature"
+      },
+      "room_temp_external": {
+        "name": "External room temperature"
+      },
+      "outdoor_temp_stop_heating": {
+        "name": "Outdoor temperature — stop heating"
+      },
+      "max_heating_supply_temp": {
+        "name": "Maximum heating supply temperature"
+      },
+      "min_heating_supply_temp": {
+        "name": "Minimum heating supply temperature"
+      },
+      "start_cooling_temperature": {
+        "name": "Start cooling temperature"
+      },
+      "min_cooling_supply_temp": {
+        "name": "Minimum cooling supply temperature"
+      },
+      "dhw_start_temp_normal": {
+        "name": "DHW start temperature (normal)"
+      },
+      "dhw_stop_temp_normal": {
+        "name": "DHW stop temperature (normal)"
+      },
+      "dhw_start_temp_extra": {
+        "name": "DHW start temperature (extra)"
+      },
+      "dhw_stop_temp_extra": {
+        "name": "DHW stop temperature (extra)"
+      },
+      "temp_compensation_curve_heating": {
+        "name": "Heating temperature compensation curve"
+      },
+      "heating_curve_minus30": {
+        "name": "Heating curve at −30 °C"
+      },
+      "heating_curve_minus20": {
+        "name": "Heating curve at −20 °C"
+      },
+      "heating_curve_minus10": {
+        "name": "Heating curve at −10 °C"
+      },
+      "heating_curve_0": {
+        "name": "Heating curve at 0 °C"
+      },
+      "heating_curve_10": {
+        "name": "Heating curve at 10 °C"
+      },
+      "heating_curve_20": {
+        "name": "Heating curve at 20 °C"
+      },
+      "heating_curve_30": {
+        "name": "Heating curve at 30 °C"
+      },
+      "pump_speed_heating": {
+        "name": "Heating pump speed"
+      },
+      "pump_speed_cooling": {
+        "name": "Cooling pump speed"
+      },
+      "dhw_pump_speed": {
+        "name": "DHW pump speed"
+      },
+      "pump_speed_idle": {
+        "name": "Pump idle speed"
+      },
+      "ventilation_fan_speed_reduced": {
+        "name": "Ventilation fan speed (reduced)"
+      },
+      "ventilation_fan_speed_normal": {
+        "name": "Ventilation fan speed (normal)"
+      },
+      "ventilation_fan_speed_extra": {
+        "name": "Ventilation fan speed (extra)"
+      },
+      "compressor_fan_speed": {
+        "name": "Compressor fan speed"
+      }
+    },
+    "button": {
+      "reset_alarms": {
+        "name": "Reset alarms"
+      }
     }
   },
   "exceptions": {
@@ -294,6 +740,9 @@
     },
     "connection_lost": {
       "message": "Modbus connection lost during polling: {error}"
+    },
+    "write_failed": {
+      "message": "Failed to write to a Modbus holding register. Check your connection and device address."
     }
   }
 }

@@ -148,7 +148,7 @@
       "heat_emitter_type": {
         "name": "Heat emitter type",
         "state": {
-          "floor_heating": "Floor heating",
+          "floor_heating": "Underfloor heating",
           "radiators": "Radiators"
         }
       },
@@ -286,6 +286,158 @@
       "wifi_connected": { "name": "Wi-Fi connected" },
       "cloud_connected": { "name": "Cloud connected" },
       "vacation_mode": { "name": "Vacation mode" }
+    },
+    "switch": {
+      "unit_on_off": { "name": "Unit on/off" },
+      "manual_allow_heating": { "name": "Allow heating (manual mode)" },
+      "manual_allow_cooling": { "name": "Allow cooling (manual mode)" },
+      "manual_allow_addition": {
+        "name": "Allow addition heater (manual mode)"
+      },
+      "manual_allow_dhw": { "name": "Allow DHW (manual mode)" },
+      "dew_point_protection": { "name": "Dew point protection" },
+      "dhw_uninterrupted_cooling": { "name": "DHW uninterrupted cooling" },
+      "bt12_mounted": { "name": "BT12 sensor mounted" },
+      "qs_unit_connected": { "name": "QS unit connected" },
+      "sg_enabled": { "name": "Smart grid enabled" },
+      "outdoor_air_mixed": { "name": "Outdoor air mixed" }
+    },
+    "select": {
+      "operation_mode": {
+        "name": "Operation mode",
+        "state": {
+          "auto": "Auto",
+          "manual": "Manual",
+          "only_addition": "Additional heat only"
+        }
+      },
+      "use_operation_mode_sensor": {
+        "name": "Operation mode sensor",
+        "state": {
+          "no": "BT1 (Outdoor sensor)",
+          "yes_bt2": "BT2 (Indoor sensor)",
+          "yes_bt3": "BT3 (Flow sensor)",
+          "yes_aux": "AUX",
+          "external": "External"
+        }
+      },
+      "desired_indoor_temperature": { "name": "Desired indoor temperature" },
+      "room_compensation_factor": { "name": "Room compensation factor" },
+      "heating_curve_parallel_offset": {
+        "name": "Heating curve parallel offset"
+      },
+      "curve_type_heating": {
+        "name": "Heating curve type",
+        "state": {
+          "auto": "Auto",
+          "user_defined": "User defined"
+        }
+      },
+      "cooling_curve_parallel_offset": {
+        "name": "Cooling curve parallel offset"
+      },
+      "dhw_mode": {
+        "name": "DHW mode",
+        "state": {
+          "eco": "Eco",
+          "normal": "Normal",
+          "extra": "Extra",
+          "smart": "Smart"
+        }
+      },
+      "dhw_outlet_temperature": {
+        "name": "DHW outlet temperature boost",
+        "state": {
+          "normal": "Normal",
+          "plus": "+",
+          "plus_plus": "++"
+        }
+      },
+      "ventilation_state": {
+        "name": "Ventilation state",
+        "state": {
+          "off": "Off",
+          "normal": "Normal",
+          "extra": "Extra",
+          "reduced": "Reduced"
+        }
+      },
+      "heating_priority_time": {
+        "name": "Heating priority time",
+        "state": {
+          "normal_30min": "Normal (30 minutes)",
+          "plus_1h": "+ (1 hour)",
+          "plus_plus_2h": "++ (2 hours)"
+        }
+      },
+      "cooling_priority_time": {
+        "name": "Cooling priority time",
+        "state": {
+          "normal_30min": "Normal (30 minutes)",
+          "plus_1h": "+ (1 hour)",
+          "plus_plus_2h": "++ (2 hours)"
+        }
+      },
+      "dhw_priority_time": {
+        "name": "DHW priority time",
+        "state": {
+          "normal_30min": "Normal (30 minutes)",
+          "plus_1h": "+ (1 hour)",
+          "plus_plus_2h": "++ (2 hours)"
+        }
+      }
+    },
+    "number": {
+      "time_between_heating_cooling": {
+        "name": "Time between heating and cooling"
+      },
+      "filtertime_outdoor_sensor": { "name": "Outdoor sensor filter time" },
+      "allow_addition_temperature": { "name": "Allow addition temperature" },
+      "room_temp_external": { "name": "External room temperature" },
+      "outdoor_temp_stop_heating": {
+        "name": "Outdoor temperature — stop heating"
+      },
+      "max_heating_supply_temp": {
+        "name": "Maximum heating supply temperature"
+      },
+      "min_heating_supply_temp": {
+        "name": "Minimum heating supply temperature"
+      },
+      "start_cooling_temperature": { "name": "Start cooling temperature" },
+      "min_cooling_supply_temp": {
+        "name": "Minimum cooling supply temperature"
+      },
+      "dhw_start_temp_normal": { "name": "DHW start temperature (normal)" },
+      "dhw_stop_temp_normal": { "name": "DHW stop temperature (normal)" },
+      "dhw_start_temp_extra": { "name": "DHW start temperature (extra)" },
+      "dhw_stop_temp_extra": { "name": "DHW stop temperature (extra)" },
+      "temp_compensation_curve_heating": {
+        "name": "Heating temperature compensation curve"
+      },
+      "heating_curve_minus30": { "name": "Heating curve at −30 °C" },
+      "heating_curve_minus20": { "name": "Heating curve at −20 °C" },
+      "heating_curve_minus10": { "name": "Heating curve at −10 °C" },
+      "heating_curve_0": { "name": "Heating curve at 0 °C" },
+      "heating_curve_10": { "name": "Heating curve at 10 °C" },
+      "heating_curve_20": { "name": "Heating curve at 20 °C" },
+      "heating_curve_30": { "name": "Heating curve at 30 °C" },
+      "pump_speed_heating": { "name": "Heating pump speed" },
+      "pump_speed_cooling": { "name": "Cooling pump speed" },
+      "dhw_pump_speed": { "name": "DHW pump speed" },
+      "pump_speed_idle": { "name": "Pump idle speed" },
+      "ventilation_fan_speed_reduced": {
+        "name": "Ventilation fan speed (reduced)"
+      },
+      "ventilation_fan_speed_normal": {
+        "name": "Ventilation fan speed (normal)"
+      },
+      "ventilation_fan_speed_extra": {
+        "name": "Ventilation fan speed (extra)"
+      },
+      "compressor_fan_speed": { "name": "Compressor fan speed" }
+    },
+    "button": {
+      "reset_alarms": { "name": "Reset alarms" }
     }
   },
   "exceptions": {
@@ -294,6 +446,9 @@
     },
     "connection_lost": {
       "message": "Modbus connection lost during polling: {error}"
+    },
+    "write_failed": {
+      "message": "Failed to write to a Modbus holding register. Check your connection and device address."
     }
   }
 }

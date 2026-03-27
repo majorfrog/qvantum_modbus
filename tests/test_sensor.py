@@ -30,6 +30,10 @@ async def _setup(
         mock_client.read_input_registers = AsyncMock(
             return_value=mock_register_result()
         )
+        mock_client.read_holding_registers = AsyncMock(
+            return_value=mock_register_result()
+        )
+        mock_client.write_register = AsyncMock(return_value=mock_register_result())
 
     with patch(
         "custom_components.qvantum_modbus.coordinator.AsyncModbusTcpClient",
@@ -141,6 +145,8 @@ async def test_sensor_unavailable_when_register_is_none(
     mock_client.close = MagicMock()
     # Error result → coordinator returns {key: None}
     mock_client.read_input_registers = AsyncMock(return_value=mock_error_result())
+    mock_client.read_holding_registers = AsyncMock(return_value=mock_error_result())
+    mock_client.write_register = AsyncMock(return_value=mock_error_result())
 
     await _setup(hass, mock_tcp_config_entry, mock_client)
 
