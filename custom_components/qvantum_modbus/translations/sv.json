@@ -140,13 +140,13 @@
         "name": "BTX-temperatur"
       },
       "calc_supply_heating": {
-        "name": "Beräknad framledningstemperatur för värme"
+        "name": "Mål framledningstemperatur för värme"
       },
       "calc_supply_cooling": {
-        "name": "Beräknad framledningstemperatur för kyla"
+        "name": "Mål framledningstemperatur för kyla"
       },
       "heating_curve_offset": {
-        "name": "Värmekurveivärskjutning"
+        "name": "Värmekurvans förskjutning"
       },
       "parallel_cooling_offset": {
         "name": "Parallellkylningsförskjutning"
@@ -209,7 +209,7 @@
         "name": "Gradminut"
       },
       "unit_state": {
-        "name": "Enhetstillstånd",
+        "name": "Strömstatus",
         "state": {
           "all_off": "Alla av",
           "on": "På"
@@ -223,6 +223,34 @@
           "dhw": "Varmvatten",
           "heating": "Uppvärmning",
           "cooling": "Kylning"
+        }
+      },
+      "heating_released": {
+        "name": "Uppvärmning tillåten",
+        "state": {
+          "blocked": "Blockerad",
+          "available": "Tillgänglig"
+        }
+      },
+      "cooling_released": {
+        "name": "Kylning tillåten",
+        "state": {
+          "blocked": "Blockerad",
+          "available": "Tillgänglig"
+        }
+      },
+      "compressor_released": {
+        "name": "Kompressor tillåten",
+        "state": {
+          "blocked": "Blockerad",
+          "available": "Tillgänglig"
+        }
+      },
+      "addition_released": {
+        "name": "Tillsats tillåten",
+        "state": {
+          "blocked": "Blockerad",
+          "available": "Tillgänglig"
         }
       },
       "heat_emitter_type": {
@@ -240,6 +268,13 @@
       },
       "dhw_priority_time_left": {
         "name": "Återstående VV-prioritetstid"
+      },
+      "time_to_defrost": {
+        "name": "Avfrostningbehov",
+        "state": {
+          "not_needed": "Behövs ej",
+          "needed": "I behov"
+        }
       },
       "compressor_state": {
         "name": "Kompressortillstånd",
@@ -310,6 +345,21 @@
       },
       "dhw_energy_kwh": {
         "name": "VV-energi (kWh)"
+      },
+      "bbr_locked": {
+        "name": "BBR",
+        "state": {
+          "unlocked": "Olåst",
+          "locked": "Låst"
+        }
+      },
+      "bt2_detected": {
+        "name": "Inomhussensor (BT2)",
+        "state": {
+          "not_connected": "Urkopplad",
+          "connected": "Inkopplad",
+          "detecting": "Söker"
+        }
       },
       "qgm1_bp1_low_pressure": {
         "name": "QGM1 lågtryck"
@@ -421,23 +471,11 @@
       "relay_ha12": {
         "name": "Relä HA12"
       },
-      "heating_released": {
-        "name": "Värme frigiven"
-      },
-      "cooling_released": {
-        "name": "Kyla frigiven"
-      },
-      "compressor_released": {
-        "name": "Kompressor frigiven"
-      },
-      "addition_released": {
-        "name": "Tillsats frigiven"
-      },
       "heating_demand": {
         "name": "Värmebehov"
       },
       "cooling_demand": {
-        "name": "Kylningsbehov"
+        "name": "Kylbehov"
       },
       "addition_demand": {
         "name": "Tillsatsbehov"
@@ -446,7 +484,7 @@
         "name": "Tillsatsbehov VV"
       },
       "dhw_demand": {
-        "name": "VV-behov"
+        "name": "Varmvattenbehov"
       },
       "heat_priority": {
         "name": "Värmeprioritet"
@@ -457,20 +495,11 @@
       "dhw_priority": {
         "name": "VV-prioritet"
       },
-      "time_to_defrost": {
-        "name": "Avfrostning behövs"
-      },
       "compressor_blocked": {
         "name": "Kompressor blockerad"
       },
-      "bt2_detected": {
-        "name": "BT2-sensor detekterad"
-      },
       "freeze_protection_active": {
-        "name": "Frysskydd aktivt"
-      },
-      "bbr_locked": {
-        "name": "BBR låst"
+        "name": "Frysskydd"
       },
       "qgm1_4way_valve": {
         "name": "QGM1 4-vägsventil"

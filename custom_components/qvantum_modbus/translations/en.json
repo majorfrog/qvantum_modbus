@@ -140,10 +140,10 @@
         "name": "BTX temperature"
       },
       "calc_supply_heating": {
-        "name": "Calculated heating supply temperature"
+        "name": "Target heating supply temperature"
       },
       "calc_supply_cooling": {
-        "name": "Calculated cooling supply temperature"
+        "name": "Target cooling supply temperature"
       },
       "heating_curve_offset": {
         "name": "Heating curve offset"
@@ -225,6 +225,34 @@
           "cooling": "Cooling"
         }
       },
+      "heating_released": {
+        "name": "Heating enabled",
+        "state": {
+          "blocked": "Blocked",
+          "available": "Available"
+        }
+      },
+      "cooling_released": {
+        "name": "Cooling enabled",
+        "state": {
+          "blocked": "Blocked",
+          "available": "Available"
+        }
+      },
+      "compressor_released": {
+        "name": "Compressor enabled",
+        "state": {
+          "blocked": "Blocked",
+          "available": "Available"
+        }
+      },
+      "addition_released": {
+        "name": "Addition heater enabled",
+        "state": {
+          "blocked": "Blocked",
+          "available": "Available"
+        }
+      },
       "heat_emitter_type": {
         "name": "Heat emitter type",
         "state": {
@@ -240,6 +268,13 @@
       },
       "dhw_priority_time_left": {
         "name": "DHW priority time remaining"
+      },
+      "time_to_defrost": {
+        "name": "Defrost needed",
+        "state": {
+          "not_needed": "Not needed",
+          "needed": "Needed"
+        }
       },
       "compressor_state": {
         "name": "Compressor state",
@@ -310,6 +345,21 @@
       },
       "dhw_energy_kwh": {
         "name": "DHW energy (kWh)"
+      },
+      "bbr_locked": {
+        "name": "BBR locked",
+        "state": {
+          "unlocked": "Unlocked",
+          "locked": "Locked"
+        }
+      },
+      "bt2_detected": {
+        "name": "Indoor sensor (BT2)",
+        "state": {
+          "not_connected": "Not connected",
+          "connected": "Connected",
+          "detecting": "Detecting"
+        }
       },
       "qgm1_bp1_low_pressure": {
         "name": "QGM1 low pressure"
@@ -421,18 +471,6 @@
       "relay_ha12": {
         "name": "Relay HA12"
       },
-      "heating_released": {
-        "name": "Heating released"
-      },
-      "cooling_released": {
-        "name": "Cooling released"
-      },
-      "compressor_released": {
-        "name": "Compressor released"
-      },
-      "addition_released": {
-        "name": "Addition released"
-      },
       "heating_demand": {
         "name": "Heating demand"
       },
@@ -440,38 +478,30 @@
         "name": "Cooling demand"
       },
       "addition_demand": {
-        "name": "Addition demand"
+        "name": "Addition heater demand"
       },
       "addition_demand_dhw": {
         "name": "Addition demand DHW"
       },
       "dhw_demand": {
-        "name": "DHW demand"
+        "name": "Hot water demand"
       },
       "heat_priority": {
-        "name": "Heat priority"
+        "name": "Heating priority"
       },
       "cool_priority": {
         "name": "Cooling priority"
       },
       "dhw_priority": {
-        "name": "DHW priority"
-      },
-      "time_to_defrost": {
-        "name": "Defrost needed"
+        "name": "Hot water priority"
       },
       "compressor_blocked": {
         "name": "Compressor blocked"
       },
-      "bt2_detected": {
-        "name": "BT2 sensor detected"
-      },
       "freeze_protection_active": {
-        "name": "Freeze protection active"
+        "name": "Freeze protection"
       },
-      "bbr_locked": {
-        "name": "BBR locked"
-      },
+
       "qgm1_4way_valve": {
         "name": "QGM1 4-way valve"
       },

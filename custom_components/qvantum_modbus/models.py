@@ -535,6 +535,49 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         options=["none", "defrost", "dhw", "heating", "cooling"],
         value_map={0: "none", 1: "defrost", 2: "dhw", 3: "heating", 4: "cooling"},
     ),
+    # -------------------------------------------------------------------------
+    # Mode release flags — Input registers 42–45 (0 = blocked, 1 = available)
+    # -------------------------------------------------------------------------
+    create_generic_sensor(
+        "heating_released",
+        42,
+        device_class=SensorDeviceClass.ENUM,
+        state_class=None,
+        scale=1.0,
+        precision=0,
+        options=["blocked", "available"],
+        value_map={0: "blocked", 1: "available"},
+    ),
+    create_generic_sensor(
+        "cooling_released",
+        43,
+        device_class=SensorDeviceClass.ENUM,
+        state_class=None,
+        scale=1.0,
+        precision=0,
+        options=["blocked", "available"],
+        value_map={0: "blocked", 1: "available"},
+    ),
+    create_generic_sensor(
+        "compressor_released",
+        44,
+        device_class=SensorDeviceClass.ENUM,
+        state_class=None,
+        scale=1.0,
+        precision=0,
+        options=["blocked", "available"],
+        value_map={0: "blocked", 1: "available"},
+    ),
+    create_generic_sensor(
+        "addition_released",
+        45,
+        device_class=SensorDeviceClass.ENUM,
+        state_class=None,
+        scale=1.0,
+        precision=0,
+        options=["blocked", "available"],
+        value_map={0: "blocked", 1: "available"},
+    ),
     create_generic_sensor(
         "heat_emitter_type",
         48,
@@ -553,8 +596,18 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
     create_duration_sensor("dhw_priority_time_left", 65),
     # -------------------------------------------------------------------------
     # Defrost and compressor state — Input registers 67–76
-    # (time_to_defrost and compressor_blocked are on the binary_sensor platform)
+    # (compressor_blocked is on the binary_sensor platform)
     # -------------------------------------------------------------------------
+    create_generic_sensor(
+        "time_to_defrost",
+        67,
+        device_class=SensorDeviceClass.ENUM,
+        state_class=None,
+        scale=1.0,
+        precision=0,
+        options=["not_needed", "needed"],
+        value_map={0: "not_needed", 1: "needed"},
+    ),
     create_generic_sensor(
         "compressor_state",
         70,
@@ -605,6 +658,19 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         precision=0,
     ),
     # -------------------------------------------------------------------------
+    # BT2 sensor detection — Input register 86 (0=Not connected, 1=Connected, 2=Detecting)
+    # -------------------------------------------------------------------------
+    create_generic_sensor(
+        "bt2_detected",
+        86,
+        device_class=SensorDeviceClass.ENUM,
+        state_class=None,
+        scale=1.0,
+        precision=0,
+        options=["not_connected", "connected", "detecting"],
+        value_map={0: "not_connected", 1: "connected", 2: "detecting"},
+    ),
+    # -------------------------------------------------------------------------
     # Run times and counters — Input registers 88–91
     # -------------------------------------------------------------------------
     create_duration_sensor(
@@ -648,6 +714,19 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
     create_energy_sensor("cooling_energy_kwh", 102, UnitOfEnergy.KILO_WATT_HOUR),
     create_energy_sensor("dhw_energy_mwh", 103, UnitOfEnergy.MEGA_WATT_HOUR),
     create_energy_sensor("dhw_energy_kwh", 104, UnitOfEnergy.KILO_WATT_HOUR),
+    # -------------------------------------------------------------------------
+    # BBR lock — Input register 117
+    # -------------------------------------------------------------------------
+    create_generic_sensor(
+        "bbr_locked",
+        117,
+        device_class=SensorDeviceClass.ENUM,
+        state_class=None,
+        scale=1.0,
+        precision=0,
+        options=["unlocked", "locked"],
+        value_map={0: "unlocked", 1: "locked"},
+    ),
     # -------------------------------------------------------------------------
     # QGM1 non-temperature sensors — Input registers 125–131
     # NOTE! These does not work! They return error
@@ -823,84 +902,75 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
         translation_key="relay_l1",
         address=33,
         bit_position=0,
+        device_class=BinarySensorDeviceClass.POWER,
     ),
     ModbusBinarySensorEntityDescription(
         key="relay_l2",
         translation_key="relay_l2",
         address=33,
         bit_position=1,
+        device_class=BinarySensorDeviceClass.POWER,
     ),
     ModbusBinarySensorEntityDescription(
         key="relay_l3",
         translation_key="relay_l3",
         address=33,
         bit_position=2,
+        device_class=BinarySensorDeviceClass.POWER,
     ),
     ModbusBinarySensorEntityDescription(
         key="relay_gp10",
         translation_key="relay_gp10",
         address=33,
         bit_position=3,
+        device_class=BinarySensorDeviceClass.RUNNING,
     ),
     ModbusBinarySensorEntityDescription(
         key="relay_qm10",
         translation_key="relay_qm10",
         address=33,
         bit_position=4,
+        device_class=BinarySensorDeviceClass.RUNNING,
     ),
     ModbusBinarySensorEntityDescription(
         key="relay_qn8_1",
         translation_key="relay_qn8_1",
         address=33,
         bit_position=5,
+        device_class=BinarySensorDeviceClass.RUNNING,
     ),
     ModbusBinarySensorEntityDescription(
         key="relay_qn8_2",
         translation_key="relay_qn8_2",
         address=33,
         bit_position=6,
+        device_class=BinarySensorDeviceClass.RUNNING,
     ),
     ModbusBinarySensorEntityDescription(
         key="relay_gp3",
         translation_key="relay_gp3",
         address=33,
         bit_position=7,
+        device_class=BinarySensorDeviceClass.RUNNING,
     ),
     ModbusBinarySensorEntityDescription(
         key="relay_pump",
         translation_key="relay_pump",
         address=33,
         bit_position=8,
+        device_class=BinarySensorDeviceClass.RUNNING,
     ),
     ModbusBinarySensorEntityDescription(
         key="relay_ha12",
         translation_key="relay_ha12",
         address=33,
         bit_position=9,
+        device_class=BinarySensorDeviceClass.POWER,
     ),
     # -------------------------------------------------------------------------
-    # Operational states — Input registers 42–60 (0 = Off/No, 1 = On/Yes)
+    # Demand and priority flags — Input registers 50–60 (0 = Off, 1 = On)
+    # _released flags moved to SENSOR_DESCRIPTIONS as ENUM sensors (addr 42–45)
     # -------------------------------------------------------------------------
-    ModbusBinarySensorEntityDescription(
-        key="heating_released",
-        translation_key="heating_released",
-        address=42,
-    ),
-    ModbusBinarySensorEntityDescription(
-        key="cooling_released",
-        translation_key="cooling_released",
-        address=43,
-    ),
-    ModbusBinarySensorEntityDescription(
-        key="compressor_released",
-        translation_key="compressor_released",
-        address=44,
-    ),
-    ModbusBinarySensorEntityDescription(
-        key="addition_released",
-        translation_key="addition_released",
-        address=45,
-    ),
     ModbusBinarySensorEntityDescription(
         key="heating_demand",
         translation_key="heating_demand",
@@ -942,15 +1012,6 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
         address=60,
     ),
     # -------------------------------------------------------------------------
-    # Defrost needed — Input register 67 (1 = defrost required)
-    # -------------------------------------------------------------------------
-    ModbusBinarySensorEntityDescription(
-        key="time_to_defrost",
-        translation_key="time_to_defrost",
-        address=67,
-        device_class=BinarySensorDeviceClass.PROBLEM,
-    ),
-    # -------------------------------------------------------------------------
     # Compressor blocked — Input register 71
     # -------------------------------------------------------------------------
     ModbusBinarySensorEntityDescription(
@@ -960,27 +1021,13 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
         device_class=BinarySensorDeviceClass.PROBLEM,
     ),
     # -------------------------------------------------------------------------
-    # Detection and protection — Input registers 86–87
+    # Detection and protection — Input register 87
     # -------------------------------------------------------------------------
-    ModbusBinarySensorEntityDescription(
-        key="bt2_detected",
-        translation_key="bt2_detected",
-        address=86,
-    ),
     ModbusBinarySensorEntityDescription(
         key="freeze_protection_active",
         translation_key="freeze_protection_active",
         address=87,
         device_class=BinarySensorDeviceClass.COLD,
-    ),
-    # -------------------------------------------------------------------------
-    # BBR lock — Input register 117
-    # -------------------------------------------------------------------------
-    ModbusBinarySensorEntityDescription(
-        key="bbr_locked",
-        translation_key="bbr_locked",
-        address=117,
-        device_class=BinarySensorDeviceClass.LOCK,
     ),
     # -------------------------------------------------------------------------
     # QGM1 binary states — Input registers 129–131
@@ -1063,7 +1110,6 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
         key="energy_prices_available",
         translation_key="energy_prices_available",
         address=166,
-        device_class=BinarySensorDeviceClass.CONNECTIVITY,
     ),
     ModbusBinarySensorEntityDescription(
         key="wifi_connected",
