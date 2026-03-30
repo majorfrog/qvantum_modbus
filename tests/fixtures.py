@@ -40,11 +40,11 @@ MOCK_RTU_ENTRY_DATA: dict = {
 # ---------------------------------------------------------------------------
 
 
-def mock_register_result(value: int = MOCK_BT1_RAW) -> MagicMock:
+def mock_register_result(value: int = MOCK_BT1_RAW, count: int = 1) -> MagicMock:
     """Return a mock successful read_input_registers / read_holding_registers result."""
     result = MagicMock()
     result.isError.return_value = False
-    result.registers = [value]
+    result.registers = [value] * count
     return result
 
 

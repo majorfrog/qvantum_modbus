@@ -301,7 +301,7 @@ def create_percent_number(
     )
 
 
-_PRIORITY_TIME_OPTIONS = ["normal_30min", "plus_1h", "plus_plus_2h"]
+_PRIORITY_TIME_OPTIONS = ["normal_30min", "plus_1h", "plus_plus_2h", "custom"]
 _PRIORITY_TIME_MAP = {30: "normal_30min", 60: "plus_1h", 120: "plus_plus_2h"}
 
 

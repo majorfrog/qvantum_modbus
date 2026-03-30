@@ -13,7 +13,7 @@ from pymodbus.exceptions import ConnectionException, ModbusException
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT
-from homeassistant.core import HomeAssistant
+from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -111,10 +111,136 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
         self._client = self._build_client(config_entry.data)
         self._device_id: int = config_entry.data[CONF_UNIT_ID]
 
+        # Cache of entity keys that are currently enabled in the entity registry.
+        # None means "not yet computed" — populated on first poll and whenever the
+        # entity registry changes.
+        self._enabled_keys: set[str] | None = None
+
+        # Subscribe to entity registry changes so the cache is invalidated whenever
+        # the user enables or disables an entity.
+        config_entry.async_on_unload(
+            hass.bus.async_listen(
+                er.EVENT_ENTITY_REGISTRY_UPDATED,
+                self._handle_entity_registry_update,
+            )
+        )
+
     @property
     def consecutive_failures(self) -> int:
         """Return the number of consecutive update failures."""
         return self._consecutive_failures
+
+    # ------------------------------------------------------------------
+    # Enabled-keys cache
+    # ------------------------------------------------------------------
+
+    @callback
+    def _handle_entity_registry_update(self, _event: Event) -> None:
+        """Invalidate the enabled-keys cache when the entity registry changes."""
+        self._enabled_keys = None
+
+    def _get_enabled_keys(self) -> set[str]:
+        """Return the cached set of enabled entity keys, rebuilding if stale.
+
+        On the very first coordinator refresh (before sensor setup completes
+        and entities are registered) the registry has no entries for this
+        entry yet, so we fall back to ``entity_registry_enabled_default``.
+        """
+        if self._enabled_keys is not None:
+            return self._enabled_keys
+
+        registry = er.async_get(self.hass)
+        prefix = f"{self.config_entry.entry_id}_"
+        registry_entries = er.async_entries_for_config_entry(
+            registry, self.config_entry.entry_id
+        )
+        if registry_entries:
+            self._enabled_keys = {
+                entry.unique_id[len(prefix) :]
+                for entry in registry_entries
+                if not entry.disabled
+            }
+        else:
+            self._enabled_keys = {
+                desc.key
+                for desc in (
+                    *SENSOR_DESCRIPTIONS,
+                    *BINARY_SENSOR_DESCRIPTIONS,
+                    *COMBINED_SENSOR_DESCRIPTIONS,
+                    *SWITCH_DESCRIPTIONS,
+                    *SELECT_DESCRIPTIONS,
+                    *NUMBER_DESCRIPTIONS,
+                    *BUTTON_DESCRIPTIONS,
+                )
+                if desc.entity_registry_enabled_default
+            }
+        return self._enabled_keys
+
+    # ------------------------------------------------------------------
+    # Batched register reading
+    # ------------------------------------------------------------------
+
+    async def _read_batched(
+        self,
+        requests: list[tuple[str, int, str, str]],
+    ) -> dict[int, int | None]:
+        """Read a set of (key, address, data_type, input_type) requests in batches.
+
+        Consecutive addresses of the same input_type are merged into a single
+        Modbus read.  Returns a mapping of ``address → raw register value``
+        (first register only for multi-register types; callers that need 32-bit
+        values read those individually via ``_read_registers``).
+
+        Only UINT16 / INT16 single-register descriptions are batched; 32-bit
+        sensors are still read individually via ``_read_sensor``.
+        """
+        if not requests:
+            return {}
+
+        # Group requests by input_type and sort by address so we can find
+        # contiguous ranges.
+        by_type: dict[str, list[tuple[str, int]]] = {}
+        for key, address, _data_type, input_type in requests:
+            by_type.setdefault(input_type, []).append((key, address))
+
+        result: dict[int, int | None] = {}
+
+        for input_type, items in by_type.items():
+            items.sort(key=lambda x: x[1])
+
+            # Build contiguous runs (gap of 1 is fine — reading an extra unused
+            # register is cheaper than an extra round-trip).
+            runs: list[tuple[int, int]] = []  # (start_address, end_address inclusive)
+            for _key, addr in items:
+                if runs and addr <= runs[-1][1] + 1:
+                    # Extend current run
+                    runs[-1] = (runs[-1][0], max(runs[-1][1], addr))
+                else:
+                    runs.append((addr, addr))
+
+            # Fetch each run in one Modbus request.
+            run_registers: dict[tuple[int, int], list[int] | None] = {}
+            for start, end in runs:
+                count = end - start + 1
+                regs = await self._read_registers(
+                    f"batch_{start}_{end}", start, count, input_type
+                )
+                run_registers[(start, end)] = regs
+
+            # Map individual addresses back from the fetched blocks.
+            for _key, addr in items:
+                reg_list = None
+                for (start, end), regs in run_registers.items():
+                    if start <= addr <= end and regs is not None:
+                        reg_list = regs
+                        offset = addr - start
+                        break
+                if reg_list is None:
+                    result[addr] = None
+                else:
+                    result[addr] = reg_list[offset]
+
+        return result
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -311,49 +437,80 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                 )
 
         data: dict[str, float | str | None] = {}
-        # Poll only sensors that are currently enabled in the entity registry.
-        # On the very first coordinator refresh (before sensor setup completes and
-        # entities are registered), fall back to entity_registry_enabled_default.
-        registry = er.async_get(self.hass)
-        prefix = f"{self.config_entry.entry_id}_"
-        registry_entries = er.async_entries_for_config_entry(
-            registry, self.config_entry.entry_id
-        )
-        if registry_entries:
-            enabled_keys = {
-                entry.unique_id[len(prefix) :]
-                for entry in registry_entries
-                if not entry.disabled
-            }
-        else:
-            enabled_keys = {
-                desc.key
-                for desc in (
-                    *SENSOR_DESCRIPTIONS,
-                    *BINARY_SENSOR_DESCRIPTIONS,
-                    *COMBINED_SENSOR_DESCRIPTIONS,
-                    *SWITCH_DESCRIPTIONS,
-                    *SELECT_DESCRIPTIONS,
-                    *NUMBER_DESCRIPTIONS,
-                    *BUTTON_DESCRIPTIONS,
-                )
-                if desc.entity_registry_enabled_default
-            }
-        try:
-            for desc in SENSOR_DESCRIPTIONS:
-                if desc.key in enabled_keys:
-                    data[desc.key] = await self._read_sensor(desc)
+        enabled_keys = self._get_enabled_keys()
 
-            # Poll binary sensors — deduplicate reads by address for bitmask registers.
-            raw_address_cache: dict[int, int | None] = {}
-            for desc in BINARY_SENSOR_DESCRIPTIONS:
-                if desc.key not in enabled_keys:
+        try:
+            # ------------------------------------------------------------------
+            # Sensors — batch single-register reads; keep multi-register separate.
+            # ------------------------------------------------------------------
+            single_reg_sensors = [
+                desc
+                for desc in SENSOR_DESCRIPTIONS
+                if desc.key in enabled_keys
+                and _register_count(desc.data_type) == 1
+                and desc.data_type != DATA_TYPE_ASCII
+            ]
+            multi_reg_sensors = [
+                desc
+                for desc in SENSOR_DESCRIPTIONS
+                if desc.key in enabled_keys
+                and (
+                    _register_count(desc.data_type) > 1
+                    or desc.data_type == DATA_TYPE_ASCII
+                )
+            ]
+
+            batched = await self._read_batched(
+                [
+                    (desc.key, desc.address, desc.data_type, desc.input_type)
+                    for desc in single_reg_sensors
+                ]
+            )
+            for desc in single_reg_sensors:
+                raw_reg = batched.get(desc.address)
+                if raw_reg is None:
+                    data[desc.key] = None
                     continue
+                raw = _decode_registers([raw_reg], desc.data_type)
+                value = round(raw * desc.scale, desc.precision)
+                _LOGGER.debug(
+                    "Read %s (address %d): raw=%s → %s %s",
+                    desc.key,
+                    desc.address,
+                    raw,
+                    value,
+                    desc.native_unit_of_measurement,
+                )
+                data[desc.key] = value
+
+            for desc in multi_reg_sensors:
+                data[desc.key] = await self._read_sensor(desc)
+
+            # ------------------------------------------------------------------
+            # Binary sensors — batch reads, deduplicate by address for bitmasks.
+            # ------------------------------------------------------------------
+            binary_enabled = [
+                desc for desc in BINARY_SENSOR_DESCRIPTIONS if desc.key in enabled_keys
+            ]
+            unique_binary_addrs = list(
+                {
+                    (desc.key, desc.address, desc.data_type, desc.input_type)
+                    for desc in binary_enabled
+                }
+            )
+            binary_batched = await self._read_batched(unique_binary_addrs)
+
+            raw_address_cache: dict[int, int | None] = {}
+            for desc in binary_enabled:
                 addr = desc.address
                 if addr not in raw_address_cache:
-                    raw_address_cache[addr] = await self._read_register_int(
-                        desc.key, addr, desc.data_type, desc.input_type
-                    )
+                    raw_reg = binary_batched.get(addr)
+                    if raw_reg is None:
+                        raw_address_cache[addr] = None
+                    else:
+                        raw_address_cache[addr] = int(
+                            _decode_registers([raw_reg], desc.data_type)
+                        )
                 raw = raw_address_cache[addr]
                 if raw is None:
                     data[desc.key] = None
@@ -362,7 +519,10 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                 else:
                     data[desc.key] = float(raw)
 
-            # Poll component registers for enabled combined sensors.
+            # ------------------------------------------------------------------
+            # Combined sensors — component registers may overlap with sensors
+            # already fetched; re-use cached values where possible.
+            # ------------------------------------------------------------------
             for combined in COMBINED_SENSOR_DESCRIPTIONS:
                 if combined.key not in enabled_keys:
                     continue
@@ -370,19 +530,35 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                     if comp.key not in data:
                         data[comp.key] = await self._read_sensor(comp)
 
-            # Poll writable holding registers (switch / select / number).
-            # Raw integer values are stored as float; entities apply their own
-            # interpretation (bool for switch, value_map for select, scale for number).
-            for desc in (
-                *SWITCH_DESCRIPTIONS,
-                *SELECT_DESCRIPTIONS,
-                *NUMBER_DESCRIPTIONS,
-            ):
-                if desc.key in enabled_keys:
-                    raw = await self._read_register_int(
-                        desc.key, desc.address, desc.data_type, desc.input_type
+            # ------------------------------------------------------------------
+            # Writable holding registers (switch / select / number) — batch.
+            # ------------------------------------------------------------------
+            writable_descs = [
+                desc
+                for desc in (
+                    *SWITCH_DESCRIPTIONS,
+                    *SELECT_DESCRIPTIONS,
+                    *NUMBER_DESCRIPTIONS,
+                )
+                if desc.key in enabled_keys
+            ]
+            writable_batched = await self._read_batched(
+                [
+                    (desc.key, desc.address, desc.data_type, desc.input_type)
+                    for desc in writable_descs
+                ]
+            )
+            for desc in writable_descs:
+                raw_reg = writable_batched.get(desc.address)
+                if raw_reg is None:
+                    data[desc.key] = None
+                else:
+                    raw = int(_decode_registers([raw_reg], desc.data_type))
+                    _LOGGER.debug(
+                        "Read raw %s (address %d): %d", desc.key, desc.address, raw
                     )
-                    data[desc.key] = float(raw) if raw is not None else None
+                    data[desc.key] = float(raw)
+
         except ConnectionException as err:
             self._apply_backoff()
             raise UpdateFailed(

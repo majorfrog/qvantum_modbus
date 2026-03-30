@@ -61,8 +61,12 @@ def _connected_client() -> MagicMock:
     client.connected = True
     client.connect = AsyncMock(return_value=True)
     client.close = MagicMock()
-    client.read_input_registers = AsyncMock(return_value=mock_register_result())
-    client.read_holding_registers = AsyncMock(return_value=mock_register_result())
+    client.read_input_registers = AsyncMock(
+        side_effect=lambda **kw: mock_register_result(count=kw.get("count", 1))
+    )
+    client.read_holding_registers = AsyncMock(
+        side_effect=lambda **kw: mock_register_result(count=kw.get("count", 1))
+    )
     client.write_register = AsyncMock(return_value=mock_register_result())
     return client
 

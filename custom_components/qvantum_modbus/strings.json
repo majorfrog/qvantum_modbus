@@ -367,7 +367,8 @@
         "state": {
           "normal_30min": "Normal (30 minutes)",
           "plus_1h": "+ (1 hour)",
-          "plus_plus_2h": "++ (2 hours)"
+          "plus_plus_2h": "++ (2 hours)",
+          "custom": "Custom"
         }
       },
       "cooling_priority_time": {
@@ -375,7 +376,8 @@
         "state": {
           "normal_30min": "Normal (30 minutes)",
           "plus_1h": "+ (1 hour)",
-          "plus_plus_2h": "++ (2 hours)"
+          "plus_plus_2h": "++ (2 hours)",
+          "custom": "Custom"
         }
       },
       "dhw_priority_time": {
@@ -383,7 +385,8 @@
         "state": {
           "normal_30min": "Normal (30 minutes)",
           "plus_1h": "+ (1 hour)",
-          "plus_plus_2h": "++ (2 hours)"
+          "plus_plus_2h": "++ (2 hours)",
+          "custom": "Custom"
         }
       }
     },

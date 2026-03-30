@@ -6,8 +6,10 @@ from typing import TYPE_CHECKING
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .const import DOMAIN
 from .entity import QvantumModbusEntity, create_device_info
 from .models import SELECT_DESCRIPTIONS, ModbusSelectEntityDescription
 
@@ -60,17 +62,33 @@ class QvantumModbusSelect(QvantumModbusEntity, SelectEntity):
 
     @property
     def current_option(self) -> str | None:
-        """Return the currently selected option."""
+        """Return the currently selected option.
+
+        Returns ``"custom"`` when the device reports a value that is not in the
+        predefined option map and ``"custom"`` is listed as a valid option.
+        This avoids the entity showing no selection for out-of-spec values.
+        """
         raw = self.coordinator.data.get(self.entity_description.key)
         if raw is None:
             return None
-        return self.entity_description.value_map.get(int(raw))
+        mapped = self.entity_description.value_map.get(int(raw))
+        if mapped is None and "custom" in self.entity_description.options:
+            return "custom"
+        return mapped
 
     async def async_select_option(self, option: str) -> None:
         """Write the selected option to the holding register."""
+        if option == "custom":
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="write_failed",
+            )
         desc = self.entity_description
         raw = next((k for k, v in desc.value_map.items() if v == option), None)
         if raw is None:
-            return
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="write_failed",
+            )
         await self.coordinator.write_holding_register(desc.address, raw)
         await self.coordinator.async_request_refresh()

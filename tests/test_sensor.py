@@ -28,10 +28,10 @@ async def _setup(
         mock_client.connect = AsyncMock(return_value=True)
         mock_client.close = MagicMock()
         mock_client.read_input_registers = AsyncMock(
-            return_value=mock_register_result()
+            side_effect=lambda **kw: mock_register_result(count=kw.get("count", 1))
         )
         mock_client.read_holding_registers = AsyncMock(
-            return_value=mock_register_result()
+            side_effect=lambda **kw: mock_register_result(count=kw.get("count", 1))
         )
         mock_client.write_register = AsyncMock(return_value=mock_register_result())
 

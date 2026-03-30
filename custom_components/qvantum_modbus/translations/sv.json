@@ -76,145 +76,279 @@
   },
   "entity": {
     "sensor": {
-      "bt1_outdoor": { "name": "Utomhustemperatur" },
-      "bt2_indoor": { "name": "Inomhustemperatur" },
-      "filtered_room": { "name": "Filtrerad rumstemperatur" },
-      "bt4": { "name": "BT4-temperatur" },
-      "bt10_condenser_outlet": { "name": "Kondensorns utloppstemperatur" },
-      "bt11_supply_addition": { "name": "Framledningstemperatur" },
-      "bt12_supply_external": { "name": "Extern framledningstemperatur" },
-      "bt13_condenser_inlet": { "name": "Kondensorns inloppstemperatur" },
-      "bt14_source_flow": { "name": "Värmekällans flödestemperatur" },
-      "bt15_source_return": { "name": "Värmekällans returtemperatur" },
-      "bt20_discharge_line": { "name": "Hetgastemperatur" },
-      "bt21_liquid_line": { "name": "Vätskeledningstemperatur" },
-      "bt22_evaporator_inlet": { "name": "Förångarens inloppstemperatur" },
-      "bt23_suction_line": { "name": "Sugsidans temperatur" },
-      "bt24_crank_case": { "name": "Vevhustemperatur" },
-      "bt30_dhw_tank": { "name": "Varmvattentankens temperatur" },
-      "bt31_dhw_inlet": { "name": "Varmvattnets inloppstemperatur" },
+      "bt1_outdoor": {
+        "name": "Utomhustemperatur"
+      },
+      "bt2_indoor": {
+        "name": "Inomhustemperatur"
+      },
+      "filtered_room": {
+        "name": "Filtrerad rumstemperatur"
+      },
+      "bt4": {
+        "name": "BT4-temperatur"
+      },
+      "bt10_condenser_outlet": {
+        "name": "Kondensorns utloppstemperatur"
+      },
+      "bt11_supply_addition": {
+        "name": "Framledningstemperatur"
+      },
+      "bt12_supply_external": {
+        "name": "Extern framledningstemperatur"
+      },
+      "bt13_condenser_inlet": {
+        "name": "Kondensorns inloppstemperatur"
+      },
+      "bt14_source_flow": {
+        "name": "Värmekällans flödestemperatur"
+      },
+      "bt15_source_return": {
+        "name": "Värmekällans returtemperatur"
+      },
+      "bt20_discharge_line": {
+        "name": "Hetgastemperatur"
+      },
+      "bt21_liquid_line": {
+        "name": "Vätskeledningstemperatur"
+      },
+      "bt22_evaporator_inlet": {
+        "name": "Förångarens inloppstemperatur"
+      },
+      "bt23_suction_line": {
+        "name": "Sugsidans temperatur"
+      },
+      "bt24_crank_case": {
+        "name": "Vevhustemperatur"
+      },
+      "bt30_dhw_tank": {
+        "name": "Varmvattentankens temperatur"
+      },
+      "bt31_dhw_inlet": {
+        "name": "Varmvattnets inloppstemperatur"
+      },
       "bt33_dhw_secondary_inlet": {
         "name": "Varmvattnets sekundära inloppstemperatur"
       },
       "bt34_dhw_secondary_outlet": {
         "name": "Varmvattnets sekundära utloppstemperatur"
       },
-      "bt_aux": { "name": "Hjälptemperatur" },
-      "btx": { "name": "BTX-temperatur" },
+      "bt_aux": {
+        "name": "Hjälptemperatur"
+      },
+      "btx": {
+        "name": "BTX-temperatur"
+      },
       "calc_supply_heating": {
         "name": "Beräknad framledningstemperatur för värme"
       },
       "calc_supply_cooling": {
         "name": "Beräknad framledningstemperatur för kyla"
       },
-      "heating_curve_offset": { "name": "Värmekurveivärskjutning" },
-      "parallel_cooling_offset": { "name": "Parallellkylningsförskjutning" },
-      "qgm1_bt10_outlet": { "name": "QGM1 utloppsvattentemperatur" },
-      "qgm1_bt13_inlet": { "name": "QGM1 inloppsvattentemperatur" },
-      "qgm1_bt14_source_return": { "name": "QGM1 källans returtemperatur" },
-      "qgm1_bt15_source_outlet": { "name": "QGM1 källans utloppstemperatur" },
-      "qgm1_bt20_exhaust": { "name": "QGM1 avgastemperatur" },
-      "qgm1_bt23_suction": { "name": "QGM1 sugledningstemperatur" },
-      "qgm2_bt10_outlet": { "name": "QGM2 utloppsvattentemperatur" },
-      "qgm2_bt13_inlet": { "name": "QGM2 inloppsvattentemperatur" },
-      "qgm2_bt14_source_return": { "name": "QGM2 källans returtemperatur" },
-      "qgm2_bt15_source_outlet": { "name": "QGM2 källans utloppstemperatur" },
-      "qgm2_bt20_exhaust": { "name": "QGM2 avgastemperatur" },
-      "qgm2_bt23_suction": { "name": "QGM2 sugledningstemperatur" },
-      "bf1_dhw_flow": { "name": "VV-flöde" },
-      "bf1_rpm": { "name": "Varmvattenpumpens hastighet" },
-      "gp1_pump_speed": { "name": "Distributionspumpens hastighet" },
-      "gp2_pump_speed": { "name": "VV-cirkulationspumpens hastighet" },
-      "fan_speed": { "name": "Fläkthastighet" },
-      "compressor_speed": { "name": "Kompressorhastighet" },
-      "degree_minute": { "name": "Gradminut" },
+      "heating_curve_offset": {
+        "name": "Värmekurveivärskjutning"
+      },
+      "parallel_cooling_offset": {
+        "name": "Parallellkylningsförskjutning"
+      },
+      "qgm1_bt10_outlet": {
+        "name": "QGM1 utloppsvattentemperatur"
+      },
+      "qgm1_bt13_inlet": {
+        "name": "QGM1 inloppsvattentemperatur"
+      },
+      "qgm1_bt14_source_return": {
+        "name": "QGM1 källans returtemperatur"
+      },
+      "qgm1_bt15_source_outlet": {
+        "name": "QGM1 källans utloppstemperatur"
+      },
+      "qgm1_bt20_exhaust": {
+        "name": "QGM1 avgastemperatur"
+      },
+      "qgm1_bt23_suction": {
+        "name": "QGM1 sugledningstemperatur"
+      },
+      "qgm2_bt10_outlet": {
+        "name": "QGM2 utloppsvattentemperatur"
+      },
+      "qgm2_bt13_inlet": {
+        "name": "QGM2 inloppsvattentemperatur"
+      },
+      "qgm2_bt14_source_return": {
+        "name": "QGM2 källans returtemperatur"
+      },
+      "qgm2_bt15_source_outlet": {
+        "name": "QGM2 källans utloppstemperatur"
+      },
+      "qgm2_bt20_exhaust": {
+        "name": "QGM2 avgastemperatur"
+      },
+      "qgm2_bt23_suction": {
+        "name": "QGM2 sugledningstemperatur"
+      },
+      "bf1_dhw_flow": {
+        "name": "VV-flöde"
+      },
+      "bf1_rpm": {
+        "name": "Varmvattenpumpens hastighet"
+      },
+      "gp1_pump_speed": {
+        "name": "Distributionspumpens hastighet"
+      },
+      "gp2_pump_speed": {
+        "name": "VV-cirkulationspumpens hastighet"
+      },
+      "fan_speed": {
+        "name": "Fläkthastighet"
+      },
+      "compressor_speed": {
+        "name": "Kompressorhastighet"
+      },
+      "degree_minute": {
+        "name": "Gradminut"
+      },
       "unit_state": {
-        "name": "Enhetstillst\u00e5nd",
+        "name": "Enhetstillstånd",
         "state": {
           "all_off": "Alla av",
-          "on": "P\u00e5"
+          "on": "På"
         }
       },
       "heatpump_state": {
-        "name": "V\u00e4rmepumpstillst\u00e5nd",
+        "name": "Värmepumpstillstånd",
         "state": {
           "none": "Ingen",
           "defrost": "Avfrostning",
           "dhw": "Varmvatten",
-          "heating": "Uppv\u00e4rmning",
+          "heating": "Uppvärmning",
           "cooling": "Kylning"
         }
       },
       "heat_emitter_type": {
-        "name": "V\u00e4rmeavgivningstyp",
+        "name": "Värmeavgivningstyp",
         "state": {
-          "floor_heating": "Golvv\u00e4rme",
+          "floor_heating": "Golvvärme",
           "radiators": "Radiatorer"
         }
       },
       "heating_priority_time_left": {
-        "name": "\u00c5terst\u00e5ende v\u00e4rmeprioritetstid"
+        "name": "Återstående värmeprioritetstid"
       },
       "cooling_priority_time_left": {
-        "name": "\u00c5terst\u00e5ende kylprioritetstid"
+        "name": "Återstående kylprioritetstid"
       },
       "dhw_priority_time_left": {
-        "name": "\u00c5terst\u00e5ende VV-prioritetstid"
+        "name": "Återstående VV-prioritetstid"
       },
       "compressor_state": {
-        "name": "Kompressortillst\u00e5nd",
+        "name": "Kompressortillstånd",
         "state": {
           "off": "Av",
-          "idle": "Vilol\u00e4ge",
-          "prepare_heating": "F\u00f6rbereder uppv\u00e4rmning",
-          "prepare_cooling": "F\u00f6rbereder kylning",
-          "prepare_dhw_1": "F\u00f6rbereder VV 1",
-          "prepare_dhw_2": "F\u00f6rbereder VV 2",
-          "heating": "Uppv\u00e4rmning",
+          "idle": "Viloläge",
+          "prepare_heating": "Förbereder uppvärmning",
+          "prepare_cooling": "Förbereder kylning",
+          "prepare_dhw_1": "Förbereder VV 1",
+          "prepare_dhw_2": "Förbereder VV 2",
+          "heating": "Uppvärmning",
           "cooling": "Kylning",
           "dhw": "Varmvatten",
           "defrost_dhw_passive": "Avfrostning VV passiv",
-          "defrost_heating_passive": "Avfrostning uppv\u00e4rmning passiv",
-          "prepare_pool": "F\u00f6rbereder pool",
+          "defrost_heating_passive": "Avfrostning uppvärmning passiv",
+          "prepare_pool": "Förbereder pool",
           "pool": "Pool",
           "defrost_pool_passive": "Avfrostning pool passiv"
         }
       },
-      "compressor_blocked_sec": { "name": "Kompressor blockerad tid" },
-      "qn8_position": { "name": "QN8-position" },
-      "compressor_run_time": { "name": "Kompressorns drifttid" },
-      "compressor_starts": { "name": "Kompressorstarter" },
+      "compressor_blocked_sec": {
+        "name": "Kompressor blockerad tid"
+      },
+      "qn8_position": {
+        "name": "QN8-position"
+      },
+      "compressor_run_time": {
+        "name": "Kompressorns drifttid"
+      },
+      "compressor_starts": {
+        "name": "Kompressorstarter"
+      },
       "ventilation_fan_run_time": {
-        "name": "Ventilationsfl\u00e4ktens drifttid"
+        "name": "Ventilationsfläktens drifttid"
       },
       "ventilation_filter_time_left": {
-        "name": "\u00c5terst\u00e5ende filtertid"
+        "name": "Återstående filtertid"
       },
-      "compressor_power": { "name": "Kompressoreffekt" },
-      "compressor_energy_mwh": { "name": "Kompressorenergi (MWh)" },
-      "compressor_energy_kwh": { "name": "Kompressorenergi (kWh)" },
-      "additional_energy_mwh": { "name": "Tillsatsenergi (MWh)" },
-      "additional_energy_kwh": { "name": "Tillsatsenergi (kWh)" },
-      "heating_energy_mwh": { "name": "V\u00e4rmeenergi (MWh)" },
-      "heating_energy_kwh": { "name": "V\u00e4rmeenergi (kWh)" },
-      "cooling_energy_mwh": { "name": "Kylenergi (MWh)" },
-      "cooling_energy_kwh": { "name": "Kylenergi (kWh)" },
-      "dhw_energy_mwh": { "name": "VV-energi (MWh)" },
-      "dhw_energy_kwh": { "name": "VV-energi (kWh)" },
-      "qgm1_bp1_low_pressure": { "name": "QGM1 l\u00e5gtryck" },
-      "qgm1_bp2_high_pressure": { "name": "QGM1 h\u00f6gtryck" },
-      "qgm1_compressor_speed": { "name": "QGM1 kompressorhastighet" },
-      "qgm2_bp1_low_pressure": { "name": "QGM2 l\u00e5gtryck" },
-      "qgm2_bp2_high_pressure": { "name": "QGM2 h\u00f6gtryck" },
-      "qgm2_compressor_speed": { "name": "QGM2 kompressorhastighet" },
-      "active_alarm_count": { "name": "Aktiva larm" },
-      "alarm_1_code": { "name": "Larmkod 1" },
-      "alarm_2_code": { "name": "Larmkod 2" },
-      "alarm_3_code": { "name": "Larmkod 3" },
-      "alarm_4_code": { "name": "Larmkod 4" },
-      "alarm_5_code": { "name": "Larmkod 5" },
+      "compressor_power": {
+        "name": "Kompressoreffekt"
+      },
+      "compressor_energy_mwh": {
+        "name": "Kompressorenergi (MWh)"
+      },
+      "compressor_energy_kwh": {
+        "name": "Kompressorenergi (kWh)"
+      },
+      "additional_energy_mwh": {
+        "name": "Tillsatsenergi (MWh)"
+      },
+      "additional_energy_kwh": {
+        "name": "Tillsatsenergi (kWh)"
+      },
+      "heating_energy_mwh": {
+        "name": "Värmeenergi (MWh)"
+      },
+      "heating_energy_kwh": {
+        "name": "Värmeenergi (kWh)"
+      },
+      "cooling_energy_mwh": {
+        "name": "Kylenergi (MWh)"
+      },
+      "cooling_energy_kwh": {
+        "name": "Kylenergi (kWh)"
+      },
+      "dhw_energy_mwh": {
+        "name": "VV-energi (MWh)"
+      },
+      "dhw_energy_kwh": {
+        "name": "VV-energi (kWh)"
+      },
+      "qgm1_bp1_low_pressure": {
+        "name": "QGM1 lågtryck"
+      },
+      "qgm1_bp2_high_pressure": {
+        "name": "QGM1 högtryck"
+      },
+      "qgm1_compressor_speed": {
+        "name": "QGM1 kompressorhastighet"
+      },
+      "qgm2_bp1_low_pressure": {
+        "name": "QGM2 lågtryck"
+      },
+      "qgm2_bp2_high_pressure": {
+        "name": "QGM2 högtryck"
+      },
+      "qgm2_compressor_speed": {
+        "name": "QGM2 kompressorhastighet"
+      },
+      "active_alarm_count": {
+        "name": "Aktiva larm"
+      },
+      "alarm_1_code": {
+        "name": "Larmkod 1"
+      },
+      "alarm_2_code": {
+        "name": "Larmkod 2"
+      },
+      "alarm_3_code": {
+        "name": "Larmkod 3"
+      },
+      "alarm_4_code": {
+        "name": "Larmkod 4"
+      },
+      "alarm_5_code": {
+        "name": "Larmkod 5"
+      },
       "sg_mode": {
-        "name": "SG-l\u00e4ge",
+        "name": "SG-läge",
         "state": {
           "disabled": "Inaktiverad",
           "blocked": "Blockerad",
@@ -224,7 +358,7 @@
         }
       },
       "smart_dhw_mode": {
-        "name": "Smart VV-l\u00e4ge",
+        "name": "Smart VV-läge",
         "state": {
           "off": "Av",
           "eco": "Eko",
@@ -235,78 +369,186 @@
       "smart_dhw_control_status": {
         "name": "Smart VV-styrningsstatus",
         "state": {
-          "unavailable": "Ej tillg\u00e4nglig",
+          "unavailable": "Ej tillgänglig",
           "standby": "Standby",
-          "raising": "H\u00f6jer",
-          "lowering": "S\u00e4nker",
-          "lowering_long_term": "S\u00e4nker l\u00e5ng sikt",
+          "raising": "Höjer",
+          "lowering": "Sänker",
+          "lowering_long_term": "Sänker lång sikt",
           "paused": "Pausad"
         }
       },
-      "electricity_price_region": { "name": "Elprisregion" },
-      "serial_number": { "name": "Serienummer" },
-      "ip_address": { "name": "IP-adress" },
-      "fw_version": { "name": "Firmwareversion" }
+      "electricity_price_region": {
+        "name": "Elprisregion"
+      },
+      "serial_number": {
+        "name": "Serienummer"
+      },
+      "ip_address": {
+        "name": "IP-adress"
+      },
+      "fw_version": {
+        "name": "Firmwareversion"
+      }
     },
     "binary_sensor": {
-      "relay_l1": { "name": "Rel\u00e4 L1" },
-      "relay_l2": { "name": "Rel\u00e4 L2" },
-      "relay_l3": { "name": "Rel\u00e4 L3" },
-      "relay_gp10": { "name": "Rel\u00e4 GP10" },
-      "relay_qm10": { "name": "Rel\u00e4 QM10" },
-      "relay_qn8_1": { "name": "Rel\u00e4 QN8-1" },
-      "relay_qn8_2": { "name": "Rel\u00e4 QN8-2" },
-      "relay_gp3": { "name": "Rel\u00e4 GP3" },
-      "relay_pump": { "name": "Rel\u00e4 pump" },
-      "relay_ha12": { "name": "Rel\u00e4 HA12" },
-      "heating_released": { "name": "V\u00e4rme frigiven" },
-      "cooling_released": { "name": "Kyla frigiven" },
-      "compressor_released": { "name": "Kompressor frigiven" },
-      "addition_released": { "name": "Tillsats frigiven" },
-      "heating_demand": { "name": "V\u00e4rmebehov" },
-      "cooling_demand": { "name": "Kylningsbehov" },
-      "addition_demand": { "name": "Tillsatsbehov" },
-      "addition_demand_dhw": { "name": "Tillsatsbehov VV" },
-      "dhw_demand": { "name": "VV-behov" },
-      "heat_priority": { "name": "V\u00e4rmeprioritet" },
-      "cool_priority": { "name": "Kylprioritet" },
-      "dhw_priority": { "name": "VV-prioritet" },
-      "time_to_defrost": { "name": "Avfrostning beh\u00f6vs" },
-      "compressor_blocked": { "name": "Kompressor blockerad" },
-      "bt2_detected": { "name": "BT2-sensor detekterad" },
-      "freeze_protection_active": { "name": "Frysskydd aktivt" },
-      "bbr_locked": { "name": "BBR l\u00e5st" },
-      "qgm1_4way_valve": { "name": "QGM1 4-v\u00e4gsventil" },
-      "qgm1_flow_switch": { "name": "QGM1 fl\u00f6desbrytare" },
-      "qgm1_gp4_pump": { "name": "QGM1 k\u00f6ldb\u00e4rarpump" },
-      "qgm2_4way_valve": { "name": "QGM2 4-v\u00e4gsventil" },
-      "qgm2_flow_switch": { "name": "QGM2 fl\u00f6desbrytare" },
-      "qgm2_gp4_pump": { "name": "QGM2 k\u00f6ldb\u00e4rarpump" },
-      "sg_ready_a": { "name": "SG klar A" },
-      "sg_ready_b": { "name": "SG klar B" },
-      "smart_price_dhw_enabled": { "name": "Smart pris VV aktiverat" },
-      "smart_price_heating_enabled": {
-        "name": "Smart pris v\u00e4rme aktiverat"
+      "relay_l1": {
+        "name": "Relä L1"
       },
-      "energy_prices_available": { "name": "Energipriser tillg\u00e4ngliga" },
-      "wifi_connected": { "name": "Wi-Fi ansluten" },
-      "cloud_connected": { "name": "Molnansluten" },
-      "vacation_mode": { "name": "Semesterläge" }
+      "relay_l2": {
+        "name": "Relä L2"
+      },
+      "relay_l3": {
+        "name": "Relä L3"
+      },
+      "relay_gp10": {
+        "name": "Relä GP10"
+      },
+      "relay_qm10": {
+        "name": "Relä QM10"
+      },
+      "relay_qn8_1": {
+        "name": "Relä QN8-1"
+      },
+      "relay_qn8_2": {
+        "name": "Relä QN8-2"
+      },
+      "relay_gp3": {
+        "name": "Relä GP3"
+      },
+      "relay_pump": {
+        "name": "Relä pump"
+      },
+      "relay_ha12": {
+        "name": "Relä HA12"
+      },
+      "heating_released": {
+        "name": "Värme frigiven"
+      },
+      "cooling_released": {
+        "name": "Kyla frigiven"
+      },
+      "compressor_released": {
+        "name": "Kompressor frigiven"
+      },
+      "addition_released": {
+        "name": "Tillsats frigiven"
+      },
+      "heating_demand": {
+        "name": "Värmebehov"
+      },
+      "cooling_demand": {
+        "name": "Kylningsbehov"
+      },
+      "addition_demand": {
+        "name": "Tillsatsbehov"
+      },
+      "addition_demand_dhw": {
+        "name": "Tillsatsbehov VV"
+      },
+      "dhw_demand": {
+        "name": "VV-behov"
+      },
+      "heat_priority": {
+        "name": "Värmeprioritet"
+      },
+      "cool_priority": {
+        "name": "Kylprioritet"
+      },
+      "dhw_priority": {
+        "name": "VV-prioritet"
+      },
+      "time_to_defrost": {
+        "name": "Avfrostning behövs"
+      },
+      "compressor_blocked": {
+        "name": "Kompressor blockerad"
+      },
+      "bt2_detected": {
+        "name": "BT2-sensor detekterad"
+      },
+      "freeze_protection_active": {
+        "name": "Frysskydd aktivt"
+      },
+      "bbr_locked": {
+        "name": "BBR låst"
+      },
+      "qgm1_4way_valve": {
+        "name": "QGM1 4-vägsventil"
+      },
+      "qgm1_flow_switch": {
+        "name": "QGM1 flödesbrytare"
+      },
+      "qgm1_gp4_pump": {
+        "name": "QGM1 köldbärarpump"
+      },
+      "qgm2_4way_valve": {
+        "name": "QGM2 4-vägsventil"
+      },
+      "qgm2_flow_switch": {
+        "name": "QGM2 flödesbrytare"
+      },
+      "qgm2_gp4_pump": {
+        "name": "QGM2 köldbärarpump"
+      },
+      "sg_ready_a": {
+        "name": "SG klar A"
+      },
+      "sg_ready_b": {
+        "name": "SG klar B"
+      },
+      "smart_price_dhw_enabled": {
+        "name": "Smart pris VV aktiverat"
+      },
+      "smart_price_heating_enabled": {
+        "name": "Smart pris värme aktiverat"
+      },
+      "energy_prices_available": {
+        "name": "Energipriser tillgängliga"
+      },
+      "wifi_connected": {
+        "name": "Wi-Fi ansluten"
+      },
+      "cloud_connected": {
+        "name": "Molnansluten"
+      },
+      "vacation_mode": {
+        "name": "Semesterläge"
+      }
     },
     "switch": {
-      "unit_on_off": { "name": "Enhet på/av" },
-      "manual_allow_heating": { "name": "Tillåt uppvärmning (manuellt läge)" },
-      "manual_allow_cooling": { "name": "Tillåt kylning (manuellt läge)" },
+      "unit_on_off": {
+        "name": "Enhet på/av"
+      },
+      "manual_allow_heating": {
+        "name": "Tillåt uppvärmning (manuellt läge)"
+      },
+      "manual_allow_cooling": {
+        "name": "Tillåt kylning (manuellt läge)"
+      },
       "manual_allow_addition": {
         "name": "Tillåt tillsatsvärme (manuellt läge)"
       },
-      "manual_allow_dhw": { "name": "Tillåt varmvatten (manuellt läge)" },
-      "dew_point_protection": { "name": "Daggpunktsskydd" },
-      "dhw_uninterrupted_cooling": { "name": "VV avbryter ej kylning" },
-      "bt12_mounted": { "name": "BT12-sensor monterad" },
-      "qs_unit_connected": { "name": "QS-enhet ansluten" },
-      "sg_enabled": { "name": "Smart grid aktiverat" },
-      "outdoor_air_mixed": { "name": "Blandad utomhusluft" }
+      "manual_allow_dhw": {
+        "name": "Tillåt varmvatten (manuellt läge)"
+      },
+      "dew_point_protection": {
+        "name": "Daggpunktsskydd"
+      },
+      "dhw_uninterrupted_cooling": {
+        "name": "VV avbryter ej kylning"
+      },
+      "bt12_mounted": {
+        "name": "BT12-sensor monterad"
+      },
+      "qs_unit_connected": {
+        "name": "QS-enhet ansluten"
+      },
+      "sg_enabled": {
+        "name": "Smart grid aktiverat"
+      },
+      "outdoor_air_mixed": {
+        "name": "Blandad utomhusluft"
+      }
     },
     "select": {
       "operation_mode": {
@@ -327,8 +569,12 @@
           "external": "Extern"
         }
       },
-      "desired_indoor_temperature": { "name": "Önskad inomhustemperatur" },
-      "room_compensation_factor": { "name": "Rumskompensationsfaktor" },
+      "desired_indoor_temperature": {
+        "name": "Önskad inomhustemperatur"
+      },
+      "room_compensation_factor": {
+        "name": "Rumskompensationsfaktor"
+      },
       "heating_curve_parallel_offset": {
         "name": "Värmekurvans parallellförskjutning"
       },
@@ -373,7 +619,8 @@
         "state": {
           "normal_30min": "Normal (30 minuter)",
           "plus_1h": "+ (1 timme)",
-          "plus_plus_2h": "++ (2 timmar)"
+          "plus_plus_2h": "++ (2 timmar)",
+          "custom": "Anpassad"
         }
       },
       "cooling_priority_time": {
@@ -381,7 +628,8 @@
         "state": {
           "normal_30min": "Normal (30 minuter)",
           "plus_1h": "+ (1 timme)",
-          "plus_plus_2h": "++ (2 timmar)"
+          "plus_plus_2h": "++ (2 timmar)",
+          "custom": "Anpassad"
         }
       },
       "dhw_priority_time": {
@@ -389,7 +637,8 @@
         "state": {
           "normal_30min": "Normal (30 minuter)",
           "plus_1h": "+ (1 timme)",
-          "plus_plus_2h": "++ (2 timmar)"
+          "plus_plus_2h": "++ (2 timmar)",
+          "custom": "Anpassad"
         }
       }
     },
@@ -397,11 +646,15 @@
       "time_between_heating_cooling": {
         "name": "Tid mellan värme och kylning"
       },
-      "filtertime_outdoor_sensor": { "name": "Filtertid utomhusgivare" },
+      "filtertime_outdoor_sensor": {
+        "name": "Filtertid utomhusgivare"
+      },
       "allow_addition_temperature": {
         "name": "Tillåtningstemperatur tillsatsvärme"
       },
-      "room_temp_external": { "name": "Extern rumstemperatur" },
+      "room_temp_external": {
+        "name": "Extern rumstemperatur"
+      },
       "outdoor_temp_stop_heating": {
         "name": "Utomhustemperatur — stopp uppvärmning"
       },
@@ -411,28 +664,60 @@
       "min_heating_supply_temp": {
         "name": "Minimal framledningstemperatur värme"
       },
-      "start_cooling_temperature": { "name": "Starttemperatur kylning" },
+      "start_cooling_temperature": {
+        "name": "Starttemperatur kylning"
+      },
       "min_cooling_supply_temp": {
         "name": "Minimal framledningstemperatur kylning"
       },
-      "dhw_start_temp_normal": { "name": "VV-starttemperatur (normal)" },
-      "dhw_stop_temp_normal": { "name": "VV-stopptemperatur (normal)" },
-      "dhw_start_temp_extra": { "name": "VV-starttemperatur (extra)" },
-      "dhw_stop_temp_extra": { "name": "VV-stopptemperatur (extra)" },
+      "dhw_start_temp_normal": {
+        "name": "VV-starttemperatur (normal)"
+      },
+      "dhw_stop_temp_normal": {
+        "name": "VV-stopptemperatur (normal)"
+      },
+      "dhw_start_temp_extra": {
+        "name": "VV-starttemperatur (extra)"
+      },
+      "dhw_stop_temp_extra": {
+        "name": "VV-stopptemperatur (extra)"
+      },
       "temp_compensation_curve_heating": {
         "name": "Temperaturkompensationskurva värme"
       },
-      "heating_curve_minus30": { "name": "Värmekurva vid −30 °C" },
-      "heating_curve_minus20": { "name": "Värmekurva vid −20 °C" },
-      "heating_curve_minus10": { "name": "Värmekurva vid −10 °C" },
-      "heating_curve_0": { "name": "Värmekurva vid 0 °C" },
-      "heating_curve_10": { "name": "Värmekurva vid 10 °C" },
-      "heating_curve_20": { "name": "Värmekurva vid 20 °C" },
-      "heating_curve_30": { "name": "Värmekurva vid 30 °C" },
-      "pump_speed_heating": { "name": "Pumphastighet värme" },
-      "pump_speed_cooling": { "name": "Pumphastiget kylning" },
-      "dhw_pump_speed": { "name": "VV-pumpens hastighet" },
-      "pump_speed_idle": { "name": "Pumpens vilolägehastighet" },
+      "heating_curve_minus30": {
+        "name": "Värmekurva vid −30 °C"
+      },
+      "heating_curve_minus20": {
+        "name": "Värmekurva vid −20 °C"
+      },
+      "heating_curve_minus10": {
+        "name": "Värmekurva vid −10 °C"
+      },
+      "heating_curve_0": {
+        "name": "Värmekurva vid 0 °C"
+      },
+      "heating_curve_10": {
+        "name": "Värmekurva vid 10 °C"
+      },
+      "heating_curve_20": {
+        "name": "Värmekurva vid 20 °C"
+      },
+      "heating_curve_30": {
+        "name": "Värmekurva vid 30 °C"
+      },
+      "pump_speed_heating": {
+        "name": "Pumphastighet värme"
+      },
+      "pump_speed_cooling": {
+        "name": "Pumphastiget kylning"
+      },
+      "dhw_pump_speed": {
+        "name": "VV-pumpens hastighet"
+      },
+      "pump_speed_idle": {
+        "name": "Pumpens vilolägehastighet"
+      },
       "ventilation_fan_speed_reduced": {
         "name": "Ventilationsfläktens hastighet (reducerad)"
       },
@@ -442,10 +727,14 @@
       "ventilation_fan_speed_extra": {
         "name": "Ventilationsfläktens hastighet (extra)"
       },
-      "compressor_fan_speed": { "name": "Kompressorfläktens hastighet" }
+      "compressor_fan_speed": {
+        "name": "Kompressorfläktens hastighet"
+      }
     },
     "button": {
-      "reset_alarms": { "name": "Återställ larm" }
+      "reset_alarms": {
+        "name": "Återställ larm"
+      }
     }
   },
   "exceptions": {
