@@ -209,8 +209,12 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
         for input_type, items in by_type.items():
             items.sort(key=lambda x: x[1])
 
-            # Build contiguous runs (gap of 1 is fine — reading an extra unused
-            # register is cheaper than an extra round-trip).
+            # Build contiguous runs. A gap of 1 is tolerated: reading one
+            # extra unused register is cheaper than an extra round-trip.
+            # This is safe because requests are grouped by input_type, so
+            # holding-register and input-register batches stay separate and
+            # a spurious read of an adjacent holding register cannot trigger
+            # unintended side-effects on well-behaved Modbus devices.
             runs: list[tuple[int, int]] = []  # (start_address, end_address inclusive)
             for _key, addr in items:
                 if runs and addr <= runs[-1][1] + 1:
@@ -521,13 +525,14 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
             binary_enabled = [
                 desc for desc in BINARY_SENSOR_DESCRIPTIONS if desc.key in enabled_keys
             ]
-            unique_binary_addrs = list(
-                {
+            # Pass all binary sensors directly; _read_batched already deduplicates
+            # by merging contiguous address ranges internally.
+            binary_batched = await self._read_batched(
+                [
                     (desc.key, desc.address, desc.data_type, desc.input_type)
                     for desc in binary_enabled
-                }
+                ]
             )
-            binary_batched = await self._read_batched(unique_binary_addrs)
 
             raw_address_cache: dict[int, int | None] = {}
             for desc in binary_enabled:

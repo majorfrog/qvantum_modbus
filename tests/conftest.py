@@ -23,8 +23,9 @@ from .fixtures import (
 
 
 @pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations):  # noqa: PT004
+def auto_enable_custom_integrations(enable_custom_integrations):
     """Automatically enable custom integrations in every test."""
+    yield
 
 
 @pytest.fixture
@@ -109,10 +110,21 @@ async def init_integration(
     mock_tcp_config_entry: MockConfigEntry,
     mock_tcp_client: MagicMock,
 ) -> AsyncGenerator[MockConfigEntry, None]:
-    """Set up the integration for testing and tear it down afterwards."""
+    """Set up the integration for testing."""
     mock_tcp_config_entry.add_to_hass(hass)
     await hass.config_entries.async_setup(mock_tcp_config_entry.entry_id)
     await hass.async_block_till_done()
     yield mock_tcp_config_entry
-    await hass.config_entries.async_unload(mock_tcp_config_entry.entry_id)
+
+
+@pytest.fixture
+async def setup_integration(
+    hass: HomeAssistant,
+    mock_tcp_config_entry: MockConfigEntry,
+    mock_tcp_client: MagicMock,
+) -> AsyncGenerator[MagicMock, None]:
+    """Set up the integration for testing and yield the mock Modbus client."""
+    mock_tcp_config_entry.add_to_hass(hass)
+    await hass.config_entries.async_setup(mock_tcp_config_entry.entry_id)
     await hass.async_block_till_done()
+    yield mock_tcp_client

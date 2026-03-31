@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from homeassistant.core import HomeAssistant
@@ -18,36 +18,6 @@ from .fixtures import mock_error_result, mock_register_result
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-
-async def _setup(
-    hass: HomeAssistant,
-    mock_tcp_config_entry,
-    mock_client: MagicMock | None = None,
-) -> MagicMock:
-    """Set up the integration and return the active mock client."""
-    if mock_client is None:
-        mock_client = MagicMock()
-        mock_client.connected = True
-        mock_client.connect = AsyncMock(return_value=True)
-        mock_client.close = MagicMock()
-        mock_client.read_input_registers = AsyncMock(
-            side_effect=lambda **kw: mock_register_result(count=kw.get("count", 1))
-        )
-        mock_client.read_holding_registers = AsyncMock(
-            side_effect=lambda **kw: mock_register_result(count=kw.get("count", 1))
-        )
-        mock_client.write_register = AsyncMock(return_value=mock_register_result())
-
-    with patch(
-        "custom_components.qvantum_modbus.coordinator.AsyncModbusTcpClient",
-        return_value=mock_client,
-    ):
-        mock_tcp_config_entry.add_to_hass(hass)
-        await hass.config_entries.async_setup(mock_tcp_config_entry.entry_id)
-        await hass.async_block_till_done()
-
-    return mock_client
 
 
 def _entity_id(hass: HomeAssistant, entry_id: str, key: str) -> str | None:
@@ -67,9 +37,9 @@ _DESC = next(d for d in NUMBER_DESCRIPTIONS if d.scale == 1.0)
 async def test_number_entity_created(
     hass: HomeAssistant,
     mock_tcp_config_entry,
+    setup_integration,
 ) -> None:
     """First number entity is registered after integration setup."""
-    await _setup(hass, mock_tcp_config_entry)
     assert _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key) is not None
 
 
@@ -81,26 +51,26 @@ async def test_number_entity_created(
 async def test_number_native_value(
     hass: HomeAssistant,
     mock_tcp_config_entry,
+    mock_tcp_client: MagicMock,
 ) -> None:
     """Number reports the register value multiplied by the scale."""
     raw = 50
-    mock_client = MagicMock()
-    mock_client.connected = True
-    mock_client.connect = AsyncMock(return_value=True)
-    mock_client.close = MagicMock()
-    mock_client.read_input_registers = AsyncMock(
+    mock_tcp_client.read_input_registers = AsyncMock(
         side_effect=lambda **kw: mock_register_result(
             value=raw, count=kw.get("count", 1)
         )
     )
-    mock_client.read_holding_registers = AsyncMock(
+    mock_tcp_client.read_holding_registers = AsyncMock(
         side_effect=lambda **kw: mock_register_result(
             value=raw, count=kw.get("count", 1)
         )
     )
-    mock_client.write_register = AsyncMock(return_value=mock_register_result(value=raw))
-
-    await _setup(hass, mock_tcp_config_entry, mock_client)
+    mock_tcp_client.write_register = AsyncMock(
+        return_value=mock_register_result(value=raw)
+    )
+    mock_tcp_config_entry.add_to_hass(hass)
+    await hass.config_entries.async_setup(mock_tcp_config_entry.entry_id)
+    await hass.async_block_till_done()
     entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
     assert entity_id is not None
     state = hass.states.get(entity_id)
@@ -117,9 +87,10 @@ async def test_number_native_value(
 async def test_number_set_value_writes_scaled_raw(
     hass: HomeAssistant,
     mock_tcp_config_entry,
+    setup_integration: MagicMock,
 ) -> None:
     """Setting a value writes round(value / scale) to the register."""
-    mock_client = await _setup(hass, mock_tcp_config_entry)
+    mock_client = setup_integration
     entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
     assert entity_id is not None
 
@@ -144,9 +115,10 @@ async def test_number_set_value_writes_scaled_raw(
 async def test_number_set_value_raises_on_write_error(
     hass: HomeAssistant,
     mock_tcp_config_entry,
+    setup_integration: MagicMock,
 ) -> None:
     """HomeAssistantError is raised when the device returns a write error."""
-    mock_client = await _setup(hass, mock_tcp_config_entry)
+    mock_client = setup_integration
     entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
     assert entity_id is not None
 
@@ -165,9 +137,10 @@ async def test_number_set_value_raises_on_write_error(
 async def test_number_set_value_raises_on_out_of_range(
     hass: HomeAssistant,
     mock_tcp_config_entry,
+    setup_integration,
 ) -> None:
     """HomeAssistantError is raised when the raw value exceeds register bounds."""
-    mock_client = await _setup(hass, mock_tcp_config_entry)
+    mock_client = setup_integration
     entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
     assert entity_id is not None
 
@@ -191,17 +164,15 @@ async def test_number_set_value_raises_on_out_of_range(
 async def test_number_unavailable_when_register_is_none(
     hass: HomeAssistant,
     mock_tcp_config_entry,
+    mock_tcp_client: MagicMock,
 ) -> None:
     """Number is unavailable when the register read fails."""
-    mock_client = MagicMock()
-    mock_client.connected = True
-    mock_client.connect = AsyncMock(return_value=True)
-    mock_client.close = MagicMock()
-    mock_client.read_input_registers = AsyncMock(return_value=mock_error_result())
-    mock_client.read_holding_registers = AsyncMock(return_value=mock_error_result())
-    mock_client.write_register = AsyncMock(return_value=mock_error_result())
-
-    await _setup(hass, mock_tcp_config_entry, mock_client)
+    mock_tcp_client.read_input_registers = AsyncMock(return_value=mock_error_result())
+    mock_tcp_client.read_holding_registers = AsyncMock(return_value=mock_error_result())
+    mock_tcp_client.write_register = AsyncMock(return_value=mock_error_result())
+    mock_tcp_config_entry.add_to_hass(hass)
+    await hass.config_entries.async_setup(mock_tcp_config_entry.entry_id)
+    await hass.async_block_till_done()
     entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
     assert entity_id is not None
     state = hass.states.get(entity_id)

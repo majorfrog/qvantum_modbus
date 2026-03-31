@@ -10,40 +10,7 @@ from homeassistant.helpers.entity_registry import EntityRegistry
 
 from custom_components.qvantum_modbus.const import DOMAIN
 
-from .fixtures import MOCK_BT1_VALUE, mock_register_result
-
-
-# ---------------------------------------------------------------------------
-# Integration setup helpers
-# ---------------------------------------------------------------------------
-
-
-async def _setup(
-    hass: HomeAssistant, mock_tcp_config_entry, mock_client: MagicMock | None = None
-) -> MagicMock:
-    """Set up the integration and return the active mock client."""
-    if mock_client is None:
-        mock_client = MagicMock()
-        mock_client.connected = True
-        mock_client.connect = AsyncMock(return_value=True)
-        mock_client.close = MagicMock()
-        mock_client.read_input_registers = AsyncMock(
-            side_effect=lambda **kw: mock_register_result(count=kw.get("count", 1))
-        )
-        mock_client.read_holding_registers = AsyncMock(
-            side_effect=lambda **kw: mock_register_result(count=kw.get("count", 1))
-        )
-        mock_client.write_register = AsyncMock(return_value=mock_register_result())
-
-    with patch(
-        "custom_components.qvantum_modbus.coordinator.AsyncModbusTcpClient",
-        return_value=mock_client,
-    ):
-        mock_tcp_config_entry.add_to_hass(hass)
-        await hass.config_entries.async_setup(mock_tcp_config_entry.entry_id)
-        await hass.async_block_till_done()
-
-    return mock_client
+from .fixtures import MOCK_BT1_VALUE
 
 
 # ---------------------------------------------------------------------------
@@ -55,10 +22,9 @@ async def test_sensor_entity_created(
     hass: HomeAssistant,
     mock_tcp_config_entry,
     entity_registry: EntityRegistry,
+    setup_integration,
 ) -> None:
     """BT1 temperature sensor entity is registered after integration setup."""
-    await _setup(hass, mock_tcp_config_entry)
-
     # Look up by domain + unique_id instead; unique_id is deterministic
     entry = entity_registry.async_get_entity_id(
         "sensor",
@@ -76,9 +42,9 @@ async def test_sensor_entity_created(
 async def test_sensor_native_value(
     hass: HomeAssistant,
     mock_tcp_config_entry,
+    setup_integration,
 ) -> None:
     """BT1 sensor reports the decoded register value."""
-    await _setup(hass, mock_tcp_config_entry)
 
     # Find the sensor state — entity_id may vary by title; check via unique_id
     from homeassistant.helpers import entity_registry as er
@@ -135,20 +101,18 @@ async def test_sensor_unavailable_when_coordinator_fails(
 async def test_sensor_unavailable_when_register_is_none(
     hass: HomeAssistant,
     mock_tcp_config_entry,
+    mock_tcp_client: MagicMock,
 ) -> None:
     """Sensor is unavailable when the register value is None (e.g. protocol error)."""
     from .fixtures import mock_error_result
 
-    mock_client = MagicMock()
-    mock_client.connected = True
-    mock_client.connect = AsyncMock(return_value=True)
-    mock_client.close = MagicMock()
     # Error result → coordinator returns {key: None}
-    mock_client.read_input_registers = AsyncMock(return_value=mock_error_result())
-    mock_client.read_holding_registers = AsyncMock(return_value=mock_error_result())
-    mock_client.write_register = AsyncMock(return_value=mock_error_result())
-
-    await _setup(hass, mock_tcp_config_entry, mock_client)
+    mock_tcp_client.read_input_registers = AsyncMock(return_value=mock_error_result())
+    mock_tcp_client.read_holding_registers = AsyncMock(return_value=mock_error_result())
+    mock_tcp_client.write_register = AsyncMock(return_value=mock_error_result())
+    mock_tcp_config_entry.add_to_hass(hass)
+    await hass.config_entries.async_setup(mock_tcp_config_entry.entry_id)
+    await hass.async_block_till_done()
 
     from homeassistant.helpers import entity_registry as er
 
@@ -172,11 +136,12 @@ async def test_sensor_unavailable_when_register_is_none(
 async def test_setup_and_unload_entry(
     hass: HomeAssistant,
     mock_tcp_config_entry,
+    setup_integration: MagicMock,
 ) -> None:
     """Integration sets up and unloads cleanly."""
     from homeassistant.config_entries import ConfigEntryState
 
-    mock_client = await _setup(hass, mock_tcp_config_entry)
+    mock_client = setup_integration
 
     assert mock_tcp_config_entry.state == ConfigEntryState.LOADED
 
