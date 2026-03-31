@@ -545,8 +545,8 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         state_class=None,
         scale=1.0,
         precision=0,
-        options=["blocked", "available"],
-        value_map={0: "blocked", 1: "available"},
+        options=["off", "ok"],
+        value_map={0: "off", 1: "ok"},
     ),
     create_generic_sensor(
         "cooling_released",
@@ -555,8 +555,8 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         state_class=None,
         scale=1.0,
         precision=0,
-        options=["blocked", "available"],
-        value_map={0: "blocked", 1: "available"},
+        options=["off", "ok"],
+        value_map={0: "off", 1: "ok"},
     ),
     create_generic_sensor(
         "compressor_released",
@@ -565,8 +565,8 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         state_class=None,
         scale=1.0,
         precision=0,
-        options=["blocked", "available"],
-        value_map={0: "blocked", 1: "available"},
+        options=["off", "ok"],
+        value_map={0: "off", 1: "ok"},
     ),
     create_generic_sensor(
         "addition_released",
@@ -575,8 +575,8 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         state_class=None,
         scale=1.0,
         precision=0,
-        options=["blocked", "available"],
-        value_map={0: "blocked", 1: "available"},
+        options=["off", "ok"],
+        value_map={0: "off", 1: "ok"},
     ),
     create_generic_sensor(
         "heat_emitter_type",
@@ -1027,7 +1027,6 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
         key="freeze_protection_active",
         translation_key="freeze_protection_active",
         address=87,
-        device_class=BinarySensorDeviceClass.COLD,
     ),
     # -------------------------------------------------------------------------
     # QGM1 binary states — Input registers 129–131

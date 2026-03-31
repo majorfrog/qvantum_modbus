@@ -73,5 +73,9 @@ class QvantumModbusNumber(QvantumModbusEntity, NumberEntity):
         """Write the value to the holding register."""
         desc = self.entity_description
         raw = round(value / desc.scale)
-        await self.coordinator.write_holding_register(desc.address, raw)
+        min_raw = round(desc.native_min_value / desc.scale)
+        max_raw = round(desc.native_max_value / desc.scale)
+        await self.coordinator.write_holding_register(
+            desc.address, raw, min_raw=min_raw, max_raw=max_raw
+        )
         await self.coordinator.async_request_refresh()

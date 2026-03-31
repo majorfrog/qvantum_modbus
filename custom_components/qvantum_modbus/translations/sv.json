@@ -151,42 +151,6 @@
       "parallel_cooling_offset": {
         "name": "Parallellkylningsförskjutning"
       },
-      "qgm1_bt10_outlet": {
-        "name": "QGM1 utloppsvattentemperatur"
-      },
-      "qgm1_bt13_inlet": {
-        "name": "QGM1 inloppsvattentemperatur"
-      },
-      "qgm1_bt14_source_return": {
-        "name": "QGM1 källans returtemperatur"
-      },
-      "qgm1_bt15_source_outlet": {
-        "name": "QGM1 källans utloppstemperatur"
-      },
-      "qgm1_bt20_exhaust": {
-        "name": "QGM1 avgastemperatur"
-      },
-      "qgm1_bt23_suction": {
-        "name": "QGM1 sugledningstemperatur"
-      },
-      "qgm2_bt10_outlet": {
-        "name": "QGM2 utloppsvattentemperatur"
-      },
-      "qgm2_bt13_inlet": {
-        "name": "QGM2 inloppsvattentemperatur"
-      },
-      "qgm2_bt14_source_return": {
-        "name": "QGM2 källans returtemperatur"
-      },
-      "qgm2_bt15_source_outlet": {
-        "name": "QGM2 källans utloppstemperatur"
-      },
-      "qgm2_bt20_exhaust": {
-        "name": "QGM2 avgastemperatur"
-      },
-      "qgm2_bt23_suction": {
-        "name": "QGM2 sugledningstemperatur"
-      },
       "bf1_dhw_flow": {
         "name": "VV-flöde"
       },
@@ -206,7 +170,7 @@
         "name": "Kompressorhastighet"
       },
       "degree_minute": {
-        "name": "Gradminut"
+        "name": "Gradminuter"
       },
       "unit_state": {
         "name": "Strömstatus",
@@ -226,31 +190,31 @@
         }
       },
       "heating_released": {
-        "name": "Uppvärmning tillåten",
+        "name": "Uppvärmning drifttillstånd",
         "state": {
-          "blocked": "Blockerad",
-          "available": "Tillgänglig"
+          "off": "Avstängd",
+          "ok": "Ok"
         }
       },
       "cooling_released": {
-        "name": "Kylning tillåten",
+        "name": "Kylning drifttillstånd",
         "state": {
-          "blocked": "Blockerad",
-          "available": "Tillgänglig"
+          "off": "Avstängd",
+          "ok": "Ok"
         }
       },
       "compressor_released": {
-        "name": "Kompressor tillåten",
+        "name": "Kompressor drifttillstånd",
         "state": {
-          "blocked": "Blockerad",
-          "available": "Tillgänglig"
+          "off": "Avstängd",
+          "ok": "Ok"
         }
       },
       "addition_released": {
-        "name": "Tillsats tillåten",
+        "name": "Tillsats drifttillstånd",
         "state": {
-          "blocked": "Blockerad",
-          "available": "Tillgänglig"
+          "off": "Avstängd",
+          "ok": "Ok"
         }
       },
       "heat_emitter_type": {
@@ -361,24 +325,6 @@
           "detecting": "Söker"
         }
       },
-      "qgm1_bp1_low_pressure": {
-        "name": "QGM1 lågtryck"
-      },
-      "qgm1_bp2_high_pressure": {
-        "name": "QGM1 högtryck"
-      },
-      "qgm1_compressor_speed": {
-        "name": "QGM1 kompressorhastighet"
-      },
-      "qgm2_bp1_low_pressure": {
-        "name": "QGM2 lågtryck"
-      },
-      "qgm2_bp2_high_pressure": {
-        "name": "QGM2 högtryck"
-      },
-      "qgm2_compressor_speed": {
-        "name": "QGM2 kompressorhastighet"
-      },
       "active_alarm_count": {
         "name": "Aktiva larm"
       },
@@ -442,13 +388,13 @@
     },
     "binary_sensor": {
       "relay_l1": {
-        "name": "Relä L1"
+        "name": "Tillskott L1"
       },
       "relay_l2": {
-        "name": "Relä L2"
+        "name": "Tillskott L2"
       },
       "relay_l3": {
-        "name": "Relä L3"
+        "name": "Tillskott L3"
       },
       "relay_gp10": {
         "name": "Relä GP10"
@@ -500,24 +446,6 @@
       },
       "freeze_protection_active": {
         "name": "Frysskydd"
-      },
-      "qgm1_4way_valve": {
-        "name": "QGM1 4-vägsventil"
-      },
-      "qgm1_flow_switch": {
-        "name": "QGM1 flödesbrytare"
-      },
-      "qgm1_gp4_pump": {
-        "name": "QGM1 köldbärarpump"
-      },
-      "qgm2_4way_valve": {
-        "name": "QGM2 4-vägsventil"
-      },
-      "qgm2_flow_switch": {
-        "name": "QGM2 flödesbrytare"
-      },
-      "qgm2_gp4_pump": {
-        "name": "QGM2 köldbärarpump"
       },
       "sg_ready_a": {
         "name": "SG klar A"

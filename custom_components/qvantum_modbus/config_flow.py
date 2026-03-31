@@ -76,7 +76,7 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                 f"tcp_{import_data[CONF_HOST]}_{port}"
                 f"_{import_data.get(CONF_UNIT_ID, DEFAULT_UNIT_ID)}"
             )
-            title = f"{import_data[CONF_HOST]}:{port}"
+            title = "Qvantum Heat Pump"
             data = {
                 CONF_CONNECTION_TYPE: CONNECTION_TYPE_TCP,
                 CONF_HOST: import_data[CONF_HOST],
@@ -87,7 +87,7 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
             port = import_data[CONF_PORT]
             unit_id = import_data.get(CONF_UNIT_ID, DEFAULT_UNIT_ID)
             unique_id = f"rtu_{str(port).replace('/', '_')}_{unit_id}"
-            title = f"RTU {port} (unit {unit_id})"
+            title = "Qvantum Heat Pump"
             data = {
                 CONF_CONNECTION_TYPE: CONNECTION_TYPE_RTU,
                 CONF_PORT: port,
@@ -176,7 +176,7 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(unique_id)
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
-                    title=f"{host}:{port}",
+                    title="Qvantum Heat Pump",
                     data={
                         CONF_CONNECTION_TYPE: CONNECTION_TYPE_TCP,
                         CONF_HOST: host,
@@ -247,7 +247,7 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(unique_id)
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
-                    title=f"RTU {port} (unit {unit_id})",
+                    title="Qvantum Heat Pump",
                     data={
                         CONF_CONNECTION_TYPE: CONNECTION_TYPE_RTU,
                         CONF_PORT: port,
@@ -271,12 +271,16 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                             min=1, max=247, step=1, mode=NumberSelectorMode.BOX
                         )
                     ),
-                    vol.Required(CONF_BAUDRATE, default=DEFAULT_BAUDRATE): NumberSelector(
+                    vol.Required(
+                        CONF_BAUDRATE, default=DEFAULT_BAUDRATE
+                    ): NumberSelector(
                         NumberSelectorConfig(
                             min=300, max=115200, step=1, mode=NumberSelectorMode.BOX
                         )
                     ),
-                    vol.Required(CONF_BYTESIZE, default=DEFAULT_BYTESIZE): NumberSelector(
+                    vol.Required(
+                        CONF_BYTESIZE, default=DEFAULT_BYTESIZE
+                    ): NumberSelector(
                         NumberSelectorConfig(
                             min=5, max=8, step=1, mode=NumberSelectorMode.BOX
                         )
@@ -403,12 +407,16 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                             min=1, max=247, step=1, mode=NumberSelectorMode.BOX
                         )
                     ),
-                    vol.Required(CONF_BAUDRATE, default=entry.data[CONF_BAUDRATE]): NumberSelector(
+                    vol.Required(
+                        CONF_BAUDRATE, default=entry.data[CONF_BAUDRATE]
+                    ): NumberSelector(
                         NumberSelectorConfig(
                             min=300, max=115200, step=1, mode=NumberSelectorMode.BOX
                         )
                     ),
-                    vol.Required(CONF_BYTESIZE, default=entry.data[CONF_BYTESIZE]): NumberSelector(
+                    vol.Required(
+                        CONF_BYTESIZE, default=entry.data[CONF_BYTESIZE]
+                    ): NumberSelector(
                         NumberSelectorConfig(
                             min=5, max=8, step=1, mode=NumberSelectorMode.BOX
                         )

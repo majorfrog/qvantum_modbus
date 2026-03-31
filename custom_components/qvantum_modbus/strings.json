@@ -109,18 +109,6 @@
       },
       "heating_curve_offset": { "name": "Heating curve offset" },
       "parallel_cooling_offset": { "name": "Parallel cooling offset" },
-      "qgm1_bt10_outlet": { "name": "QGM1 outlet water temperature" },
-      "qgm1_bt13_inlet": { "name": "QGM1 inlet water temperature" },
-      "qgm1_bt14_source_return": { "name": "QGM1 source return temperature" },
-      "qgm1_bt15_source_outlet": { "name": "QGM1 source outlet temperature" },
-      "qgm1_bt20_exhaust": { "name": "QGM1 exhaust temperature" },
-      "qgm1_bt23_suction": { "name": "QGM1 suction temperature" },
-      "qgm2_bt10_outlet": { "name": "QGM2 outlet water temperature" },
-      "qgm2_bt13_inlet": { "name": "QGM2 inlet water temperature" },
-      "qgm2_bt14_source_return": { "name": "QGM2 source return temperature" },
-      "qgm2_bt15_source_outlet": { "name": "QGM2 source outlet temperature" },
-      "qgm2_bt20_exhaust": { "name": "QGM2 exhaust temperature" },
-      "qgm2_bt23_suction": { "name": "QGM2 suction temperature" },
       "bf1_dhw_flow": { "name": "DHW flow" },
       "bf1_rpm": { "name": "Hot water pump speed" },
       "gp1_pump_speed": { "name": "Distribution pump speed" },
@@ -147,19 +135,31 @@
       },
       "heating_released": {
         "name": "Heating enabled",
-        "state": { "blocked": "Blocked", "available": "Available" }
+        "state": {
+          "off": "Off",
+          "ok": "Ok"
+        }
       },
       "cooling_released": {
         "name": "Cooling enabled",
-        "state": { "blocked": "Blocked", "available": "Available" }
+        "state": {
+          "off": "Off",
+          "ok": "Ok"
+        }
       },
       "compressor_released": {
         "name": "Compressor enabled",
-        "state": { "blocked": "Blocked", "available": "Available" }
+        "state": {
+          "off": "Off",
+          "ok": "Ok"
+        }
       },
       "addition_released": {
         "name": "Addition heater enabled",
-        "state": { "blocked": "Blocked", "available": "Available" }
+        "state": {
+          "off": "Off",
+          "ok": "Ok"
+        }
       },
       "heat_emitter_type": {
         "name": "Heat emitter type",
@@ -235,12 +235,6 @@
           "detecting": "Detecting"
         }
       },
-      "qgm1_bp1_low_pressure": { "name": "QGM1 low pressure" },
-      "qgm1_bp2_high_pressure": { "name": "QGM1 high pressure" },
-      "qgm1_compressor_speed": { "name": "QGM1 compressor speed" },
-      "qgm2_bp1_low_pressure": { "name": "QGM2 low pressure" },
-      "qgm2_bp2_high_pressure": { "name": "QGM2 high pressure" },
-      "qgm2_compressor_speed": { "name": "QGM2 compressor speed" },
       "active_alarm_count": { "name": "Active alarms" },
       "alarm_1_code": { "name": "Alarm 1 code" },
       "alarm_2_code": { "name": "Alarm 2 code" },
@@ -303,12 +297,6 @@
       "dhw_priority": { "name": "Hot water priority" },
       "compressor_blocked": { "name": "Compressor blocked" },
       "freeze_protection_active": { "name": "Freeze protection" },
-      "qgm1_4way_valve": { "name": "QGM1 4-way valve" },
-      "qgm1_flow_switch": { "name": "QGM1 flow switch" },
-      "qgm1_gp4_pump": { "name": "QGM1 ground source pump" },
-      "qgm2_4way_valve": { "name": "QGM2 4-way valve" },
-      "qgm2_flow_switch": { "name": "QGM2 flow switch" },
-      "qgm2_gp4_pump": { "name": "QGM2 ground source pump" },
       "sg_ready_a": { "name": "SG ready A" },
       "sg_ready_b": { "name": "SG ready B" },
       "smart_price_dhw_enabled": { "name": "Smart price DHW enabled" },

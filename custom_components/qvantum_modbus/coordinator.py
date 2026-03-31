@@ -391,12 +391,32 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
         """Close the Modbus transport; called on entry unload."""
         self._client.close()
 
-    async def write_holding_register(self, address: int, value: int) -> None:
+    async def write_holding_register(
+        self,
+        address: int,
+        value: int,
+        min_raw: int | None = None,
+        max_raw: int | None = None,
+    ) -> None:
         """Write a single value to a holding register using FC6.
 
         Negative values are converted to unsigned 16-bit two's complement so
         pymodbus writes them correctly for S16 registers.
+
+        Raises ``HomeAssistantError`` if ``value`` falls outside the optional
+        [min_raw, max_raw] bounds — allowing number.py to enforce register limits
+        even when HA service calls bypass the UI min/max validation.
         """
+        if min_raw is not None and value < min_raw:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="write_failed",
+            )
+        if max_raw is not None and value > max_raw:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="write_failed",
+            )
         if not self._client.connected:
             if not await self._client.connect():
                 raise HomeAssistantError(
