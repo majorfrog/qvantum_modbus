@@ -108,10 +108,15 @@ class QvantumModbusCombinedSensor(QvantumModbusEntity, SensorEntity):
         )
 
     @property
-    def native_value(self) -> str | None:
-        """Return the formatted combined value, or None if any component is missing."""
+    def native_value(self) -> float | str | None:
+        """Return the combined value, or None if any component is missing."""
         data = self.coordinator.data
         vals = [data.get(comp.key) for comp in self.entity_description.components]
         if any(v is None for v in vals):
             return None
-        return self.entity_description.format_fn(vals)  # type: ignore[arg-type]
+        desc = self.entity_description
+        if desc.value_fn is not None:
+            return desc.value_fn(vals)  # type: ignore[arg-type]
+        if desc.format_fn is not None:
+            return desc.format_fn(vals)  # type: ignore[arg-type]
+        return None

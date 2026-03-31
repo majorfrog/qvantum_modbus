@@ -343,3 +343,110 @@ async def test_import_duplicate_aborts(hass: HomeAssistant) -> None:
     )
     assert result["type"] == FlowResultType.ABORT
     assert result["reason"] == "already_configured"
+
+
+# ---------------------------------------------------------------------------
+# Reconfigure — TCP happy path
+# ---------------------------------------------------------------------------
+
+
+async def test_reconfigure_tcp_success(
+    hass: HomeAssistant,
+    mock_tcp_config_entry,
+    mock_tcp_config_flow_client,
+) -> None:
+    """Reconfigure updates TCP connection parameters and unique ID."""
+    mock_tcp_config_entry.add_to_hass(hass)
+
+    result = await mock_tcp_config_entry.start_reconfigure_flow(hass)
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "reconfigure"
+
+    new_host = "10.0.0.99"
+    new_port = 503
+    new_unit = 2
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {
+            CONF_HOST: new_host,
+            CONF_PORT: new_port,
+            CONF_UNIT_ID: new_unit,
+        },
+    )
+
+    assert result["type"] == FlowResultType.ABORT
+    assert result["reason"] == "reconfigure_successful"
+    assert mock_tcp_config_entry.data[CONF_HOST] == new_host
+    assert mock_tcp_config_entry.data[CONF_PORT] == new_port
+    assert mock_tcp_config_entry.data[CONF_UNIT_ID] == new_unit
+    assert mock_tcp_config_entry.unique_id == f"tcp_{new_host}_{new_port}_{new_unit}"
+
+
+# ---------------------------------------------------------------------------
+# Reconfigure — RTU happy path
+# ---------------------------------------------------------------------------
+
+
+async def test_reconfigure_rtu_success(
+    hass: HomeAssistant,
+    mock_rtu_config_entry,
+    mock_rtu_config_flow_client,
+) -> None:
+    """Reconfigure updates RTU connection parameters and unique ID."""
+    mock_rtu_config_entry.add_to_hass(hass)
+
+    result = await mock_rtu_config_entry.start_reconfigure_flow(hass)
+    assert result["type"] == FlowResultType.FORM
+    assert result["step_id"] == "reconfigure"
+
+    new_port = "/dev/ttyUSB1"
+    new_unit = 3
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {
+            CONF_PORT: new_port,
+            CONF_UNIT_ID: new_unit,
+            CONF_BAUDRATE: MOCK_RTU_ENTRY_DATA["baudrate"],
+            CONF_BYTESIZE: MOCK_RTU_ENTRY_DATA["bytesize"],
+            CONF_PARITY: MOCK_RTU_ENTRY_DATA["parity"],
+            CONF_STOPBITS: str(MOCK_RTU_ENTRY_DATA["stopbits"]),
+        },
+    )
+
+    assert result["type"] == FlowResultType.ABORT
+    assert result["reason"] == "reconfigure_successful"
+    assert mock_rtu_config_entry.data[CONF_PORT] == new_port
+    assert mock_rtu_config_entry.data[CONF_UNIT_ID] == new_unit
+    assert mock_rtu_config_entry.unique_id == (
+        f"rtu_{new_port.replace('/', '_')}_{new_unit}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Reconfigure — TCP cannot connect
+# ---------------------------------------------------------------------------
+
+
+async def test_reconfigure_tcp_cannot_connect(
+    hass: HomeAssistant,
+    mock_tcp_config_entry,
+) -> None:
+    """Reconfigure shows error when the new TCP target is unreachable."""
+    mock_tcp_config_entry.add_to_hass(hass)
+
+    result = await mock_tcp_config_entry.start_reconfigure_flow(hass)
+
+    with _tcp_connect_patch(connected=False):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_HOST: "10.0.0.99",
+                CONF_PORT: 502,
+                CONF_UNIT_ID: 1,
+            },
+        )
+
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"] == {"base": "cannot_connect"}

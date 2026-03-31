@@ -128,7 +128,11 @@ class ModbusCombinedSensorEntityDescription(SensorEntityDescription):
     components: tuple[ModbusSensorEntityDescription, ...]
     # Receives the list of float values (same order as components) and returns
     # the string to display.  Called only when all values are non-None.
-    format_fn: Callable[[list[float]], str]
+    format_fn: Callable[[list[float]], str] | None = None
+    # Like format_fn but returns a numeric value (float).  Used for combined
+    # energy sensors where a native numeric value is needed for statistics.
+    # When set, format_fn is ignored.
+    value_fn: Callable[[list[float]], float] | None = None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -1197,6 +1201,91 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
         ),
         format_fn=lambda vals: str(int(vals[0]))
         + "".join(f"{int(v):03d}" for v in vals[1:]),
+    ),
+    # -------------------------------------------------------------------------
+    # Combined energy totals — MWh * 1000 + kWh → total kWh
+    # The existing per-register sensors (compressor_energy_mwh, etc.) are kept;
+    # these new sensors provide a single usable kWh value for the energy dashboard.
+    # -------------------------------------------------------------------------
+    ModbusCombinedSensorEntityDescription(
+        key="compressor_energy_total",
+        translation_key="compressor_energy_total",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        components=(
+            ModbusSensorEntityDescription(
+                key="compressor_energy_mwh", address=95, data_type=DATA_TYPE_UINT16
+            ),
+            ModbusSensorEntityDescription(
+                key="compressor_energy_kwh", address=96, data_type=DATA_TYPE_UINT16
+            ),
+        ),
+        value_fn=lambda vals: vals[0] * 1000 + vals[1],
+    ),
+    ModbusCombinedSensorEntityDescription(
+        key="additional_energy_total",
+        translation_key="additional_energy_total",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        components=(
+            ModbusSensorEntityDescription(
+                key="additional_energy_mwh", address=97, data_type=DATA_TYPE_UINT16
+            ),
+            ModbusSensorEntityDescription(
+                key="additional_energy_kwh", address=98, data_type=DATA_TYPE_UINT16
+            ),
+        ),
+        value_fn=lambda vals: vals[0] * 1000 + vals[1],
+    ),
+    ModbusCombinedSensorEntityDescription(
+        key="heating_energy_total",
+        translation_key="heating_energy_total",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        components=(
+            ModbusSensorEntityDescription(
+                key="heating_energy_mwh", address=99, data_type=DATA_TYPE_UINT16
+            ),
+            ModbusSensorEntityDescription(
+                key="heating_energy_kwh", address=100, data_type=DATA_TYPE_UINT16
+            ),
+        ),
+        value_fn=lambda vals: vals[0] * 1000 + vals[1],
+    ),
+    ModbusCombinedSensorEntityDescription(
+        key="cooling_energy_total",
+        translation_key="cooling_energy_total",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        components=(
+            ModbusSensorEntityDescription(
+                key="cooling_energy_mwh", address=101, data_type=DATA_TYPE_UINT16
+            ),
+            ModbusSensorEntityDescription(
+                key="cooling_energy_kwh", address=102, data_type=DATA_TYPE_UINT16
+            ),
+        ),
+        value_fn=lambda vals: vals[0] * 1000 + vals[1],
+    ),
+    ModbusCombinedSensorEntityDescription(
+        key="dhw_energy_total",
+        translation_key="dhw_energy_total",
+        native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        device_class=SensorDeviceClass.ENERGY,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        components=(
+            ModbusSensorEntityDescription(
+                key="dhw_energy_mwh", address=103, data_type=DATA_TYPE_UINT16
+            ),
+            ModbusSensorEntityDescription(
+                key="dhw_energy_kwh", address=104, data_type=DATA_TYPE_UINT16
+            ),
+        ),
+        value_fn=lambda vals: vals[0] * 1000 + vals[1],
     ),
 )
 

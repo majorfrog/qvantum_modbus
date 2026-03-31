@@ -25,7 +25,7 @@ def create_device_info(coordinator: QvantumModbusCoordinator) -> DeviceInfo:
         )
     return DeviceInfo(
         identifiers={(DOMAIN, entry.entry_id)},
-        name=entry.title,
+        name=MODEL,
         manufacturer=MANUFACTURER,
         model=MODEL,
     )

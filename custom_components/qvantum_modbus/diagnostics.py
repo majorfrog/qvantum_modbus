@@ -5,13 +5,14 @@ from __future__ import annotations
 from typing import Any
 
 from homeassistant.components.diagnostics import async_redact_data
+from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 
 from . import QvantumModbusConfigEntry
 
-# No credentials in Modbus; the set is empty but kept for consistency with
-# the standard HA diagnostics pattern in case sensitive fields are added later.
-TO_REDACT: set[str] = set()
+# Redact connection details and device-specific identifiers that could
+# expose the local network layout.
+TO_REDACT: set[str] = {CONF_HOST, "ip_address", "serial_number"}
 
 
 async def async_get_config_entry_diagnostics(

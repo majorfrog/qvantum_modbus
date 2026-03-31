@@ -59,6 +59,97 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
         return False
 
     # ------------------------------------------------------------------
+    # Schema builders — shared by initial and reconfigure flows
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _tcp_schema(
+        defaults: dict[str, Any] | None = None,
+    ) -> vol.Schema:
+        """Build the TCP connection form schema."""
+        d = defaults or {}
+        return vol.Schema(
+            {
+                vol.Required(
+                    CONF_HOST, default=d.get(CONF_HOST, vol.UNDEFINED)
+                ): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
+                vol.Required(
+                    CONF_PORT, default=d.get(CONF_PORT, DEFAULT_TCP_PORT)
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=1, max=65535, step=1, mode=NumberSelectorMode.BOX
+                    )
+                ),
+                vol.Required(
+                    CONF_UNIT_ID, default=d.get(CONF_UNIT_ID, DEFAULT_UNIT_ID)
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=1, max=247, step=1, mode=NumberSelectorMode.BOX
+                    )
+                ),
+            }
+        )
+
+    @staticmethod
+    def _rtu_schema(
+        defaults: dict[str, Any] | None = None,
+    ) -> vol.Schema:
+        """Build the RTU connection form schema."""
+        d = defaults or {}
+        return vol.Schema(
+            {
+                vol.Required(
+                    CONF_PORT, default=d.get(CONF_PORT, vol.UNDEFINED)
+                ): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
+                vol.Required(
+                    CONF_UNIT_ID, default=d.get(CONF_UNIT_ID, DEFAULT_UNIT_ID)
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=1, max=247, step=1, mode=NumberSelectorMode.BOX
+                    )
+                ),
+                vol.Required(
+                    CONF_BAUDRATE, default=d.get(CONF_BAUDRATE, DEFAULT_BAUDRATE)
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=300, max=115200, step=1, mode=NumberSelectorMode.BOX
+                    )
+                ),
+                vol.Required(
+                    CONF_BYTESIZE, default=d.get(CONF_BYTESIZE, DEFAULT_BYTESIZE)
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=5, max=8, step=1, mode=NumberSelectorMode.BOX
+                    )
+                ),
+                vol.Required(
+                    CONF_PARITY, default=d.get(CONF_PARITY, DEFAULT_PARITY)
+                ): SelectSelector(
+                    SelectSelectorConfig(
+                        options=[
+                            SelectOptionDict(value="N", label="None"),
+                            SelectOptionDict(value="E", label="Even"),
+                            SelectOptionDict(value="O", label="Odd"),
+                        ],
+                        mode=SelectSelectorMode.LIST,
+                    )
+                ),
+                vol.Required(
+                    CONF_STOPBITS,
+                    default=str(d.get(CONF_STOPBITS, DEFAULT_STOPBITS)),
+                ): SelectSelector(
+                    SelectSelectorConfig(
+                        options=[
+                            SelectOptionDict(value="1", label="1"),
+                            SelectOptionDict(value="2", label="2"),
+                        ],
+                        mode=SelectSelectorMode.LIST,
+                    )
+                ),
+            }
+        )
+
+    # ------------------------------------------------------------------
     # Step 0 — YAML import (no user interaction)
     # ------------------------------------------------------------------
 
@@ -187,23 +278,7 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="tcp",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_HOST): TextSelector(
-                        TextSelectorConfig(type=TextSelectorType.TEXT)
-                    ),
-                    vol.Required(CONF_PORT, default=DEFAULT_TCP_PORT): NumberSelector(
-                        NumberSelectorConfig(
-                            min=1, max=65535, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                    vol.Required(CONF_UNIT_ID, default=DEFAULT_UNIT_ID): NumberSelector(
-                        NumberSelectorConfig(
-                            min=1, max=247, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                }
-            ),
+            data_schema=self._tcp_schema(),
             errors=errors,
         )
 
@@ -261,53 +336,7 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="rtu",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_PORT): TextSelector(
-                        TextSelectorConfig(type=TextSelectorType.TEXT)
-                    ),
-                    vol.Required(CONF_UNIT_ID, default=DEFAULT_UNIT_ID): NumberSelector(
-                        NumberSelectorConfig(
-                            min=1, max=247, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                    vol.Required(
-                        CONF_BAUDRATE, default=DEFAULT_BAUDRATE
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=300, max=115200, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                    vol.Required(
-                        CONF_BYTESIZE, default=DEFAULT_BYTESIZE
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=5, max=8, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                    vol.Required(CONF_PARITY, default=DEFAULT_PARITY): SelectSelector(
-                        SelectSelectorConfig(
-                            options=[
-                                SelectOptionDict(value="N", label="None"),
-                                SelectOptionDict(value="E", label="Even"),
-                                SelectOptionDict(value="O", label="Odd"),
-                            ],
-                            mode=SelectSelectorMode.LIST,
-                        )
-                    ),
-                    vol.Required(
-                        CONF_STOPBITS, default=str(DEFAULT_STOPBITS)
-                    ): SelectSelector(
-                        SelectSelectorConfig(
-                            options=[
-                                SelectOptionDict(value="1", label="1"),
-                                SelectOptionDict(value="2", label="2"),
-                            ],
-                            mode=SelectSelectorMode.LIST,
-                        )
-                    ),
-                }
-            ),
+            data_schema=self._rtu_schema(),
             errors=errors,
         )
 
@@ -352,15 +381,22 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
 
             if not errors:
                 if conn_type == CONNECTION_TYPE_TCP:
+                    host = user_input[CONF_HOST]
+                    port = int(user_input[CONF_PORT])
+                    unit_id = int(user_input[CONF_UNIT_ID])
+                    new_unique_id = f"tcp_{host}_{port}_{unit_id}"
                     data_updates: dict[str, Any] = {
-                        CONF_HOST: user_input[CONF_HOST],
-                        CONF_PORT: int(user_input[CONF_PORT]),
-                        CONF_UNIT_ID: int(user_input[CONF_UNIT_ID]),
+                        CONF_HOST: host,
+                        CONF_PORT: port,
+                        CONF_UNIT_ID: unit_id,
                     }
                 else:
+                    port_str = user_input[CONF_PORT]
+                    unit_id = int(user_input[CONF_UNIT_ID])
+                    new_unique_id = f"rtu_{port_str.replace('/', '_')}_{unit_id}"
                     data_updates = {
-                        CONF_PORT: user_input[CONF_PORT],
-                        CONF_UNIT_ID: int(user_input[CONF_UNIT_ID]),
+                        CONF_PORT: port_str,
+                        CONF_UNIT_ID: unit_id,
                         CONF_BAUDRATE: int(user_input[CONF_BAUDRATE]),
                         CONF_BYTESIZE: int(user_input[CONF_BYTESIZE]),
                         CONF_PARITY: user_input[CONF_PARITY],
@@ -368,84 +404,15 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                     }
                 return self.async_update_reload_and_abort(
                     entry,
+                    unique_id=new_unique_id,
                     data_updates=data_updates,
                 )
 
         # Build schema pre-populated with the current entry values.
         if conn_type == CONNECTION_TYPE_TCP:
-            data_schema = vol.Schema(
-                {
-                    vol.Required(
-                        CONF_HOST, default=entry.data[CONF_HOST]
-                    ): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
-                    vol.Required(
-                        CONF_PORT, default=entry.data[CONF_PORT]
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=1, max=65535, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                    vol.Required(
-                        CONF_UNIT_ID, default=entry.data[CONF_UNIT_ID]
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=1, max=247, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                }
-            )
+            data_schema = self._tcp_schema(defaults=dict(entry.data))
         else:
-            data_schema = vol.Schema(
-                {
-                    vol.Required(
-                        CONF_PORT, default=entry.data[CONF_PORT]
-                    ): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
-                    vol.Required(
-                        CONF_UNIT_ID, default=entry.data[CONF_UNIT_ID]
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=1, max=247, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                    vol.Required(
-                        CONF_BAUDRATE, default=entry.data[CONF_BAUDRATE]
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=300, max=115200, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                    vol.Required(
-                        CONF_BYTESIZE, default=entry.data[CONF_BYTESIZE]
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=5, max=8, step=1, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                    vol.Required(
-                        CONF_PARITY, default=entry.data[CONF_PARITY]
-                    ): SelectSelector(
-                        SelectSelectorConfig(
-                            options=[
-                                SelectOptionDict(value="N", label="None"),
-                                SelectOptionDict(value="E", label="Even"),
-                                SelectOptionDict(value="O", label="Odd"),
-                            ],
-                            mode=SelectSelectorMode.LIST,
-                        )
-                    ),
-                    vol.Required(
-                        CONF_STOPBITS, default=str(entry.data[CONF_STOPBITS])
-                    ): SelectSelector(
-                        SelectSelectorConfig(
-                            options=[
-                                SelectOptionDict(value="1", label="1"),
-                                SelectOptionDict(value="2", label="2"),
-                            ],
-                            mode=SelectSelectorMode.LIST,
-                        )
-                    ),
-                }
-            )
+            data_schema = self._rtu_schema(defaults=dict(entry.data))
 
         return self.async_show_form(
             step_id="reconfigure",

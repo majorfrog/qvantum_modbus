@@ -57,13 +57,14 @@ async def test_diagnostics_contains_entry_data(
     hass: HomeAssistant,
     mock_tcp_config_entry,
 ) -> None:
-    """Diagnostics output includes the config entry data."""
+    """Diagnostics output includes the config entry data with sensitive fields redacted."""
     await _setup(hass, mock_tcp_config_entry)
     result = await async_get_config_entry_diagnostics(hass, mock_tcp_config_entry)
 
     assert "entry_data" in result
     entry_data = result["entry_data"]
-    assert entry_data["host"] == MOCK_HOST
+    # Host is redacted for privacy
+    assert entry_data["host"] == "**REDACTED**"
     assert entry_data["port"] == MOCK_PORT
     assert entry_data["unit_id"] == MOCK_UNIT_ID
 

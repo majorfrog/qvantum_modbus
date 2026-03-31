@@ -88,7 +88,7 @@ class QvantumModbusSelect(QvantumModbusEntity, SelectEntity):
         if raw is None:
             raise HomeAssistantError(
                 translation_domain=DOMAIN,
-                translation_key="write_failed",
+                translation_key="unknown_option",
             )
         await self.coordinator.write_holding_register(desc.address, raw)
         await self.coordinator.async_request_refresh()

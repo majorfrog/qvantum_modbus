@@ -220,6 +220,11 @@
       "cooling_energy_kwh": { "name": "Cooling energy (kWh)" },
       "dhw_energy_mwh": { "name": "DHW energy (MWh)" },
       "dhw_energy_kwh": { "name": "DHW energy (kWh)" },
+      "compressor_energy_total": { "name": "Compressor energy total" },
+      "additional_energy_total": { "name": "Additional heater energy total" },
+      "heating_energy_total": { "name": "Heating energy total" },
+      "cooling_energy_total": { "name": "Cooling energy total" },
+      "dhw_energy_total": { "name": "DHW energy total" },
       "bbr_locked": {
         "name": "BBR locked",
         "state": {
@@ -471,6 +476,9 @@
     },
     "write_failed": {
       "message": "Failed to write to a Modbus holding register. Check your connection and device address."
+    },
+    "unknown_option": {
+      "message": "The selected option is not recognised by the device."
     }
   }
 }

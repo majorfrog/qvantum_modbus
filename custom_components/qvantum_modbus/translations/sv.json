@@ -310,6 +310,21 @@
       "dhw_energy_kwh": {
         "name": "VV-energi (kWh)"
       },
+      "compressor_energy_total": {
+        "name": "Kompressorenergi totalt"
+      },
+      "additional_energy_total": {
+        "name": "Tillsatsenergi totalt"
+      },
+      "heating_energy_total": {
+        "name": "Värmeenergi totalt"
+      },
+      "cooling_energy_total": {
+        "name": "Kylenergi totalt"
+      },
+      "dhw_energy_total": {
+        "name": "VV-energi totalt"
+      },
       "bbr_locked": {
         "name": "BBR",
         "state": {
@@ -703,6 +718,9 @@
     },
     "write_failed": {
       "message": "Det gick inte att skriva till Modbus-registret. Kontrollera din anslutning."
+    },
+    "unknown_option": {
+      "message": "Det valda alternativet känns inte igen av enheten."
     }
   }
 }
