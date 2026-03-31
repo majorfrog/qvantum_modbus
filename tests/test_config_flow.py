@@ -450,3 +450,105 @@ async def test_reconfigure_tcp_cannot_connect(
 
     assert result["type"] == FlowResultType.FORM
     assert result["errors"] == {"base": "cannot_connect"}
+
+
+# ---------------------------------------------------------------------------
+# is_matching — returns False (allows two simultaneous user flows)
+# ---------------------------------------------------------------------------
+
+
+def test_is_matching_returns_false() -> None:
+    """is_matching always returns False to allow parallel flows."""
+    from custom_components.qvantum_modbus.config_flow import QvantumModbusConfigFlow
+
+    flow = QvantumModbusConfigFlow()
+    other = MagicMock()
+
+    assert flow.is_matching(other) is False
+
+
+async def test_is_matching_allows_parallel_user_flows(
+    hass: HomeAssistant,
+) -> None:
+    """Two concurrent user flows are both allowed (is_matching returns False)."""
+    result1 = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result2 = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    assert result1["type"] == FlowResultType.FORM
+    assert result2["type"] == FlowResultType.FORM
+
+
+# ---------------------------------------------------------------------------
+# RTU — connect() raises exception (lines 305-311)
+# ---------------------------------------------------------------------------
+
+
+async def test_rtu_flow_connect_raises_exception(hass: HomeAssistant) -> None:
+    """RTU flow shows 'cannot_connect' when connect() raises an exception."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_CONNECTION_TYPE: CONNECTION_TYPE_RTU}
+    )
+
+    with patch(
+        "custom_components.qvantum_modbus.config_flow.AsyncModbusSerialClient"
+    ) as mock_class:
+        client = MagicMock()
+        client.connect = AsyncMock(side_effect=OSError("no such device"))
+        client.close = MagicMock()
+        mock_class.return_value = client
+
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_PORT: MOCK_RTU_ENTRY_DATA["port"],
+                CONF_UNIT_ID: MOCK_RTU_ENTRY_DATA["unit_id"],
+                CONF_BAUDRATE: MOCK_RTU_ENTRY_DATA["baudrate"],
+                CONF_BYTESIZE: MOCK_RTU_ENTRY_DATA["bytesize"],
+                CONF_PARITY: MOCK_RTU_ENTRY_DATA["parity"],
+                CONF_STOPBITS: str(MOCK_RTU_ENTRY_DATA["stopbits"]),
+            },
+        )
+
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"] == {"base": "cannot_connect"}
+
+
+# ---------------------------------------------------------------------------
+# Reconfigure — connect() raises exception (lines 374-375)
+# ---------------------------------------------------------------------------
+
+
+async def test_reconfigure_connect_raises_exception(
+    hass: HomeAssistant,
+    mock_tcp_config_entry,
+) -> None:
+    """Reconfigure shows error when connect() raises an exception."""
+    mock_tcp_config_entry.add_to_hass(hass)
+
+    result = await mock_tcp_config_entry.start_reconfigure_flow(hass)
+
+    with patch(
+        "custom_components.qvantum_modbus.config_flow.AsyncModbusTcpClient"
+    ) as mock_class:
+        client = MagicMock()
+        client.connect = AsyncMock(side_effect=OSError("connection refused"))
+        client.close = MagicMock()
+        mock_class.return_value = client
+
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_HOST: "10.0.0.99",
+                CONF_PORT: 502,
+                CONF_UNIT_ID: 1,
+            },
+        )
+
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"] == {"base": "cannot_connect"}

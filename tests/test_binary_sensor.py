@@ -153,3 +153,22 @@ async def test_binary_sensor_unavailable_when_register_is_none(
     state = hass.states.get(entity_id)
     assert state is not None
     assert state.state == "unavailable"
+
+
+# ---------------------------------------------------------------------------
+# is_on — returns None when coordinator data has None for the key
+# ---------------------------------------------------------------------------
+
+
+def test_binary_sensor_is_on_none_when_data_key_is_none() -> None:
+    """is_on returns None when coordinator.data[key] is None."""
+    from custom_components.qvantum_modbus.binary_sensor import QvantumModbusBinarySensor
+
+    # Call the property getter directly via a minimal mock
+    entity = MagicMock()
+    entity.coordinator.data = {"relay_l1": None}
+    entity.entity_description.key = "relay_l1"
+
+    result = QvantumModbusBinarySensor.is_on.fget(entity)
+
+    assert result is None

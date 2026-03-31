@@ -628,16 +628,16 @@
         "name": "VV-stopptemperatur (extra)"
       },
       "temp_compensation_curve_heating": {
-        "name": "Temperaturkompensationskurva värme"
+        "name": "Värmekurva"
       },
       "heating_curve_minus30": {
-        "name": "Värmekurva vid −30 °C"
+        "name": "Värmekurva vid -30 °C"
       },
       "heating_curve_minus20": {
-        "name": "Värmekurva vid −20 °C"
+        "name": "Värmekurva vid -20 °C"
       },
       "heating_curve_minus10": {
-        "name": "Värmekurva vid −10 °C"
+        "name": "Värmekurva vid -10 °C"
       },
       "heating_curve_0": {
         "name": "Värmekurva vid 0 °C"

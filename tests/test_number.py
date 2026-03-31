@@ -178,3 +178,22 @@ async def test_number_unavailable_when_register_is_none(
     state = hass.states.get(entity_id)
     assert state is not None
     assert state.state == "unavailable"
+
+
+# ---------------------------------------------------------------------------
+# native_value — returns None when coordinator data has None for the key
+# ---------------------------------------------------------------------------
+
+
+def test_number_native_value_none_when_data_key_is_none() -> None:
+    """native_value returns None when coordinator.data[key] is None."""
+    from custom_components.qvantum_modbus.number import QvantumModbusNumber
+
+    entity = MagicMock()
+    entity.coordinator.data = {_DESC.key: None}
+    entity.entity_description.key = _DESC.key
+    entity.entity_description.scale = _DESC.scale
+
+    result = QvantumModbusNumber.native_value.fget(entity)
+
+    assert result is None

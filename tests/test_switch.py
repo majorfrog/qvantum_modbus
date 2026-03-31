@@ -168,3 +168,21 @@ async def test_switch_unavailable_when_register_is_none(
     state = hass.states.get(entity_id)
     assert state is not None
     assert state.state == "unavailable"
+
+
+# ---------------------------------------------------------------------------
+# is_on — returns None when coordinator data has None for the key
+# ---------------------------------------------------------------------------
+
+
+def test_switch_is_on_none_when_data_key_is_none() -> None:
+    """is_on returns None when coordinator.data[key] is None."""
+    from custom_components.qvantum_modbus.switch import QvantumModbusSwitch
+
+    entity = MagicMock()
+    entity.coordinator.data = {"unit_on_off": None}
+    entity.entity_description.key = "unit_on_off"
+
+    result = QvantumModbusSwitch.is_on.fget(entity)
+
+    assert result is None

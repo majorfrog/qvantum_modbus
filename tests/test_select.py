@@ -160,3 +160,63 @@ async def test_select_unavailable_when_register_is_none(
     state = hass.states.get(entity_id)
     assert state is not None
     assert state.state == "unavailable"
+
+
+# ---------------------------------------------------------------------------
+# current_option — returns None when coordinator data has None for the key
+# ---------------------------------------------------------------------------
+
+
+def test_select_current_option_none_when_data_key_is_none() -> None:
+    """current_option returns None when coordinator.data[key] is None."""
+    from custom_components.qvantum_modbus.select import QvantumModbusSelect
+
+    entity = MagicMock()
+    entity.coordinator.data = {_FIRST_SELECT.key: None}
+    entity.entity_description.key = _FIRST_SELECT.key
+
+    result = QvantumModbusSelect.current_option.fget(entity)
+
+    assert result is None
+
+
+# ---------------------------------------------------------------------------
+# async_select_option — unknown option raises HomeAssistantError
+# ---------------------------------------------------------------------------
+
+
+async def test_select_option_raises_for_unknown_option(
+    hass: HomeAssistant,
+    mock_tcp_config_entry,
+    setup_integration: MagicMock,
+) -> None:
+    """HomeAssistantError is raised when selecting an option not in the value_map."""
+    entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _FIRST_SELECT.key)
+    assert entity_id is not None
+
+    with pytest.raises(HomeAssistantError):
+        await hass.services.async_call(
+            "select",
+            "select_option",
+            {"entity_id": entity_id, "option": "__invalid_option__"},
+            blocking=True,
+        )
+
+
+# ---------------------------------------------------------------------------
+# async_select_option — unknown option raises HomeAssistantError (line 76)
+# Calls the entity method directly to bypass HA's option-list validation.
+# ---------------------------------------------------------------------------
+
+
+async def test_select_option_entity_method_raises_for_unknown() -> None:
+    """Entity's async_select_option raises HomeAssistantError for an unmapped option."""
+    from custom_components.qvantum_modbus.select import QvantumModbusSelect
+
+    mock_entity = MagicMock()
+    mock_entity.entity_description = _FIRST_SELECT
+
+    with pytest.raises(HomeAssistantError):
+        await QvantumModbusSelect.async_select_option(
+            mock_entity, "__not_a_valid_option__"
+        )

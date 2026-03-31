@@ -414,9 +414,9 @@
       "temp_compensation_curve_heating": {
         "name": "Heating temperature compensation curve"
       },
-      "heating_curve_minus30": { "name": "Heating curve at −30 °C" },
-      "heating_curve_minus20": { "name": "Heating curve at −20 °C" },
-      "heating_curve_minus10": { "name": "Heating curve at −10 °C" },
+      "heating_curve_minus30": { "name": "Heating curve at -30 °C" },
+      "heating_curve_minus20": { "name": "Heating curve at -20 °C" },
+      "heating_curve_minus10": { "name": "Heating curve at -10 °C" },
       "heating_curve_0": { "name": "Heating curve at 0 °C" },
       "heating_curve_10": { "name": "Heating curve at 10 °C" },
       "heating_curve_20": { "name": "Heating curve at 20 °C" },
