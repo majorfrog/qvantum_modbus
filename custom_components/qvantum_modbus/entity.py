@@ -23,11 +23,29 @@ def create_device_info(coordinator: QvantumModbusCoordinator) -> DeviceInfo:
         raise RuntimeError(
             "create_device_info called before coordinator was bound to a config entry"
         )
+    data = coordinator.data or {}
+
+    # Serial number is stored across five consecutive input registers (_sn_1 … _sn_5).
+    sn_parts = [data.get(f"_sn_{i}") for i in range(1, 6)]
+    serial_number: str | None = None
+    if all(v is not None for v in sn_parts):
+        sn_ints = [int(v) for v in sn_parts if v is not None]
+        serial_number = str(sn_ints[0]) + "".join(f"{v:03d}" for v in sn_ints[1:])
+
+    # Firmware version is split across _fw_major, _fw_minor, _fw_patch registers.
+    fw_parts = [data.get("_fw_major"), data.get("_fw_minor"), data.get("_fw_patch")]
+    sw_version: str | None = None
+    if all(v is not None for v in fw_parts):
+        fw_ints = [int(v) for v in fw_parts if v is not None]
+        sw_version = f"{fw_ints[0]}.{fw_ints[1]}.{fw_ints[2]}"
+
     return DeviceInfo(
-        identifiers={(DOMAIN, entry.entry_id)},
+        identifiers={(DOMAIN, serial_number or entry.entry_id)},
         name=MODEL,
         manufacturer=MANUFACTURER,
         model=MODEL,
+        serial_number=serial_number,
+        sw_version=sw_version,
     )
 
 

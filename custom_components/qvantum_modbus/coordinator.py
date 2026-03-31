@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Mapping
 from datetime import timedelta
 import logging
@@ -289,6 +290,8 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
             # Let connection errors propagate — handled in _async_update_data
             raise
         except ModbusException as err:
+            if isinstance(err.__cause__, asyncio.CancelledError):
+                raise err.__cause__
             _LOGGER.warning(
                 "Modbus protocol error reading %s (address %d): %s",
                 key,

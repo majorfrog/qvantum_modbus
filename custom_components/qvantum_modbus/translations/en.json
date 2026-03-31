@@ -128,10 +128,10 @@
         "name": "Hot water inlet temperature"
       },
       "bt33_dhw_secondary_inlet": {
-        "name": "Hot water secondary inlet temperature"
+        "name": "Cold water inlet temperature"
       },
       "bt34_dhw_secondary_outlet": {
-        "name": "Hot water secondary outlet temperature"
+        "name": "Hot water outlet temperature"
       },
       "bt_aux": {
         "name": "Auxiliary temperature"
@@ -161,7 +161,7 @@
         "name": "Distribution pump speed"
       },
       "gp2_pump_speed": {
-        "name": "DHW circulation pump speed"
+        "name": "DHW charging pump speed"
       },
       "fan_speed": {
         "name": "Fan speed"
@@ -415,13 +415,13 @@
         "name": "Relay GP10"
       },
       "relay_qm10": {
-        "name": "Relay QM10"
+        "name": "Diverter valve QM10"
       },
       "relay_qn8_1": {
-        "name": "Relay QN8-1"
+        "name": "Shunt valve 1"
       },
       "relay_qn8_2": {
-        "name": "Relay QN8-2"
+        "name": "Shunt valve 2"
       },
       "relay_gp3": {
         "name": "Relay GP3"
@@ -586,33 +586,6 @@
           "extra": "Extra",
           "reduced": "Reduced"
         }
-      },
-      "heating_priority_time": {
-        "name": "Heating priority time",
-        "state": {
-          "normal_30min": "Normal (30 minutes)",
-          "plus_1h": "+ (1 hour)",
-          "plus_plus_2h": "++ (2 hours)",
-          "custom": "Custom"
-        }
-      },
-      "cooling_priority_time": {
-        "name": "Cooling priority time",
-        "state": {
-          "normal_30min": "Normal (30 minutes)",
-          "plus_1h": "+ (1 hour)",
-          "plus_plus_2h": "++ (2 hours)",
-          "custom": "Custom"
-        }
-      },
-      "dhw_priority_time": {
-        "name": "DHW priority time",
-        "state": {
-          "normal_30min": "Normal (30 minutes)",
-          "plus_1h": "+ (1 hour)",
-          "plus_plus_2h": "++ (2 hours)",
-          "custom": "Custom"
-        }
       }
     },
     "number": {
@@ -702,6 +675,15 @@
       },
       "compressor_fan_speed": {
         "name": "Compressor fan speed"
+      },
+      "heating_priority_time": {
+        "name": "Heating priority time"
+      },
+      "cooling_priority_time": {
+        "name": "Cooling priority time"
+      },
+      "dhw_priority_time": {
+        "name": "DHW priority time"
       }
     },
     "button": {

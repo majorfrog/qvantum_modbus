@@ -147,6 +147,9 @@ class ModbusSwitchEntityDescription(SwitchEntityDescription):
     address: int = 0
     input_type: str = INPUT_TYPE_HOLDING
     data_type: str = DATA_TYPE_UINT16
+    # When set, the entity is only available if coordinator.data[key] == value.
+    # Use this to gate entities that are meaningless outside a specific mode.
+    available_when: dict[str, float] | None = None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -193,6 +196,7 @@ class ModbusNumberEntityDescription(NumberEntityDescription):
     native_min_value: float = 0.0
     native_max_value: float = 100.0
     native_step: float = 1.0
+    available_when: dict[str, float] | None = None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -287,6 +291,7 @@ def create_heating_curve_point(key: str, address: int) -> ModbusNumberEntityDesc
         native_min_value=10,
         native_max_value=80,
         entity_category=EntityCategory.CONFIG,
+        available_when={"curve_type_heating": 1.0},
     )
 
 
@@ -305,20 +310,19 @@ def create_percent_number(
     )
 
 
-_PRIORITY_TIME_OPTIONS = ["normal_30min", "plus_1h", "plus_plus_2h", "custom"]
-_PRIORITY_TIME_MAP = {30: "normal_30min", 60: "plus_1h", 120: "plus_plus_2h"}
-
-
 def create_priority_time_number(
     key: str, address: int
-) -> ModbusSelectEntityDescription:
-    """Create a priority time select (30 / 60 / 120 minutes, CONFIG)."""
-    return ModbusSelectEntityDescription(
+) -> ModbusNumberEntityDescription:
+    """Create a priority time number (0..480 minutes, UINT16, CONFIG)."""
+    return ModbusNumberEntityDescription(
         key=key,
         translation_key=key,
         address=address,
-        options=_PRIORITY_TIME_OPTIONS,
-        value_map=_PRIORITY_TIME_MAP,
+        native_unit_of_measurement=UnitOfTime.MINUTES,
+        device_class=NumberDeviceClass.DURATION,
+        native_min_value=0,
+        native_max_value=480,
+        entity_category=EntityCategory.CONFIG,
     )
 
 
@@ -877,15 +881,15 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
     ),
     # Note! This does not work.
     # This sensor does not work. It will return 2 chars top, but region could be SE4.
-    # create_generic_sensor(
-    #     "electricity_price_region",
-    #     165,
-    #     data_type=DATA_TYPE_ASCII,
-    #     state_class=None,
-    #     scale=1.0,
-    #     precision=0,
-    #     entity_category=EntityCategory.DIAGNOSTIC,
-    # ),
+    create_generic_sensor(
+        "electricity_price_region",
+        165,
+        data_type=DATA_TYPE_ASCII,
+        state_class=None,
+        scale=1.0,
+        precision=0,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
     # -------------------------------------------------------------------------
     # Device info (diagnostic) — Input registers 180–193
     # (wifi_connected, cloud_connected, vacation_mode → binary_sensor platform)
@@ -1316,21 +1320,29 @@ SWITCH_DESCRIPTIONS: tuple[ModbusSwitchEntityDescription, ...] = (
         key="manual_allow_heating",
         translation_key="manual_allow_heating",
         address=2,
+        available_when={"operation_mode": 1.0},
+        entity_category=EntityCategory.CONFIG,
     ),
     ModbusSwitchEntityDescription(
         key="manual_allow_cooling",
         translation_key="manual_allow_cooling",
         address=3,
+        available_when={"operation_mode": 1.0},
+        entity_category=EntityCategory.CONFIG,
     ),
     ModbusSwitchEntityDescription(
         key="manual_allow_addition",
         translation_key="manual_allow_addition",
         address=4,
+        available_when={"operation_mode": 1.0},
+        entity_category=EntityCategory.CONFIG,
     ),
     ModbusSwitchEntityDescription(
         key="manual_allow_dhw",
         translation_key="manual_allow_dhw",
         address=5,
+        available_when={"operation_mode": 1.0},
+        entity_category=EntityCategory.CONFIG,
     ),
     ModbusSwitchEntityDescription(
         key="dew_point_protection",
@@ -1378,6 +1390,7 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
         key="operation_mode",
         translation_key="operation_mode",
         address=1,
+        entity_category=EntityCategory.CONFIG,
         options=["auto", "manual", "only_addition"],
         value_map={0: "auto", 1: "manual", 2: "only_addition"},
     ),
@@ -1453,9 +1466,6 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
         options=["off", "normal", "extra", "reduced"],
         value_map={0: "off", 1: "normal", 2: "extra", 3: "reduced"},
     ),
-    create_priority_time_number("heating_priority_time", 73),
-    create_priority_time_number("cooling_priority_time", 74),
-    create_priority_time_number("dhw_priority_time", 75),
 )
 
 # ---------------------------------------------------------------------------
@@ -1531,6 +1541,10 @@ NUMBER_DESCRIPTIONS: tuple[ModbusNumberEntityDescription, ...] = (
     create_percent_number("ventilation_fan_speed_normal", 70),
     create_percent_number("ventilation_fan_speed_extra", 71),
     create_percent_number("compressor_fan_speed", 72),
+    # --- Priority time (minutes, UINT16, 0..480) ---
+    create_priority_time_number("heating_priority_time", 73),
+    create_priority_time_number("cooling_priority_time", 74),
+    create_priority_time_number("dhw_priority_time", 75),
 )
 
 # ---------------------------------------------------------------------------

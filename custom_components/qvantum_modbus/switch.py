@@ -49,13 +49,22 @@ class QvantumModbusSwitch(QvantumModbusEntity, SwitchEntity):
 
     @property
     def available(self) -> bool:
-        """Return True when coordinator succeeded and the register has a value."""
+        """Return True when coordinator succeeded and the register has a value.
+
+        If the description specifies ``available_when``, also requires that
+        every listed key in coordinator data equals the expected value.  This
+        makes mode-gated entities (e.g. manual-mode switches) appear
+        unavailable when the device is not in the relevant mode.
+        """
         if not super().available:
             return False
-        return (
-            self.coordinator.data is not None
-            and self.coordinator.data.get(self.entity_description.key) is not None
-        )
+        data = self.coordinator.data
+        if data is None or data.get(self.entity_description.key) is None:
+            return False
+        condition = self.entity_description.available_when
+        if condition and any(data.get(k) != v for k, v in condition.items()):
+            return False
+        return True
 
     @property
     def is_on(self) -> bool | None:

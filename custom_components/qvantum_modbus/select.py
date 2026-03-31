@@ -62,27 +62,14 @@ class QvantumModbusSelect(QvantumModbusEntity, SelectEntity):
 
     @property
     def current_option(self) -> str | None:
-        """Return the currently selected option.
-
-        Returns ``"custom"`` when the device reports a value that is not in the
-        predefined option map and ``"custom"`` is listed as a valid option.
-        This avoids the entity showing no selection for out-of-spec values.
-        """
+        """Return the currently selected option, or None for unmapped values."""
         raw = self.coordinator.data.get(self.entity_description.key)
         if raw is None:
             return None
-        mapped = self.entity_description.value_map.get(int(raw))
-        if mapped is None and "custom" in self.entity_description.options:
-            return "custom"
-        return mapped
+        return self.entity_description.value_map.get(int(raw))
 
     async def async_select_option(self, option: str) -> None:
         """Write the selected option to the holding register."""
-        if option == "custom":
-            raise HomeAssistantError(
-                translation_domain=DOMAIN,
-                translation_key="write_failed",
-            )
         desc = self.entity_description
         raw = next((k for k, v in desc.value_map.items() if v == option), None)
         if raw is None:

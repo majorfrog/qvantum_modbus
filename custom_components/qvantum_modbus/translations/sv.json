@@ -116,7 +116,7 @@
         "name": "Förångarens inloppstemperatur"
       },
       "bt23_suction_line": {
-        "name": "Sugsidans temperatur"
+        "name": "Suggasledningens temperatur"
       },
       "bt24_crank_case": {
         "name": "Vevhustemperatur"
@@ -128,10 +128,10 @@
         "name": "Varmvattnets inloppstemperatur"
       },
       "bt33_dhw_secondary_inlet": {
-        "name": "Varmvattnets sekundära inloppstemperatur"
+        "name": "Kallvattnets inloppstemperatur"
       },
       "bt34_dhw_secondary_outlet": {
-        "name": "Varmvattnets sekundära utloppstemperatur"
+        "name": "Varmvattens utloppstemperatur"
       },
       "bt_aux": {
         "name": "Hjälptemperatur"
@@ -158,10 +158,10 @@
         "name": "Varmvattenpumpens hastighet"
       },
       "gp1_pump_speed": {
-        "name": "Distributionspumpens hastighet"
+        "name": "Cirkulationspumpens hastighet (värme)"
       },
       "gp2_pump_speed": {
-        "name": "VV-cirkulationspumpens hastighet"
+        "name": "Laddpumpens hastighet (varmvatten)"
       },
       "fan_speed": {
         "name": "Fläkthastighet"
@@ -415,13 +415,13 @@
         "name": "Relä GP10"
       },
       "relay_qm10": {
-        "name": "Relä QM10"
+        "name": "Växelventil"
       },
       "relay_qn8_1": {
-        "name": "Relä QN8-1"
+        "name": "Shuntventil 1"
       },
       "relay_qn8_2": {
-        "name": "Relä QN8-2"
+        "name": "Shuntventil 2"
       },
       "relay_gp3": {
         "name": "Relä GP3"
@@ -585,33 +585,6 @@
           "extra": "Extra",
           "reduced": "Reducerad"
         }
-      },
-      "heating_priority_time": {
-        "name": "Värmeprioritetstid",
-        "state": {
-          "normal_30min": "Normal (30 minuter)",
-          "plus_1h": "+ (1 timme)",
-          "plus_plus_2h": "++ (2 timmar)",
-          "custom": "Anpassad"
-        }
-      },
-      "cooling_priority_time": {
-        "name": "Kylprioritetstid",
-        "state": {
-          "normal_30min": "Normal (30 minuter)",
-          "plus_1h": "+ (1 timme)",
-          "plus_plus_2h": "++ (2 timmar)",
-          "custom": "Anpassad"
-        }
-      },
-      "dhw_priority_time": {
-        "name": "VV-prioritetstid",
-        "state": {
-          "normal_30min": "Normal (30 minuter)",
-          "plus_1h": "+ (1 timme)",
-          "plus_plus_2h": "++ (2 timmar)",
-          "custom": "Anpassad"
-        }
       }
     },
     "number": {
@@ -701,6 +674,15 @@
       },
       "compressor_fan_speed": {
         "name": "Kompressorfläktens hastighet"
+      },
+      "heating_priority_time": {
+        "name": "Värmeprioritetstid"
+      },
+      "cooling_priority_time": {
+        "name": "Kylprioritetstid"
+      },
+      "dhw_priority_time": {
+        "name": "VV-prioritetstid"
       }
     },
     "button": {
