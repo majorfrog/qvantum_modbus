@@ -52,7 +52,17 @@ Key principles:
          /path/to/homeassistant/config/custom_components/
    ```
 
-4. **Restart Home Assistant**
+4. **Activate the Git hooks** (one-off, per clone)
+
+   ```bash
+   git config core.hooksPath .githooks
+   ```
+
+   This enables a pre-commit hook that automatically increments the patch number
+   in `manifest.json` on every commit. To bump the minor or major version,
+   edit `manifest.json` manually before committing.
+
+5. **Restart Home Assistant**
    - The integration should now be available
 
 ## How to Contribute
