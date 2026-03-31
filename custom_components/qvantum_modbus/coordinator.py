@@ -291,6 +291,12 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
             raise
         except ModbusException as err:
             if isinstance(err.__cause__, asyncio.CancelledError):
+                # pymodbus wraps CancelledError when the event loop cancels an
+                # in-flight request during HA shutdown.  Close the transport
+                # explicitly so the TCP FIN is sent before propagating; otherwise
+                # the device may see a half-open connection and refuse the next
+                # reconnect attempt.
+                self._client.close()
                 raise err.__cause__
             _LOGGER.warning(
                 "Modbus protocol error reading %s (address %d): %s",
