@@ -61,6 +61,18 @@ class QvantumModbusEntity(CoordinatorEntity["QvantumModbusCoordinator"]):
 
     _attr_has_entity_name = True
 
+    @property
+    def suggested_object_id(self) -> str | None:
+        """Use the register key as the entity ID slug.
+
+        This ensures entity IDs are stable, key-based identifiers
+        (e.g. ``number.qvantum_heat_pump_heating_curve_minus20``) rather than
+        being derived from the translated entity name, which can produce
+        duplicates or unhelpful slugs.
+        """
+        desc = getattr(self, "entity_description", None)
+        return desc.key if desc is not None else None
+
     def __init__(self, coordinator: QvantumModbusCoordinator) -> None:
         """Initialise the base entity."""
         super().__init__(coordinator)

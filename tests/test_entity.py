@@ -47,7 +47,9 @@ async def test_entity_logs_once_when_unavailable(
     )
     coordinator = init_integration.runtime_data
 
-    with caplog.at_level(logging.INFO, logger="custom_components.qvantum_modbus.entity"):
+    with caplog.at_level(
+        logging.INFO, logger="custom_components.qvantum_modbus.entity"
+    ):
         await coordinator.async_refresh()
         await hass.async_block_till_done()
 
@@ -94,7 +96,9 @@ async def test_entity_logs_once_when_recovering(
     )
 
     caplog.clear()
-    with caplog.at_level(logging.INFO, logger="custom_components.qvantum_modbus.entity"):
+    with caplog.at_level(
+        logging.INFO, logger="custom_components.qvantum_modbus.entity"
+    ):
         await coordinator.async_refresh()
         await hass.async_block_till_done()
 
