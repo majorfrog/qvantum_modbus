@@ -554,7 +554,7 @@
         "name": "Värmekurvetyp",
         "state": {
           "auto": "Auto",
-          "user_defined": "Användardefinierad"
+          "user_defined": "Manuell"
         }
       },
       "cooling_curve_parallel_offset": {

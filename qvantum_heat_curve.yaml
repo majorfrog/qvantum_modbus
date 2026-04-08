@@ -1,0 +1,149 @@
+title: Heat Curve
+views:
+  - title: Heat Curve
+    path: heat-curve
+    icon: mdi:chart-bell-curve-cumulative
+    type: sections
+    sections:
+      # ------------------------------------------------------------------
+      # Curve type and global offsets
+      # ------------------------------------------------------------------
+      - type: grid
+        title: Curve type and offset
+        cards:
+          - type: entities
+            title: Settings
+            entities:
+              - entity: select.qvantum_heat_pump_curve_type_heating
+                name: Curve type
+              - entity: number.qvantum_heat_pump_temp_compensation_curve_heating
+                name: Temperature compensation curve
+              - entity: select.qvantum_heat_pump_heating_curve_parallel_offset
+                name: Parallel offset
+              - entity: sensor.qvantum_heat_pump_heating_curve_offset
+                name: Curve offset
+              - entity: number.qvantum_heat_pump_max_heating_supply_temp
+                name: Max supply temperature
+              - entity: number.qvantum_heat_pump_min_heating_supply_temp
+                name: Min supply temperature
+              - entity: number.qvantum_heat_pump_pump_speed_heating
+                name: Pump speed (heating)
+              - entity: number.qvantum_heat_pump_pump_speed_idle
+                name: Pump speed (idle)
+              - entity: select.qvantum_heat_pump_desired_indoor_temperature
+                name: Desired indoor temperature
+
+      # ------------------------------------------------------------------
+      # User-defined curve: live table, history graph, and sliders
+      # ------------------------------------------------------------------
+      - type: grid
+        title: Custom heat curve
+        cards:
+          # Curve graph: outdoor temp on X axis, supply temp on Y axis ------
+          - type: custom:plotly-graph
+            raw_plotly_config: true
+            entities:
+              - entity: ""
+                name: Heat curve
+                mode: lines+markers
+                x: [30, 20, 10, 0, -10, -20, -30]
+                y: |
+                  $ex [
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_30']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_20']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_10']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_0']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_minus10']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_minus20']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_minus30']?.state ?? 0)
+                  ]
+              - entity: ""
+                name: Max supply temp
+                mode: lines
+                x: [30, -30]
+                y: |
+                  $ex (() => {
+                    const v = parseFloat(hass.states['number.qvantum_heat_pump_max_heating_supply_temp']?.state ?? 0);
+                    return [v, v];
+                  })()
+                line:
+                  color: red
+                  dash: dash
+                  width: 1
+                showlegend: true
+              - entity: ""
+                name: Min supply temp
+                mode: lines
+                x: [30, -30]
+                y: |
+                  $ex (() => {
+                    const v = parseFloat(hass.states['number.qvantum_heat_pump_min_heating_supply_temp']?.state ?? 0);
+                    return [v, v];
+                  })()
+                line:
+                  color: red
+                  dash: dot
+                  width: 1
+                showlegend: true
+              # Internal entities trigger re-render when slider values change
+              - entity: number.qvantum_heat_pump_max_heating_supply_temp
+                internal: true
+              - entity: number.qvantum_heat_pump_min_heating_supply_temp
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_minus30
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_minus20
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_minus10
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_0
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_10
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_20
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_30
+                internal: true
+            layout:
+              height: 330
+              margin:
+                l: 60
+                r: 20
+                t: 20
+                b: 80
+              xaxis:
+                type: linear
+                title: Outdoor temperature (°C)
+                range: [30, -30]
+                fixedrange: true
+                tickmode: array
+                tickvals: [30, 20, 10, 0, -10, -20, -30]
+                ticktext: ["30", "20", "10", "0", "-10", "-20", "-30"]
+              yaxis:
+                title: Supply temperature (°C)
+                fixedrange: true
+                autorange: true
+            config:
+              displayModeBar: false
+              scrollZoom: false
+              responsive: true
+
+          # Sliders to adjust each curve point ------------------------------
+          - type: entities
+            title: Adjust heat curve
+            entities:
+              - entity: number.qvantum_heat_pump_heating_curve_minus30
+                name: "-30 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_minus20
+                name: "-20 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_minus10
+                name: "-10 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_0
+                name: "0 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_10
+                name: "10 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_20
+                name: "20 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_30
+                name: "30 °C outdoor → supply"
+

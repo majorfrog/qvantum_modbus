@@ -7,10 +7,6 @@ an import cycle.
 Import hierarchy (no cycles):
     const.py  ←  models.py  ←  coordinator.py  ←  sensor.py
                                                ←  __init__.py
-
-A small note; entities with prefix qgm1 or qgm2.  These registers are currently not working, as they return error on read.
-They are left in the codebase for future testing and implementation when the issue is resolved. Could be that the device
-testing on does not support it.
 """
 
 from __future__ import annotations
@@ -458,26 +454,6 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
     create_temp_sensor("heating_curve_offset", 37),
     create_temp_sensor("parallel_cooling_offset", 38),
     # -------------------------------------------------------------------------
-    # QGM1 module temperatures — Input registers 119–124
-    # NOTE! These does not work! They return error
-    # -------------------------------------------------------------------------
-    # create_temp_sensor("qgm1_bt10_outlet", 119),
-    # create_temp_sensor("qgm1_bt13_inlet", 120),
-    # create_temp_sensor("qgm1_bt14_source_return", 121),
-    # create_temp_sensor("qgm1_bt15_source_outlet", 122),
-    # create_temp_sensor("qgm1_bt20_exhaust", 123),
-    # create_temp_sensor("qgm1_bt23_suction", 124),
-    # -------------------------------------------------------------------------
-    # QGM2 module temperatures — Input registers 134–139
-    # NOTE! These does not work! They return error
-    # -------------------------------------------------------------------------
-    # create_temp_sensor("qgm2_bt10_outlet", 134),
-    # create_temp_sensor("qgm2_bt13_inlet", 135),
-    # create_temp_sensor("qgm2_bt14_source_return", 136),
-    # create_temp_sensor("qgm2_bt15_source_outlet", 137),
-    # create_temp_sensor("qgm2_bt20_exhaust", 138),
-    # create_temp_sensor("qgm2_bt23_suction", 139),
-    # -------------------------------------------------------------------------
     # Flow and pump speeds — Input registers 26–31
     # -------------------------------------------------------------------------
     create_generic_sensor(
@@ -735,46 +711,6 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         options=["unlocked", "locked"],
         value_map={0: "unlocked", 1: "locked"},
     ),
-    # -------------------------------------------------------------------------
-    # QGM1 non-temperature sensors — Input registers 125–131
-    # NOTE! These does not work! They return error
-    # -------------------------------------------------------------------------
-    # create_generic_sensor(
-    #     "qgm1_bp1_low_pressure", 125, data_type=DATA_TYPE_INT16, scale=0.01, precision=2
-    # ),
-    # create_generic_sensor(
-    #     "qgm1_bp2_high_pressure",
-    #     126,
-    #     data_type=DATA_TYPE_INT16,
-    #     scale=0.01,
-    #     precision=2,
-    # ),
-    # create_generic_sensor(
-    #     "qgm1_compressor_speed",
-    #     128,
-    #     data_type=DATA_TYPE_INT16,
-    #     native_unit_of_measurement="rps",
-    # ),
-    # -------------------------------------------------------------------------
-    # QGM2 non-temperature sensors — Input registers 140–146
-    # NOTE! These does not work! They return error
-    # -------------------------------------------------------------------------
-    # create_generic_sensor(
-    #     "qgm2_bp1_low_pressure", 140, data_type=DATA_TYPE_INT16, scale=0.01, precision=2
-    # ),
-    # create_generic_sensor(
-    #     "qgm2_bp2_high_pressure",
-    #     141,
-    #     data_type=DATA_TYPE_INT16,
-    #     scale=0.01,
-    #     precision=2,
-    # ),
-    # create_generic_sensor(
-    #     "qgm2_compressor_speed",
-    #     143,
-    #     data_type=DATA_TYPE_INT16,
-    #     native_unit_of_measurement="rps",
-    # ),
     # -------------------------------------------------------------------------
     # Alarm registers — Input registers 150–155
     # -------------------------------------------------------------------------
@@ -1036,52 +972,6 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
         translation_key="freeze_protection_active",
         address=87,
     ),
-    # -------------------------------------------------------------------------
-    # QGM1 binary states — Input registers 129–131
-    # NOTE! These does not work! They return error
-    # -------------------------------------------------------------------------
-    # ModbusBinarySensorEntityDescription(
-    #     key="qgm1_4way_valve",
-    #     translation_key="qgm1_4way_valve",
-    #     address=129,
-    #
-    # ),
-    # ModbusBinarySensorEntityDescription(
-    #     key="qgm1_flow_switch",
-    #     translation_key="qgm1_flow_switch",
-    #     address=130,
-    #
-    # ),
-    # ModbusBinarySensorEntityDescription(
-    #     key="qgm1_gp4_pump",
-    #     translation_key="qgm1_gp4_pump",
-    #     address=131,
-    #     device_class=BinarySensorDeviceClass.RUNNING,
-    #
-    # ),
-    # -------------------------------------------------------------------------
-    # QGM2 binary states — Input registers 144–146
-    # NOTE! These does not work! They return error
-    # -------------------------------------------------------------------------
-    # ModbusBinarySensorEntityDescription(
-    #     key="qgm2_4way_valve",
-    #     translation_key="qgm2_4way_valve",
-    #     address=144,
-    #
-    # ),
-    # ModbusBinarySensorEntityDescription(
-    #     key="qgm2_flow_switch",
-    #     translation_key="qgm2_flow_switch",
-    #     address=145,
-    #
-    # ),
-    # ModbusBinarySensorEntityDescription(
-    #     key="qgm2_gp4_pump",
-    #     translation_key="qgm2_gp4_pump",
-    #     address=146,
-    #     device_class=BinarySensorDeviceClass.RUNNING,
-    #
-    # ),
     # -------------------------------------------------------------------------
     # Smart grid ready — Input registers 158–159
     # -------------------------------------------------------------------------

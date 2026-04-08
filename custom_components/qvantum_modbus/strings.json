@@ -354,7 +354,7 @@
         "name": "Heating curve type",
         "state": {
           "auto": "Auto",
-          "user_defined": "User defined"
+          "user_defined": "Manual"
         }
       },
       "cooling_curve_parallel_offset": {

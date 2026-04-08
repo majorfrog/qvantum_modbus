@@ -197,6 +197,21 @@ qvantum_modbus:
 
 ---
 
+## Heating curve dashboard
+
+The integration exposes seven `number` entities that represent the custom
+heating curve — one supply temperature target per outdoor temperature point
+(−30 °C to +30 °C). You can visualise and adjust the curve directly from a
+Home Assistant dashboard.
+
+See **[HEAT_CURVE.md](HEAT_CURVE.md)** for the full guide, including:
+
+- Which entities to enable before use (disabled by default)
+- How to install the [Plotly Graph Card](https://github.com/dbuezas/lovelace-plotly-graph-card)
+- How to import the ready-made dashboard view ([`qvantum_heat_curve.yaml`](qvantum_heat_curve.yaml))
+
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
