@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
+
+_LOGGER = logging.getLogger(__name__)
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.core import HomeAssistant
@@ -76,7 +79,14 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
             return None
         value_map = self.entity_description.value_map
         if value_map is not None:
-            return value_map.get(int(raw))
+            mapped = value_map.get(int(raw))
+            if mapped is None:
+                _LOGGER.warning(
+                    "Unmapped value %d for %s",
+                    int(raw),
+                    self.entity_description.key,
+                )
+            return mapped
         return raw
 
 

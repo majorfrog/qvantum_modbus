@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
+
+_LOGGER = logging.getLogger(__name__)
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.core import HomeAssistant
@@ -66,7 +69,14 @@ class QvantumModbusSelect(QvantumModbusEntity, SelectEntity):
         raw = self.coordinator.data.get(self.entity_description.key)
         if raw is None:
             return None
-        return self.entity_description.value_map.get(int(raw))
+        mapped = self.entity_description.value_map.get(int(raw))
+        if mapped is None:
+            _LOGGER.warning(
+                "Unmapped value %d for %s",
+                int(raw),
+                self.entity_description.key,
+            )
+        return mapped
 
     async def async_select_option(self, option: str) -> None:
         """Write the selected option to the holding register."""

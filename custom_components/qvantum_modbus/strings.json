@@ -282,11 +282,11 @@
       "fw_version": { "name": "Firmware version" }
     },
     "binary_sensor": {
-      "relay_l1": { "name": "Relay L1" },
-      "relay_l2": { "name": "Relay L2" },
-      "relay_l3": { "name": "Relay L3" },
+      "relay_l1": { "name": "Addition L1" },
+      "relay_l2": { "name": "Addition L2" },
+      "relay_l3": { "name": "Addition L3" },
       "relay_gp10": { "name": "Relay GP10" },
-      "relay_qm10": { "name": "Diverter valve" },
+      "relay_qm10": { "name": "Diverter valve QM10" },
       "relay_qn8_1": { "name": "Shunt valve 1" },
       "relay_qn8_2": { "name": "Shunt valve 2" },
       "relay_gp3": { "name": "Relay GP3" },
