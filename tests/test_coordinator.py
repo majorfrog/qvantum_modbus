@@ -106,6 +106,30 @@ async def test_connect_failure_raises_update_failed(hass: HomeAssistant) -> None
         await coordinator._async_update_data()
 
 
+async def test_connect_oserror_raises_update_failed(hass: HomeAssistant) -> None:
+    """When connect() raises OSError (e.g. serial port not found) the coordinator raises UpdateFailed."""
+    mock_client = MagicMock()
+    mock_client.connected = False
+    mock_client.connect = AsyncMock(side_effect=OSError("No such file or directory"))
+    mock_client.close = MagicMock()
+    coordinator = _make_coordinator(hass, mock_client)
+
+    with pytest.raises(UpdateFailed):
+        await coordinator._async_update_data()
+
+
+async def test_connect_timeout_raises_update_failed(hass: HomeAssistant) -> None:
+    """When connect() times out the coordinator raises UpdateFailed."""
+    mock_client = MagicMock()
+    mock_client.connected = False
+    mock_client.connect = AsyncMock(side_effect=asyncio.TimeoutError)
+    mock_client.close = MagicMock()
+    coordinator = _make_coordinator(hass, mock_client)
+
+    with pytest.raises(UpdateFailed):
+        await coordinator._async_update_data()
+
+
 async def test_connect_failure_applies_backoff(hass: HomeAssistant) -> None:
     """Each connection failure doubles the poll interval."""
     mock_client = MagicMock()

@@ -267,6 +267,7 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
             bytesize=data[CONF_BYTESIZE],
             parity=data[CONF_PARITY],
             stopbits=data[CONF_STOPBITS],
+            timeout=3,
         )
 
     async def _read_registers(
@@ -431,7 +432,11 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                 translation_key="write_failed",
             )
         if not self._client.connected:
-            if not await self._client.connect():
+            try:
+                connected = await asyncio.wait_for(self._client.connect(), timeout=10.0)
+            except (asyncio.TimeoutError, OSError):
+                connected = False
+            if not connected:
                 raise HomeAssistantError(
                     translation_domain=DOMAIN,
                     translation_key="cannot_connect",
@@ -461,7 +466,11 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
         # if the transport dropped, so we only check here to give an early,
         # clear UpdateFailed instead of an implicit ConnectionException.
         if not self._client.connected:
-            if not await self._client.connect():
+            try:
+                connected = await asyncio.wait_for(self._client.connect(), timeout=10.0)
+            except (asyncio.TimeoutError, OSError):
+                connected = False
+            if not connected:
                 self._apply_backoff()
                 raise UpdateFailed(
                     "Could not establish Modbus connection",

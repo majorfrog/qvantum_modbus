@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any, Self
 
@@ -244,7 +245,7 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                 port=int(user_input[CONF_PORT]),
             )
             try:
-                connected = await client.connect()
+                connected = await asyncio.wait_for(client.connect(), timeout=10.0)
             except Exception:  # noqa: BLE001 — catch-all to surface as UI error
                 _LOGGER.debug(
                     "TCP connection test failed for %s:%d",
@@ -301,7 +302,7 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                 stopbits=user_input[CONF_STOPBITS],
             )
             try:
-                connected = await client.connect()
+                connected = await asyncio.wait_for(client.connect(), timeout=10.0)
             except Exception:  # noqa: BLE001 — catch-all to surface as UI error
                 _LOGGER.debug(
                     "RTU connection test failed for port %s",
@@ -370,7 +371,7 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                 )
 
             try:
-                connected = await client.connect()
+                connected = await asyncio.wait_for(client.connect(), timeout=10.0)
             except Exception:  # noqa: BLE001 — catch-all to surface as UI error
                 errors["base"] = "cannot_connect"
             else:
