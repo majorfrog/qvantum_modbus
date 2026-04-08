@@ -569,14 +569,7 @@
           "smart": "Smart"
         }
       },
-      "dhw_outlet_temperature": {
-        "name": "VV-utloppstemperaturläge",
-        "state": {
-          "normal": "Normal",
-          "plus": "+",
-          "plus_plus": "++"
-        }
-      },
+
       "ventilation_state": {
         "name": "Ventilationsläge",
         "state": {
@@ -588,6 +581,7 @@
       }
     },
     "number": {
+      "dhw_outlet_temperature": { "name": "VV-utloppstemperatur" },
       "time_between_heating_cooling": {
         "name": "Tid mellan värme och kylning"
       },

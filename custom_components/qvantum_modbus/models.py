@@ -118,6 +118,7 @@ class ModbusCombinedSensorEntityDescription(SensorEntityDescription):
     entity_category: EntityCategory | None = None
     native_unit_of_measurement: str | None = None
     device_class: SensorDeviceClass | None = None
+    state_class: SensorStateClass | str | None = None
 
     # Sub-register descriptions the coordinator polls when this sensor is enabled.
     # Use underscore-prefixed keys (e.g. "_fw_major") to mark them as internal.
@@ -1342,14 +1343,6 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
         value_map={0: "eco", 1: "normal", 2: "extra", 3: "smart"},
     ),
     ModbusSelectEntityDescription(
-        key="dhw_outlet_temperature",
-        translation_key="dhw_outlet_temperature",
-        address=60,
-        entity_category=EntityCategory.CONFIG,
-        options=["normal", "plus", "plus_plus"],
-        value_map={0: "normal", 1: "plus", 2: "plus_plus"},
-    ),
-    ModbusSelectEntityDescription(
         key="ventilation_state",
         translation_key="ventilation_state",
         address=68,
@@ -1362,6 +1355,14 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
 # Number descriptions (holding registers, numeric range)
 # ---------------------------------------------------------------------------
 NUMBER_DESCRIPTIONS: tuple[ModbusNumberEntityDescription, ...] = (
+    # --- DHW outlet temperature ---
+    create_number_entity(
+        "dhw_outlet_temperature",
+        60,
+        data_type=DATA_TYPE_UINT16,
+        min_value=40,
+        max_value=60,
+    ),
     # --- Duration (hours) ---
     ModbusNumberEntityDescription(
         key="time_between_heating_cooling",
