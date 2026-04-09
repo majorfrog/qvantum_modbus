@@ -72,6 +72,10 @@ async def test_async_setup_with_yaml_config_imports_entry(
 
     assert result is True
 
+    # async_setup schedules the flow via async_create_task; yield to the event
+    # loop so the task actually runs before we inspect entries/flows.
+    await hass.async_block_till_done()
+
     # async_init queues a SOURCE_IMPORT flow; verify it was created/completed
     entries = hass.config_entries.async_entries(DOMAIN)
     # The flow may have completed as a new entry by now; either way, at least one

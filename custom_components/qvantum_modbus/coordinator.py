@@ -308,12 +308,15 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                 # reconnect attempt.
                 self._client.close()
                 raise err.__cause__
-            # Close the connection so the next poll starts with a fresh TCP
-            # handshake.  pymodbus reports the connection as "connected" even
-            # when the remote side has gone away (half-open socket), so without
-            # this the coordinator keeps re-using the stale transport and
-            # pymodbus floods the log with "wrong id" / 0xFF garbage errors.
-            self._client.close()
+            # For TCP: close the stale socket so the next poll opens a fresh
+            # connection.  pymodbus keeps reporting "connected" on a half-open
+            # TCP socket, leading to "wrong id" / 0xFF floods without this.
+            # For RTU serial: do NOT close — "no response" just means the device
+            # missed a request; the serial port is still healthy and closing it
+            # causes every subsequent read in the same poll to raise
+            # ConnectionException ("Not connected"), cascading into UpdateFailed.
+            if isinstance(self._client, AsyncModbusTcpClient):
+                self._client.close()
             _LOGGER.warning(
                 "Modbus protocol error reading %s (address %d): %s",
                 key,
