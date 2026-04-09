@@ -111,6 +111,10 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
         )
         self._client = self._build_client(config_entry.data)
         self._device_id: int = config_entry.data[CONF_UNIT_ID]
+        # Serialize all Modbus I/O.  Serial is strictly half-duplex; TCP needs
+        # this to prevent concurrent close()/reconnect calls from corrupting
+        # an in-flight request when a write arrives mid-poll.
+        self._modbus_lock = asyncio.Lock()
 
         # Cache of entity keys that are currently enabled in the entity registry.
         # None means "not yet computed" — populated on first poll and whenever the
@@ -279,18 +283,19 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
     ) -> list[int] | None:
         """Perform the raw Modbus read and return register list, or None on error."""
         try:
-            if input_type == INPUT_TYPE_INPUT:
-                result = await self._client.read_input_registers(
-                    address=address,
-                    count=count,
-                    device_id=self._device_id,
-                )
-            else:
-                result = await self._client.read_holding_registers(
-                    address=address,
-                    count=count,
-                    device_id=self._device_id,
-                )
+            async with self._modbus_lock:
+                if input_type == INPUT_TYPE_INPUT:
+                    result = await self._client.read_input_registers(
+                        address=address,
+                        count=count,
+                        device_id=self._device_id,
+                    )
+                else:
+                    result = await self._client.read_holding_registers(
+                        address=address,
+                        count=count,
+                        device_id=self._device_id,
+                    )
         except ConnectionException:
             # Let connection errors propagate — handled in _async_update_data
             raise
@@ -303,6 +308,12 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                 # reconnect attempt.
                 self._client.close()
                 raise err.__cause__
+            # Close the connection so the next poll starts with a fresh TCP
+            # handshake.  pymodbus reports the connection as "connected" even
+            # when the remote side has gone away (half-open socket), so without
+            # this the coordinator keeps re-using the stale transport and
+            # pymodbus floods the log with "wrong id" / 0xFF garbage errors.
+            self._client.close()
             _LOGGER.warning(
                 "Modbus protocol error reading %s (address %d): %s",
                 key,
@@ -431,24 +442,28 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                 translation_domain=DOMAIN,
                 translation_key="write_failed",
             )
-        if not self._client.connected:
-            try:
-                connected = await asyncio.wait_for(self._client.connect(), timeout=10.0)
-            except (asyncio.TimeoutError, OSError):
-                connected = False
-            if not connected:
-                raise HomeAssistantError(
-                    translation_domain=DOMAIN,
-                    translation_key="cannot_connect",
-                )
-        # Two's complement for signed 16-bit registers (e.g. S16 with negative values)
-        if value < 0:
-            value = value & 0xFFFF
-        result = await self._client.write_register(
-            address=address,
-            value=value,
-            device_id=self._device_id,
-        )
+        async with self._modbus_lock:
+            if not self._client.connected:
+                try:
+                    connected = await asyncio.wait_for(
+                        self._client.connect(), timeout=10.0
+                    )
+                except (asyncio.TimeoutError, OSError):
+                    connected = False
+                if not connected:
+                    raise HomeAssistantError(
+                        translation_domain=DOMAIN,
+                        translation_key="cannot_connect",
+                    )
+            # Two's complement for signed 16-bit registers (e.g. S16 with negative
+            # values)
+            if value < 0:
+                value = value & 0xFFFF
+            result = await self._client.write_register(
+                address=address,
+                value=value,
+                device_id=self._device_id,
+            )
         if result.isError():
             raise HomeAssistantError(
                 translation_domain=DOMAIN,
