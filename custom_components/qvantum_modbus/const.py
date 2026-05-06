@@ -6,6 +6,20 @@ from typing import Final
 
 DOMAIN: Final = "qvantum_modbus"
 
+# Service action names
+SERVICE_START_EXTRA_HOT_WATER: Final = "start_extra_hot_water"
+SERVICE_CANCEL_EXTRA_HOT_WATER: Final = "cancel_extra_hot_water"
+
+# Service field names
+ATTR_DURATION_HOURS: Final = "duration_hours"
+
+# DHW mode option values (must match SELECT_DESCRIPTIONS value_map in models.py)
+DHW_MODE_NORMAL: Final = "normal"
+DHW_MODE_EXTRA: Final = "extra"
+
+# Key used in coordinator.data for the DHW mode register
+DHW_MODE_KEY: Final = "dhw_mode"
+
 # Device identity constants
 MANUFACTURER: Final = "Qvantum"
 MODEL: Final = "Qvantum Heat Pump"

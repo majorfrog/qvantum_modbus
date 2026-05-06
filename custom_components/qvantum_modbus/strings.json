@@ -449,6 +449,12 @@
     },
     "unknown_option": {
       "message": "The selected option is not recognised by the device."
+    },
+    "unknown_dhw_mode": {
+      "message": "Unknown DHW mode '{mode}'. Cannot write to device."
+    },
+    "no_loaded_entry": {
+      "message": "No loaded Qvantum Modbus integration found. Make sure the device is configured and connected."
     }
   }
 }

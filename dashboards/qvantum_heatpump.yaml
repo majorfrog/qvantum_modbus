@@ -1,0 +1,608 @@
+title: Qvantum Heat Pump
+views:
+  # ===========================================================================
+  # Tab 1 — Overview: hot water boost, status, key temperatures, demands
+  # ===========================================================================
+  - title: Overview
+    path: overview
+    icon: mdi:heat-pump
+    type: sections
+    sections:
+      # -----------------------------------------------------------------------
+      # Hot water boost
+      # The integration provides two service actions:
+      #   qvantum_modbus.start_extra_hot_water  (duration_hours: 0.5–24, default 4)
+      #   qvantum_modbus.cancel_extra_hot_water
+      # The "Boost 4 h" button calls start_extra_hot_water with the default
+      # 4-hour duration. The service automatically restores the previous DHW
+      # mode when the timer expires or when cancel_extra_hot_water is called.
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Hot water boost
+        cards:
+          # Quick-action buttons -----------------------------------------------
+          - type: horizontal-stack
+            cards:
+              - type: button
+                name: "Boost 4 hours"
+                icon: mdi:water-boiler
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: qvantum_modbus.start_extra_hot_water
+                  service_data:
+                    duration_hours: 4
+              - type: button
+                name: "Cancel boost"
+                icon: mdi:water-boiler-off
+                show_state: false
+                tap_action:
+                  action: call-service
+                  service: qvantum_modbus.cancel_extra_hot_water
+
+          # Status entities ----------------------------------------------------
+          - type: entities
+            title: Hot water status
+            entities:
+              - entity: select.qvantum_heat_pump_dhw_mode
+                name: DHW mode
+              - entity: sensor.qvantum_heat_pump_bt30_dhw_tank
+                name: Tank temperature (BT30)
+              - entity: binary_sensor.qvantum_heat_pump_dhw_demand
+                name: Hot water demand active
+              - entity: binary_sensor.qvantum_heat_pump_dhw_priority
+                name: Hot water priority active
+              - entity: sensor.qvantum_heat_pump_dhw_priority_time_left
+                name: DHW priority time remaining
+              - entity: number.qvantum_heat_pump_dhw_priority_time
+                name: DHW priority duration (min)
+
+      # -----------------------------------------------------------------------
+      # Heat pump status
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Heat pump status
+        cards:
+          - type: entities
+            title: Status
+            entities:
+              - entity: switch.qvantum_heat_pump_unit_on_off
+                name: Unit on/off
+              - entity: sensor.qvantum_heat_pump_unit_state
+                name: Unit state
+              - entity: sensor.qvantum_heat_pump_heatpump_state
+                name: Heat pump state
+              - entity: sensor.qvantum_heat_pump_compressor_state
+                name: Compressor state
+              - entity: sensor.qvantum_heat_pump_degree_minute
+                name: Degree minute
+              - entity: binary_sensor.qvantum_heat_pump_compressor_blocked
+                name: Compressor blocked
+              - entity: sensor.qvantum_heat_pump_active_alarm_count
+                name: Active alarms
+
+      # -----------------------------------------------------------------------
+      # Key temperatures
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Key temperatures
+        cards:
+          - type: entities
+            title: Temperatures
+            entities:
+              - entity: sensor.qvantum_heat_pump_bt30_dhw_tank
+                name: Hot water tank (BT30)
+              - entity: sensor.qvantum_heat_pump_bt1_outdoor
+                name: Outdoor (BT1)
+              - entity: sensor.qvantum_heat_pump_bt2_indoor
+                name: Indoor (BT2)
+              - entity: sensor.qvantum_heat_pump_bt11_supply_addition
+                name: Heating supply (BT11)
+              - entity: sensor.qvantum_heat_pump_calc_supply_heating
+                name: Target heating supply
+              - entity: sensor.qvantum_heat_pump_bt10_condenser_outlet
+                name: Condenser outlet (BT10)
+              - entity: sensor.qvantum_heat_pump_bt14_source_flow
+                name: Source flow (BT14)
+              - entity: sensor.qvantum_heat_pump_bt15_source_return
+                name: Source return (BT15)
+
+      # -----------------------------------------------------------------------
+      # Active demands and priority timers
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Demands & priority
+        cards:
+          - type: entities
+            title: Active demands
+            entities:
+              - entity: binary_sensor.qvantum_heat_pump_heating_demand
+                name: Heating demand
+              - entity: binary_sensor.qvantum_heat_pump_cooling_demand
+                name: Cooling demand
+              - entity: binary_sensor.qvantum_heat_pump_dhw_demand
+                name: Hot water demand
+              - entity: binary_sensor.qvantum_heat_pump_addition_demand
+                name: Addition heater demand
+              - entity: sensor.qvantum_heat_pump_heating_priority_time_left
+                name: Heating priority remaining
+              - entity: sensor.qvantum_heat_pump_dhw_priority_time_left
+                name: DHW priority remaining
+
+  # ===========================================================================
+  # Tab 2 — Sensors: all sensor data, sorted by category
+  # ===========================================================================
+  - title: Sensors
+    path: sensors
+    icon: mdi:thermometer-lines
+    type: sections
+    sections:
+      # -----------------------------------------------------------------------
+      # Main temperatures
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Main temperatures
+        cards:
+          - type: entities
+            title: Ambient & supply
+            entities:
+              - entity: sensor.qvantum_heat_pump_bt1_outdoor
+                name: Outdoor (BT1)
+              - entity: sensor.qvantum_heat_pump_bt2_indoor
+                name: Indoor (BT2)
+              - entity: sensor.qvantum_heat_pump_filtered_room
+                name: Filtered room temperature
+              - entity: sensor.qvantum_heat_pump_bt4
+                name: BT4
+              - entity: sensor.qvantum_heat_pump_bt11_supply_addition
+                name: Heating supply (BT11)
+              - entity: sensor.qvantum_heat_pump_bt12_supply_external
+                name: External supply (BT12)
+              - entity: sensor.qvantum_heat_pump_bt_aux
+                name: Auxiliary (BT-AUX)
+              - entity: sensor.qvantum_heat_pump_calc_supply_heating
+                name: Target heating supply
+              - entity: sensor.qvantum_heat_pump_calc_supply_cooling
+                name: Target cooling supply
+              - entity: sensor.qvantum_heat_pump_heating_curve_offset
+                name: Heating curve offset
+              - entity: sensor.qvantum_heat_pump_degree_minute
+                name: Degree minute
+
+      # -----------------------------------------------------------------------
+      # Hot water (DHW) temperatures
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Hot water temperatures
+        cards:
+          - type: entities
+            title: DHW sensors
+            entities:
+              - entity: sensor.qvantum_heat_pump_bt30_dhw_tank
+                name: Tank (BT30)
+              - entity: sensor.qvantum_heat_pump_bt31_dhw_inlet
+                name: Inlet (BT31)
+              - entity: sensor.qvantum_heat_pump_bt33_dhw_secondary_inlet
+                name: Cold inlet (BT33)
+              - entity: sensor.qvantum_heat_pump_bt34_dhw_secondary_outlet
+                name: Hot outlet (BT34)
+              - entity: sensor.qvantum_heat_pump_bf1_dhw_flow
+                name: DHW flow rate
+              - entity: sensor.qvantum_heat_pump_bf1_rpm
+                name: DHW pump RPM
+
+      # -----------------------------------------------------------------------
+      # Heat source temperatures
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Heat source temperatures
+        cards:
+          - type: entities
+            title: Source circuit
+            entities:
+              - entity: sensor.qvantum_heat_pump_bt10_condenser_outlet
+                name: Condenser outlet (BT10)
+              - entity: sensor.qvantum_heat_pump_bt13_condenser_inlet
+                name: Condenser inlet (BT13)
+              - entity: sensor.qvantum_heat_pump_bt14_source_flow
+                name: Source flow (BT14)
+              - entity: sensor.qvantum_heat_pump_bt15_source_return
+                name: Source return (BT15)
+
+      # -----------------------------------------------------------------------
+      # Refrigerant circuit temperatures
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Refrigerant circuit
+        cards:
+          - type: entities
+            title: Refrigerant sensors
+            entities:
+              - entity: sensor.qvantum_heat_pump_bt20_discharge_line
+                name: Discharge line (BT20)
+              - entity: sensor.qvantum_heat_pump_bt21_liquid_line
+                name: Liquid line (BT21)
+              - entity: sensor.qvantum_heat_pump_bt22_evaporator_inlet
+                name: Evaporator inlet (BT22)
+              - entity: sensor.qvantum_heat_pump_bt23_suction_line
+                name: Suction line (BT23)
+              - entity: sensor.qvantum_heat_pump_bt24_crank_case
+                name: Crankcase (BT24)
+
+      # -----------------------------------------------------------------------
+      # Pump speeds, compressor & fan
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Pumps, compressor & fan
+        cards:
+          - type: entities
+            title: Speeds
+            entities:
+              - entity: sensor.qvantum_heat_pump_gp1_pump_speed
+                name: Distribution pump GP1 (%)
+              - entity: sensor.qvantum_heat_pump_gp2_pump_speed
+                name: DHW charging pump GP2 (%)
+              - entity: sensor.qvantum_heat_pump_compressor_speed
+                name: Compressor speed (RPM)
+              - entity: sensor.qvantum_heat_pump_fan_speed
+                name: Fan speed (RPM)
+              - entity: sensor.qvantum_heat_pump_compressor_power
+                name: Compressor power (W)
+              - entity: sensor.qvantum_heat_pump_compressor_state
+                name: Compressor state
+              - entity: sensor.qvantum_heat_pump_time_to_defrost
+                name: Defrost needed
+              - entity: sensor.qvantum_heat_pump_compressor_run_time
+                name: Total run time
+              - entity: sensor.qvantum_heat_pump_compressor_starts
+                name: Total starts
+
+      # -----------------------------------------------------------------------
+      # Mode release flags (which functions are enabled)
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Mode release flags
+        cards:
+          - type: entities
+            title: Enabled functions
+            entities:
+              - entity: sensor.qvantum_heat_pump_heating_released
+                name: Heating enabled
+              - entity: sensor.qvantum_heat_pump_cooling_released
+                name: Cooling enabled
+              - entity: sensor.qvantum_heat_pump_compressor_released
+                name: Compressor enabled
+              - entity: sensor.qvantum_heat_pump_addition_released
+                name: Addition heater enabled
+              - entity: binary_sensor.qvantum_heat_pump_heating_demand
+                name: Heating demand
+              - entity: binary_sensor.qvantum_heat_pump_cooling_demand
+                name: Cooling demand
+              - entity: binary_sensor.qvantum_heat_pump_dhw_demand
+                name: Hot water demand
+              - entity: binary_sensor.qvantum_heat_pump_addition_demand
+                name: Addition heater demand
+
+      # -----------------------------------------------------------------------
+      # Energy counters
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Energy counters
+        cards:
+          - type: entities
+            title: Energy totals (kWh)
+            entities:
+              - entity: sensor.qvantum_heat_pump_compressor_energy_total
+                name: Compressor total
+              - entity: sensor.qvantum_heat_pump_heating_energy_total
+                name: Heating total
+              - entity: sensor.qvantum_heat_pump_dhw_energy_total
+                name: DHW total
+              - entity: sensor.qvantum_heat_pump_additional_energy_total
+                name: Additional heater total
+              - entity: sensor.qvantum_heat_pump_cooling_energy_total
+                name: Cooling total
+
+  # ===========================================================================
+  # Tab 3 — Configuration: pump operation, DHW, sensor selection, on/off
+  # ===========================================================================
+  - title: Configuration
+    path: configuration
+    icon: mdi:cog
+    type: sections
+    sections:
+      # -----------------------------------------------------------------------
+      # On/off and operation mode
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Operation
+        cards:
+          - type: entities
+            title: On/off and mode
+            entities:
+              - entity: switch.qvantum_heat_pump_unit_on_off
+                name: Unit on/off
+              - entity: select.qvantum_heat_pump_operation_mode
+                name: Operation mode (auto / manual / addition only)
+              - entity: binary_sensor.qvantum_heat_pump_vacation_mode
+                name: Vacation mode active
+
+      # -----------------------------------------------------------------------
+      # Manual mode permissions
+      # These switches only take effect when operation mode = Manual.
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Manual mode — allowed functions
+        cards:
+          - type: entities
+            title: Allow in manual mode
+            entities:
+              - entity: switch.qvantum_heat_pump_manual_allow_heating
+                name: Allow heating
+              - entity: switch.qvantum_heat_pump_manual_allow_cooling
+                name: Allow cooling
+              - entity: switch.qvantum_heat_pump_manual_allow_addition
+                name: Allow addition heater
+              - entity: switch.qvantum_heat_pump_manual_allow_dhw
+                name: Allow DHW
+
+      # -----------------------------------------------------------------------
+      # DHW (hot water) configuration
+      # Note: "number of people" for hot water sizing is a Qvantum web API
+      # feature and is not available over Modbus.
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Hot water configuration
+        cards:
+          - type: entities
+            title: DHW settings
+            entities:
+              - entity: select.qvantum_heat_pump_dhw_mode
+                name: DHW mode (Eco / Normal / Extra / Smart)
+              - entity: number.qvantum_heat_pump_dhw_outlet_temperature
+                name: Outlet temperature setpoint
+              - entity: number.qvantum_heat_pump_dhw_start_temp_normal
+                name: Start temperature — normal mode
+              - entity: number.qvantum_heat_pump_dhw_stop_temp_normal
+                name: Stop temperature — normal mode
+              - entity: number.qvantum_heat_pump_dhw_start_temp_extra
+                name: Start temperature — extra/boost mode
+              - entity: number.qvantum_heat_pump_dhw_stop_temp_extra
+                name: Stop temperature — extra/boost mode
+              - entity: number.qvantum_heat_pump_dhw_priority_time
+                name: DHW priority duration (min, 0=no priority)
+              - entity: switch.qvantum_heat_pump_dhw_uninterrupted_cooling
+                name: DHW uninterrupted cooling
+
+      # -----------------------------------------------------------------------
+      # Sensor selection
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Sensor configuration
+        cards:
+          - type: entities
+            title: Which sensors to use
+            entities:
+              - entity: select.qvantum_heat_pump_use_operation_mode_sensor
+                name: Operation mode sensor
+              - entity: select.qvantum_heat_pump_desired_indoor_temperature
+                name: Desired indoor temperature
+              - entity: number.qvantum_heat_pump_room_temp_external
+                name: External room temperature input
+              - entity: switch.qvantum_heat_pump_bt12_mounted
+                name: BT12 external supply sensor mounted
+              - entity: sensor.qvantum_heat_pump_bt2_detected
+                name: Indoor sensor (BT2) connection status
+              - entity: switch.qvantum_heat_pump_outdoor_air_mixed
+                name: Outdoor air mixed
+              - entity: number.qvantum_heat_pump_filtertime_outdoor_sensor
+                name: Outdoor sensor filter time (h)
+
+      # -----------------------------------------------------------------------
+      # Addition heater
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Addition heater
+        cards:
+          - type: entities
+            title: Addition heater settings
+            entities:
+              - entity: number.qvantum_heat_pump_allow_addition_temperature
+                name: Allow addition below outdoor temp (°C, -29 = off)
+              - entity: sensor.qvantum_heat_pump_addition_released
+                name: Addition heater enabled status
+              - entity: binary_sensor.qvantum_heat_pump_addition_demand
+                name: Addition heater demand active
+
+      # -----------------------------------------------------------------------
+      # Heating settings
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Heating settings
+        cards:
+          - type: entities
+            title: Heating
+            entities:
+              - entity: number.qvantum_heat_pump_outdoor_temp_stop_heating
+                name: Outdoor temp — stop heating (°C)
+              - entity: number.qvantum_heat_pump_heating_priority_time
+                name: Heating priority time (min, 0 = no priority)
+              - entity: number.qvantum_heat_pump_time_between_heating_cooling
+                name: Time between heating and cooling (h)
+              - entity: switch.qvantum_heat_pump_dew_point_protection
+                name: Dew point protection (cooling)
+              - entity: sensor.qvantum_heat_pump_heat_emitter_type
+                name: Heat emitter type
+
+      # -----------------------------------------------------------------------
+      # Alarms
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Alarms
+        cards:
+          - type: entities
+            title: Active alarms
+            entities:
+              - entity: sensor.qvantum_heat_pump_active_alarm_count
+                name: Active alarm count
+              - entity: sensor.qvantum_heat_pump_alarm_1_code
+                name: Alarm 1 code
+              - entity: sensor.qvantum_heat_pump_alarm_2_code
+                name: Alarm 2 code
+              - entity: sensor.qvantum_heat_pump_alarm_3_code
+                name: Alarm 3 code
+              - entity: sensor.qvantum_heat_pump_alarm_4_code
+                name: Alarm 4 code
+              - entity: sensor.qvantum_heat_pump_alarm_5_code
+                name: Alarm 5 code
+              - entity: button.qvantum_heat_pump_reset_alarms
+                name: Reset alarms
+
+  # ===========================================================================
+  # Tab 4 — Heat Curve (same content as qvantum_heat_curve.yaml)
+  # ===========================================================================
+  - title: Heat Curve
+    path: heat-curve
+    icon: mdi:chart-bell-curve-cumulative
+    type: sections
+    sections:
+      # -----------------------------------------------------------------------
+      # Curve type and global offsets
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Curve type and offset
+        cards:
+          - type: entities
+            title: Settings
+            entities:
+              - entity: select.qvantum_heat_pump_curve_type_heating
+                name: Curve type
+              - entity: number.qvantum_heat_pump_temp_compensation_curve_heating
+                name: Temperature compensation curve
+              - entity: select.qvantum_heat_pump_heating_curve_parallel_offset
+                name: Parallel offset
+              - entity: sensor.qvantum_heat_pump_heating_curve_offset
+                name: Curve offset
+              - entity: number.qvantum_heat_pump_max_heating_supply_temp
+                name: Max supply temperature
+              - entity: number.qvantum_heat_pump_min_heating_supply_temp
+                name: Min supply temperature
+              - entity: number.qvantum_heat_pump_pump_speed_heating
+                name: Pump speed (heating)
+              - entity: number.qvantum_heat_pump_pump_speed_idle
+                name: Pump speed (idle)
+              - entity: select.qvantum_heat_pump_desired_indoor_temperature
+                name: Desired indoor temperature
+
+      # -----------------------------------------------------------------------
+      # User-defined curve: live graph and sliders
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Custom heat curve
+        cards:
+          # Curve graph: outdoor temp on X axis, supply temp on Y axis --------
+          - type: custom:plotly-graph
+            raw_plotly_config: true
+            entities:
+              - entity: ""
+                name: Heat curve
+                mode: lines+markers
+                x: [30, 20, 10, 0, -10, -20, -30]
+                y: |
+                  $ex [
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_30']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_20']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_10']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_0']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_minus10']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_minus20']?.state ?? 0),
+                    parseFloat(hass.states['number.qvantum_heat_pump_heating_curve_minus30']?.state ?? 0)
+                  ]
+              - entity: ""
+                name: Max supply temp
+                mode: lines
+                x: [30, -30]
+                y: |
+                  $ex (() => {
+                    const v = parseFloat(hass.states['number.qvantum_heat_pump_max_heating_supply_temp']?.state ?? 0);
+                    return [v, v];
+                  })()
+                line:
+                  color: red
+                  dash: dash
+                  width: 1
+                showlegend: true
+              - entity: ""
+                name: Min supply temp
+                mode: lines
+                x: [30, -30]
+                y: |
+                  $ex (() => {
+                    const v = parseFloat(hass.states['number.qvantum_heat_pump_min_heating_supply_temp']?.state ?? 0);
+                    return [v, v];
+                  })()
+                line:
+                  color: red
+                  dash: dot
+                  width: 1
+                showlegend: true
+              - entity: number.qvantum_heat_pump_max_heating_supply_temp
+                internal: true
+              - entity: number.qvantum_heat_pump_min_heating_supply_temp
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_minus30
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_minus20
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_minus10
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_0
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_10
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_20
+                internal: true
+              - entity: number.qvantum_heat_pump_heating_curve_30
+                internal: true
+            layout:
+              height: 330
+              margin:
+                l: 60
+                r: 20
+                t: 20
+                b: 80
+              xaxis:
+                type: linear
+                title: Outdoor temperature (°C)
+                range: [30, -30]
+                fixedrange: true
+                tickmode: array
+                tickvals: [30, 20, 10, 0, -10, -20, -30]
+                ticktext: ["30", "20", "10", "0", "-10", "-20", "-30"]
+              yaxis:
+                title: Supply temperature (°C)
+                fixedrange: true
+                autorange: true
+            config:
+              displayModeBar: false
+              scrollZoom: false
+              responsive: true
+
+          # Sliders to adjust each curve point --------------------------------
+          - type: entities
+            title: Adjust heat curve
+            entities:
+              - entity: number.qvantum_heat_pump_heating_curve_minus30
+                name: "-30 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_minus20
+                name: "-20 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_minus10
+                name: "-10 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_0
+                name: "0 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_10
+                name: "10 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_20
+                name: "20 °C outdoor → supply"
+              - entity: number.qvantum_heat_pump_heating_curve_30
+                name: "30 °C outdoor → supply"

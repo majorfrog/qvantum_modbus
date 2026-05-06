@@ -183,3 +183,5 @@ cython_debug/
 TODO.md
 *registers.md
 quality_scale.yaml
+
+*.pdf

@@ -212,6 +212,142 @@ See **[HEAT_CURVE.md](HEAT_CURVE.md)** for the full guide, including:
 
 ---
 
+## Full control dashboard
+
+A ready-made four-tab Lovelace dashboard is included at
+[`dashboards/qvantum_heatpump.yaml`](dashboards/qvantum_heatpump.yaml).
+
+### Tabs
+
+| Tab | What it contains |
+|---|---|
+| **Overview** | Hot water boost buttons, heat pump status, key temperatures, active demands |
+| **Sensors** | All sensor data grouped by category (temperatures, DHW, refrigerant, pumps, energy) |
+| **Configuration** | Operation mode, manual mode permissions, DHW settings, sensor selection, alarms |
+| **Heat Curve** | Same interactive curve graph and sliders as the standalone heat curve dashboard |
+
+### How to add the dashboard
+
+1. Copy `dashboards/qvantum_heatpump.yaml` to your HA `config/dashboards/` folder.
+2. Add the following block under the `lovelace:` → `dashboards:` key in your `configuration.yaml`:
+
+```yaml
+lovelace:
+  dashboards:
+    lovelace-qvantum-heatpump:
+      mode: yaml
+      filename: dashboards/qvantum_heatpump.yaml
+      title: Qvantum Heat Pump
+      icon: mdi:heat-pump
+      show_in_sidebar: true
+```
+
+3. Restart Home Assistant. The dashboard appears in the sidebar as **Qvantum Heat Pump**.
+
+> **Note:** The Overview tab uses the
+> `qvantum_modbus.start_extra_hot_water` and
+> `qvantum_modbus.cancel_extra_hot_water` service actions described below.
+> The Heat Curve tab requires the
+> [Plotly Graph Card](https://github.com/dbuezas/lovelace-plotly-graph-card)
+> custom frontend card (install via HACS).
+
+---
+
+## Service actions
+
+The integration registers two service actions that are available from the UI
+(**Developer Tools → Services**), from automations, and from scripts.
+
+### `qvantum_modbus.start_extra_hot_water`
+
+Activates the **Extra** DHW mode for a configurable number of hours and then
+automatically restores the DHW mode that was active before the boost.
+
+If the service is called while a boost is already running, the previous timer
+is cancelled and a new one is started from the current point in time
+(restart semantics).
+
+| Field | Type | Default | Range | Description |
+|---|---|---|---|---|
+| `duration_hours` | float | `4` | 0.5 – 24 | How long to run the boost, in hours |
+
+**Example — start a 2-hour boost:**
+
+```yaml
+action: qvantum_modbus.start_extra_hot_water
+data:
+  duration_hours: 2
+```
+
+**Example — start with the default 4-hour duration:**
+
+```yaml
+action: qvantum_modbus.start_extra_hot_water
+```
+
+---
+
+### `qvantum_modbus.cancel_extra_hot_water`
+
+Immediately stops the running hot water boost and restores the DHW mode
+that was active when the boost was started.
+
+```yaml
+action: qvantum_modbus.cancel_extra_hot_water
+```
+
+---
+
+### Automation examples
+
+#### Boost every morning before people wake up
+
+```yaml
+automation:
+  - alias: "Qvantum — Morning hot water boost"
+    triggers:
+      - trigger: time
+        at: "06:00:00"
+    actions:
+      - action: qvantum_modbus.start_extra_hot_water
+        data:
+          duration_hours: 1.5
+```
+
+#### Boost when a button is pressed (e.g. a Zigbee remote)
+
+```yaml
+automation:
+  - alias: "Qvantum — Button hot water boost"
+    triggers:
+      - trigger: state
+        entity_id: sensor.my_button
+        to: "single"
+    actions:
+      - action: qvantum_modbus.start_extra_hot_water
+        data:
+          duration_hours: 2
+```
+
+#### Cancel boost if tank temperature is already high enough
+
+```yaml
+automation:
+  - alias: "Qvantum — Cancel boost when tank is warm"
+    triggers:
+      - trigger: numeric_state
+        entity_id: sensor.qvantum_heat_pump_bt30_dhw_tank
+        above: 58
+    conditions:
+      - condition: state
+        entity_id: select.qvantum_heat_pump_dhw_mode
+        state: extra
+    actions:
+      - action: qvantum_modbus.cancel_extra_hot_water
+```
+
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

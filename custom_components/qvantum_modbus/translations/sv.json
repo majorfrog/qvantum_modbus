@@ -122,7 +122,7 @@
         "name": "Vevhustemperatur"
       },
       "bt30_dhw_tank": {
-        "name": "Varmvattentankens temperatur"
+        "name": "Ackumulatortankens temperatur"
       },
       "bt31_dhw_inlet": {
         "name": "Varmvattnets inloppstemperatur"
@@ -697,6 +697,12 @@
     },
     "unknown_option": {
       "message": "Det valda alternativet känns inte igen av enheten."
+    },
+    "unknown_dhw_mode": {
+      "message": "Okänt varmvattenläge '{mode}'. Kan inte skriva till enheten."
+    },
+    "no_loaded_entry": {
+      "message": "Ingen laddad Qvantum Modbus-integration hittades. Se till att enheten är konfigurerad och ansluten."
     }
   }
 }

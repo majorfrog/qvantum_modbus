@@ -1,0 +1,25 @@
+start_extra_hot_water:
+  name: Start extra hot water
+  description: >-
+    Activates the extra/boost DHW mode for the given number of hours and then
+    automatically restores the previous DHW mode. Calling this service again
+    while a boost is already running cancels the previous timer and starts a
+    new one.
+  fields:
+    duration_hours:
+      name: Duration (hours)
+      description: How many hours the extra hot water boost should run (0.5–24).
+      default: 4
+      required: false
+      selector:
+        number:
+          min: 0.5
+          max: 24
+          step: 0.5
+          unit_of_measurement: h
+
+cancel_extra_hot_water:
+  name: Cancel extra hot water
+  description: >-
+    Immediately stops the active extra hot water boost and restores the DHW
+    mode that was active before the boost was started.

@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
+import asyncio
+import logging
 import voluptuous as vol
 
 from typing import Any
 
-from homeassistant.config_entries import ConfigEntry, SOURCE_IMPORT
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState, SOURCE_IMPORT
 from homeassistant.const import CONF_HOST, CONF_PORT, Platform
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 
 from .const import (
+    ATTR_DURATION_HOURS,
     CONF_BAUDRATE,
     CONF_BYTESIZE,
     CONF_CONNECTION_TYPE,
@@ -25,9 +29,17 @@ from .const import (
     DEFAULT_PARITY,
     DEFAULT_UNIT_ID,
     DEFAULT_STOPBITS,
+    DHW_MODE_EXTRA,
+    DHW_MODE_KEY,
+    DHW_MODE_NORMAL,
     DOMAIN,
+    SERVICE_CANCEL_EXTRA_HOT_WATER,
+    SERVICE_START_EXTRA_HOT_WATER,
 )
 from .coordinator import QvantumModbusCoordinator
+from .models import SELECT_DESCRIPTIONS
+
+_LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
@@ -103,7 +115,7 @@ CONFIG_SCHEMA = vol.Schema(
 
 
 async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
-    """Import entries defined in configuration.yaml."""
+    """Import entries defined in configuration.yaml and register service actions."""
     for device_config in config.get(DOMAIN, []):
         hass.async_create_task(
             hass.config_entries.flow.async_init(
@@ -112,6 +124,153 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
                 data=device_config,
             )
         )
+
+    # -------------------------------------------------------------------------
+    # Service: start_extra_hot_water
+    # Sets DHW mode to "extra" for the given number of hours, then restores the
+    # previous mode. Operates on every loaded config entry for this domain.
+    # -------------------------------------------------------------------------
+    _boost_tasks: dict[str, asyncio.Task[None]] = {}
+
+    # Resolve the Modbus address of the dhw_mode holding register once at setup
+    # time so we don't hard-code a magic number here.
+    _dhw_select = next((d for d in SELECT_DESCRIPTIONS if d.key == DHW_MODE_KEY), None)
+    if _dhw_select is None:
+        _LOGGER.error(
+            "Could not find dhw_mode select description — services will not be registered"
+        )
+        return True
+
+    _dhw_address: int = _dhw_select.address
+    # Map option strings → raw register values (inverse of value_map)
+    _dhw_option_to_raw: dict[str, int] = {
+        v: k for k, v in _dhw_select.value_map.items()
+    }
+
+    def _get_coordinators() -> list[QvantumModbusCoordinator]:
+        """Return coordinators for every loaded config entry."""
+        coordinators: list[QvantumModbusCoordinator] = []
+        for entry in hass.config_entries.async_entries(DOMAIN):
+            if entry.state is ConfigEntryState.LOADED:
+                coordinators.append(entry.runtime_data)
+        return coordinators
+
+    async def _set_dhw_mode(coordinator: QvantumModbusCoordinator, mode: str) -> None:
+        """Write a DHW mode option to the device holding register."""
+        raw = _dhw_option_to_raw.get(mode)
+        if raw is None:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="unknown_dhw_mode",
+                translation_placeholders={"mode": mode},
+            )
+        await coordinator.write_holding_register(_dhw_address, raw)
+        await coordinator.async_request_refresh()
+
+    def _current_dhw_mode(coordinator: QvantumModbusCoordinator) -> str:
+        """Return the current DHW mode option string from coordinator data."""
+        raw = (coordinator.data or {}).get(DHW_MODE_KEY)
+        if raw is None:
+            return DHW_MODE_NORMAL
+        mapped = _dhw_select.value_map.get(int(raw))
+        return mapped if mapped is not None else DHW_MODE_NORMAL
+
+    async def _boost_worker(
+        coordinator: QvantumModbusCoordinator,
+        previous_mode: str,
+        duration_seconds: float,
+    ) -> None:
+        """Run the timed boost: wait, then restore the previous mode."""
+        try:
+            await asyncio.sleep(duration_seconds)
+        except asyncio.CancelledError:
+            pass  # Cancelled by cancel_extra_hot_water — restore mode below.
+        finally:
+            try:
+                await _set_dhw_mode(coordinator, previous_mode)
+            except Exception:
+                _LOGGER.exception(
+                    "Failed to restore DHW mode to %s after boost", previous_mode
+                )
+
+    async def _handle_start_extra_hot_water(call: ServiceCall) -> None:
+        """Handle the start_extra_hot_water service call."""
+        duration_hours: float = call.data[ATTR_DURATION_HOURS]
+        duration_seconds = duration_hours * 3600
+
+        coordinators = _get_coordinators()
+        if not coordinators:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="no_loaded_entry",
+            )
+
+        for coordinator in coordinators:
+            entry_id = coordinator.config_entry.entry_id  # type: ignore[union-attr]
+
+            # Cancel any running boost for this entry first.
+            if existing := _boost_tasks.get(entry_id):
+                existing.cancel()
+
+            # Save the current mode (skip if already in extra so original is kept).
+            previous_mode = _current_dhw_mode(coordinator)
+            if previous_mode == DHW_MODE_EXTRA:
+                previous_mode = DHW_MODE_NORMAL
+
+            await _set_dhw_mode(coordinator, DHW_MODE_EXTRA)
+
+            task = hass.async_create_task(
+                _boost_worker(coordinator, previous_mode, duration_seconds),
+                name=f"qvantum_boost_{entry_id}",
+            )
+            _boost_tasks[entry_id] = task
+
+            def _cleanup(fut: asyncio.Task[None], eid: str = entry_id) -> None:
+                _boost_tasks.pop(eid, None)
+
+            task.add_done_callback(_cleanup)
+
+        _LOGGER.debug("Extra hot water boost started for %.1f hours", duration_hours)
+
+    async def _handle_cancel_extra_hot_water(call: ServiceCall) -> None:
+        """Handle the cancel_extra_hot_water service call."""
+        coordinators = _get_coordinators()
+        if not coordinators:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="no_loaded_entry",
+            )
+
+        for coordinator in coordinators:
+            entry_id = coordinator.config_entry.entry_id  # type: ignore[union-attr]
+            if task := _boost_tasks.get(entry_id):
+                task.cancel()
+                # _boost_worker's finally block will restore the mode.
+            else:
+                _LOGGER.debug(
+                    "cancel_extra_hot_water called but no boost was running for %s",
+                    entry_id,
+                )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_START_EXTRA_HOT_WATER,
+        _handle_start_extra_hot_water,
+        schema=vol.Schema(
+            {
+                vol.Optional(ATTR_DURATION_HOURS, default=4.0): vol.All(
+                    vol.Coerce(float), vol.Range(min=0.5, max=24.0)
+                ),
+            }
+        ),
+    )
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_CANCEL_EXTRA_HOT_WATER,
+        _handle_cancel_extra_hot_water,
+        schema=vol.Schema({}),
+    )
+
     return True
 
 

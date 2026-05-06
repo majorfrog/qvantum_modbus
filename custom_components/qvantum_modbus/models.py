@@ -371,6 +371,8 @@ def create_energy_sensor(
     key: str,
     address: int,
     unit: str,
+    scale: float = 1.0,
+    precision: int = 0,
 ) -> ModbusSensorEntityDescription:
     """Create an energy counter sensor description with standard defaults."""
     return ModbusSensorEntityDescription(
@@ -381,6 +383,8 @@ def create_energy_sensor(
         native_unit_of_measurement=unit,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
+        scale=scale,
+        precision=precision,
     )
 
 
@@ -690,15 +694,25 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
     # Energy counters — Input registers 95–104
     # -------------------------------------------------------------------------
     create_energy_sensor("compressor_energy_mwh", 95, UnitOfEnergy.MEGA_WATT_HOUR),
-    create_energy_sensor("compressor_energy_kwh", 96, UnitOfEnergy.KILO_WATT_HOUR),
+    create_energy_sensor(
+        "compressor_energy_kwh", 96, UnitOfEnergy.KILO_WATT_HOUR, scale=0.1, precision=1
+    ),
     create_energy_sensor("additional_energy_mwh", 97, UnitOfEnergy.MEGA_WATT_HOUR),
-    create_energy_sensor("additional_energy_kwh", 98, UnitOfEnergy.KILO_WATT_HOUR),
+    create_energy_sensor(
+        "additional_energy_kwh", 98, UnitOfEnergy.KILO_WATT_HOUR, scale=0.1, precision=1
+    ),
     create_energy_sensor("heating_energy_mwh", 99, UnitOfEnergy.MEGA_WATT_HOUR),
-    create_energy_sensor("heating_energy_kwh", 100, UnitOfEnergy.KILO_WATT_HOUR),
+    create_energy_sensor(
+        "heating_energy_kwh", 100, UnitOfEnergy.KILO_WATT_HOUR, scale=0.1, precision=1
+    ),
     create_energy_sensor("cooling_energy_mwh", 101, UnitOfEnergy.MEGA_WATT_HOUR),
-    create_energy_sensor("cooling_energy_kwh", 102, UnitOfEnergy.KILO_WATT_HOUR),
+    create_energy_sensor(
+        "cooling_energy_kwh", 102, UnitOfEnergy.KILO_WATT_HOUR, scale=0.1, precision=1
+    ),
     create_energy_sensor("dhw_energy_mwh", 103, UnitOfEnergy.MEGA_WATT_HOUR),
-    create_energy_sensor("dhw_energy_kwh", 104, UnitOfEnergy.KILO_WATT_HOUR),
+    create_energy_sensor(
+        "dhw_energy_kwh", 104, UnitOfEnergy.KILO_WATT_HOUR, scale=0.1, precision=1
+    ),
     # -------------------------------------------------------------------------
     # BBR lock — Input register 117
     # -------------------------------------------------------------------------
@@ -1113,7 +1127,11 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
                 key="compressor_energy_mwh", address=95, data_type=DATA_TYPE_UINT16
             ),
             ModbusSensorEntityDescription(
-                key="compressor_energy_kwh", address=96, data_type=DATA_TYPE_UINT16
+                key="compressor_energy_kwh",
+                address=96,
+                data_type=DATA_TYPE_UINT16,
+                scale=0.1,
+                precision=1,
             ),
         ),
         value_fn=lambda vals: vals[0] * 1000 + vals[1],
@@ -1129,7 +1147,11 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
                 key="additional_energy_mwh", address=97, data_type=DATA_TYPE_UINT16
             ),
             ModbusSensorEntityDescription(
-                key="additional_energy_kwh", address=98, data_type=DATA_TYPE_UINT16
+                key="additional_energy_kwh",
+                address=98,
+                data_type=DATA_TYPE_UINT16,
+                scale=0.1,
+                precision=1,
             ),
         ),
         value_fn=lambda vals: vals[0] * 1000 + vals[1],
@@ -1145,7 +1167,11 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
                 key="heating_energy_mwh", address=99, data_type=DATA_TYPE_UINT16
             ),
             ModbusSensorEntityDescription(
-                key="heating_energy_kwh", address=100, data_type=DATA_TYPE_UINT16
+                key="heating_energy_kwh",
+                address=100,
+                data_type=DATA_TYPE_UINT16,
+                scale=0.1,
+                precision=1,
             ),
         ),
         value_fn=lambda vals: vals[0] * 1000 + vals[1],
@@ -1161,7 +1187,11 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
                 key="cooling_energy_mwh", address=101, data_type=DATA_TYPE_UINT16
             ),
             ModbusSensorEntityDescription(
-                key="cooling_energy_kwh", address=102, data_type=DATA_TYPE_UINT16
+                key="cooling_energy_kwh",
+                address=102,
+                data_type=DATA_TYPE_UINT16,
+                scale=0.1,
+                precision=1,
             ),
         ),
         value_fn=lambda vals: vals[0] * 1000 + vals[1],
@@ -1177,7 +1207,11 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
                 key="dhw_energy_mwh", address=103, data_type=DATA_TYPE_UINT16
             ),
             ModbusSensorEntityDescription(
-                key="dhw_energy_kwh", address=104, data_type=DATA_TYPE_UINT16
+                key="dhw_energy_kwh",
+                address=104,
+                data_type=DATA_TYPE_UINT16,
+                scale=0.1,
+                precision=1,
             ),
         ),
         value_fn=lambda vals: vals[0] * 1000 + vals[1],
