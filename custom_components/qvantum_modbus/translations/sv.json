@@ -700,7 +700,7 @@
       "message": "Det valda alternativet känns inte igen av enheten."
     },
     "unknown_dhw_mode": {
-      "message": "Okänt varmvattenläge '{mode}'. Kan inte skriva till enheten."
+      "message": "Okänt varmvattenläge {mode}. Kan inte skriva till enheten."
     },
     "no_loaded_entry": {
       "message": "Ingen laddad Qvantum Modbus-integration hittades. Se till att enheten är konfigurerad och ansluten."
