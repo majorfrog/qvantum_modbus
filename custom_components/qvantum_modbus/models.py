@@ -138,7 +138,7 @@ class ModbusSwitchEntityDescription(SwitchEntityDescription):
 
     key: str
     translation_key: str | None = None
-    entity_registry_enabled_default: bool = True
+    entity_registry_enabled_default: bool = False
     entity_category: EntityCategory | None = None
 
     address: int = 0
@@ -185,7 +185,7 @@ class ModbusNumberEntityDescription(NumberEntityDescription):
 
     key: str
     translation_key: str | None = None
-    entity_registry_enabled_default: bool = True
+    entity_registry_enabled_default: bool = False
     entity_category: EntityCategory | None = None
     native_unit_of_measurement: str | None = None
     device_class: NumberDeviceClass | None = None
@@ -320,8 +320,6 @@ def create_temp_sensor(
     key: str,
     address: int,
     *,
-    scale: float = 0.1,
-    precision: int = 1,
     data_type: str = DATA_TYPE_INT16,
     entity_registry_enabled_default: bool = True,
 ) -> ModbusSensorEntityDescription:
@@ -334,8 +332,8 @@ def create_temp_sensor(
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
-        scale=scale,
-        precision=precision,
+        scale=0.1,
+        precision=1,
         entity_registry_enabled_default=entity_registry_enabled_default,
     )
 
@@ -347,6 +345,7 @@ def create_duration_sensor(
     state_class: SensorStateClass | str = SensorStateClass.MEASUREMENT,
     *,
     data_type: str = DATA_TYPE_UINT16,
+    entity_registry_enabled_default: bool = True,
 ) -> ModbusSensorEntityDescription:
     """Create a duration sensor description with standard defaults."""
     return ModbusSensorEntityDescription(
@@ -357,6 +356,7 @@ def create_duration_sensor(
         native_unit_of_measurement=unit,
         device_class=SensorDeviceClass.DURATION,
         state_class=state_class,
+        entity_registry_enabled_default=entity_registry_enabled_default,
     )
 
 
@@ -366,6 +366,7 @@ def create_energy_sensor(
     unit: str,
     scale: float = 1.0,
     precision: int = 0,
+    entity_registry_enabled_default: bool = True,
 ) -> ModbusSensorEntityDescription:
     """Create an energy counter sensor description with standard defaults."""
     return ModbusSensorEntityDescription(
@@ -378,6 +379,7 @@ def create_energy_sensor(
         state_class=SensorStateClass.TOTAL_INCREASING,
         scale=scale,
         precision=precision,
+        entity_registry_enabled_default=entity_registry_enabled_default,
     )
 
 
@@ -423,34 +425,57 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
     # -------------------------------------------------------------------------
     create_temp_sensor("bt1_outdoor", 0),
     create_temp_sensor("bt2_indoor", 2),
-    create_temp_sensor("filtered_room", 3),
-    create_temp_sensor("bt4", 4),
-    create_temp_sensor("bt10_condenser_outlet", 5),
-    create_temp_sensor("bt11_supply_addition", 6),
-    create_temp_sensor("bt12_supply_external", 7),
-    create_temp_sensor("bt13_condenser_inlet", 8),
-    create_temp_sensor("bt14_source_flow", 9),
-    create_temp_sensor("bt15_source_return", 10),
+    create_temp_sensor("filtered_room", 3, entity_registry_enabled_default=False),
+    create_temp_sensor("bt4", 4, entity_registry_enabled_default=False),
+    create_temp_sensor(
+        "bt10_condenser_outlet", 5, entity_registry_enabled_default=False
+    ),
+    create_temp_sensor(
+        "bt11_supply_addition", 6, entity_registry_enabled_default=False
+    ),
+    create_temp_sensor(
+        "bt12_supply_external", 7, entity_registry_enabled_default=False
+    ),
+    create_temp_sensor(
+        "bt13_condenser_inlet", 8, entity_registry_enabled_default=False
+    ),
+    create_temp_sensor("bt14_source_flow", 9, entity_registry_enabled_default=False),
+    create_temp_sensor("bt15_source_return", 10, entity_registry_enabled_default=False),
     # Refrigerant circuit temperatures
-    create_temp_sensor("bt20_discharge_line", 11),
-    create_temp_sensor("bt21_liquid_line", 12),
-    create_temp_sensor("bt22_evaporator_inlet", 13),
-    create_temp_sensor("bt23_suction_line", 14),
-    create_temp_sensor("bt24_crank_case", 15),
+    create_temp_sensor(
+        "bt20_discharge_line", 11, entity_registry_enabled_default=False
+    ),
+    create_temp_sensor("bt21_liquid_line", 12, entity_registry_enabled_default=False),
+    create_temp_sensor(
+        "bt22_evaporator_inlet", 13, entity_registry_enabled_default=False
+    ),
+    create_temp_sensor("bt23_suction_line", 14, entity_registry_enabled_default=False),
+    create_temp_sensor("bt24_crank_case", 15, entity_registry_enabled_default=False),
     # DHW tank temperatures
     create_temp_sensor("bt30_dhw_tank", 16),
     create_temp_sensor("bt31_dhw_inlet", 17),
-    create_temp_sensor("bt33_dhw_secondary_inlet", 18),
-    create_temp_sensor("bt34_dhw_secondary_outlet", 19),
-    create_temp_sensor("bt_aux", 20),
-    create_temp_sensor("btx", 21),
+    create_temp_sensor(
+        "bt33_dhw_secondary_inlet", 18, entity_registry_enabled_default=False
+    ),
+    create_temp_sensor(
+        "bt34_dhw_secondary_outlet", 19, entity_registry_enabled_default=False
+    ),
+    create_temp_sensor("bt_aux", 20, entity_registry_enabled_default=False),
+    create_temp_sensor("btx", 21, entity_registry_enabled_default=False),
     # -------------------------------------------------------------------------
     # Calculated / derived temperatures — Input registers 35–38
     # -------------------------------------------------------------------------
     create_temp_sensor("calc_supply_heating", 35),
-    create_temp_sensor("calc_supply_cooling", 36, data_type=DATA_TYPE_UINT16),
+    create_temp_sensor(
+        "calc_supply_cooling",
+        36,
+        data_type=DATA_TYPE_UINT16,
+        entity_registry_enabled_default=False,
+    ),
     create_temp_sensor("heating_curve_offset", 37),
-    create_temp_sensor("parallel_cooling_offset", 38),
+    create_temp_sensor(
+        "parallel_cooling_offset", 38, entity_registry_enabled_default=False
+    ),
     # -------------------------------------------------------------------------
     # Flow and pump speeds — Input registers 26–31
     # -------------------------------------------------------------------------
@@ -479,6 +504,7 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         native_unit_of_measurement=REVOLUTIONS_PER_MINUTE,
         scale=1.0,
         precision=0,
+        entity_registry_enabled_default=False,
     ),
     create_generic_sensor(
         "compressor_speed",
@@ -491,7 +517,10 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
     # Heating metrics — Input register 34
     # -------------------------------------------------------------------------
     create_generic_sensor(
-        "degree_minute", 34, data_type=DATA_TYPE_INT16, native_unit_of_measurement="dm"
+        "degree_minute",
+        34,
+        data_type=DATA_TYPE_INT16,
+        native_unit_of_measurement="dm",
     ),
     # -------------------------------------------------------------------------
     # Operational state registers — Input registers 40–60
@@ -539,6 +568,7 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         precision=0,
         options=["off", "ok"],
         value_map={0: "off", 1: "ok"},
+        entity_registry_enabled_default=False,
     ),
     create_generic_sensor(
         "compressor_released",
@@ -573,9 +603,15 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
     # -------------------------------------------------------------------------
     # Priority timers — Input registers 63–65
     # -------------------------------------------------------------------------
-    create_duration_sensor("heating_priority_time_left", 63),
-    create_duration_sensor("cooling_priority_time_left", 64),
-    create_duration_sensor("dhw_priority_time_left", 65),
+    create_duration_sensor(
+        "heating_priority_time_left", 63, entity_registry_enabled_default=False
+    ),
+    create_duration_sensor(
+        "cooling_priority_time_left", 64, entity_registry_enabled_default=False
+    ),
+    create_duration_sensor(
+        "dhw_priority_time_left", 65, entity_registry_enabled_default=False
+    ),
     # -------------------------------------------------------------------------
     # Defrost and compressor state — Input registers 67–76
     # (compressor_blocked is on the binary_sensor platform)
@@ -630,7 +666,9 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
             13: "defrost_pool_passive",
         },
     ),
-    create_duration_sensor("compressor_blocked_sec", 72),
+    create_duration_sensor(
+        "compressor_blocked_sec", 72, entity_registry_enabled_default=False
+    ),
     create_generic_sensor(
         "qn8_position",
         76,
@@ -671,7 +709,11 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         UnitOfTime.HOURS,
         SensorStateClass.TOTAL_INCREASING,
     ),
-    create_duration_sensor("ventilation_filter_time_left", 91, UnitOfTime.HOURS),
+    create_duration_sensor(
+        "ventilation_filter_time_left",
+        91,
+        UnitOfTime.HOURS,
+    ),
     # -------------------------------------------------------------------------
     # Power — Input register 93
     # -------------------------------------------------------------------------
@@ -698,9 +740,19 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
     create_energy_sensor(
         "heating_energy_kwh", 100, UnitOfEnergy.KILO_WATT_HOUR, scale=0.1, precision=1
     ),
-    create_energy_sensor("cooling_energy_mwh", 101, UnitOfEnergy.MEGA_WATT_HOUR),
     create_energy_sensor(
-        "cooling_energy_kwh", 102, UnitOfEnergy.KILO_WATT_HOUR, scale=0.1, precision=1
+        "cooling_energy_mwh",
+        101,
+        UnitOfEnergy.MEGA_WATT_HOUR,
+        entity_registry_enabled_default=False,
+    ),
+    create_energy_sensor(
+        "cooling_energy_kwh",
+        102,
+        UnitOfEnergy.KILO_WATT_HOUR,
+        scale=0.1,
+        precision=1,
+        entity_registry_enabled_default=False,
     ),
     create_energy_sensor("dhw_energy_mwh", 103, UnitOfEnergy.MEGA_WATT_HOUR),
     create_energy_sensor(
@@ -833,6 +885,7 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         scale=1.0,
         precision=0,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     # -------------------------------------------------------------------------
     # Device info (diagnostic) — Input registers 180–193
@@ -932,6 +985,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
         key="cooling_demand",
         translation_key="cooling_demand",
         address=51,
+        entity_registry_enabled_default=False,
     ),
     ModbusBinarySensorEntityDescription(
         key="addition_demand",
@@ -952,16 +1006,19 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[ModbusBinarySensorEntityDescription, ...] = (
         key="heat_priority",
         translation_key="heat_priority",
         address=58,
+        entity_registry_enabled_default=False,
     ),
     ModbusBinarySensorEntityDescription(
         key="cool_priority",
         translation_key="cool_priority",
         address=59,
+        entity_registry_enabled_default=False,
     ),
     ModbusBinarySensorEntityDescription(
         key="dhw_priority",
         translation_key="dhw_priority",
         address=60,
+        entity_registry_enabled_default=False,
     ),
     # -------------------------------------------------------------------------
     # Compressor blocked — Input register 71
@@ -1229,6 +1286,7 @@ SWITCH_DESCRIPTIONS: tuple[ModbusSwitchEntityDescription, ...] = (
         key="unit_on_off",
         translation_key="unit_on_off",
         address=0,
+        entity_registry_enabled_default=True,
     ),
     ModbusSwitchEntityDescription(
         key="manual_allow_heating",
@@ -1313,6 +1371,7 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
         translation_key="use_operation_mode_sensor",
         address=9,
         entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
         options=["no", "yes_bt2", "yes_bt3", "yes_aux", "external"],
         value_map={0: "no", 1: "yes_bt2", 2: "yes_bt3", 3: "yes_aux", 4: "external"},
     ),
@@ -1347,6 +1406,7 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
         translation_key="curve_type_heating",
         address=22,
         entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
         options=["auto", "user_defined"],
         value_map={0: "auto", 1: "user_defined"},
     ),
@@ -1356,6 +1416,7 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
         address=36,
         data_type=DATA_TYPE_INT16,
         entity_category=EntityCategory.CONFIG,
+        entity_registry_enabled_default=False,
         options=_OFFSET_OPTS,
         value_map=dict(_OFFSET_MAP),
     ),
@@ -1370,6 +1431,7 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
         key="ventilation_state",
         translation_key="ventilation_state",
         address=68,
+        entity_registry_enabled_default=False,
         options=["off", "normal", "extra", "reduced"],
         value_map={0: "off", 1: "normal", 2: "extra", 3: "reduced"},
     ),

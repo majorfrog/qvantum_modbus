@@ -1,0 +1,459 @@
+title: Qvantum Heat Pump
+views:
+  # ===========================================================================
+  # Tab 1 — Overview: controls, temperatures, live status, alerts
+  # ===========================================================================
+  - title: Overview
+    path: overview
+    icon: mdi:heat-pump
+    type: sections
+    sections:
+      # -----------------------------------------------------------------------
+      # Main controls
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Controls
+        cards:
+          - type: entities
+            entities:
+              - entity: switch.qvantum_heat_pump_unit_on_off
+                name: Unit on/off
+              - entity: select.qvantum_heat_pump_operation_mode
+                name: Operation mode
+              - entity: select.qvantum_heat_pump_dhw_mode
+                name: DHW mode
+              - entity: select.qvantum_heat_pump_desired_indoor_temperature
+                name: Desired indoor temperature
+              - entity: select.qvantum_heat_pump_heating_curve_parallel_offset
+                name: Heating curve offset
+              - entity: select.qvantum_heat_pump_room_compensation_factor
+                name: Room compensation
+
+      # -----------------------------------------------------------------------
+      # Key temperatures
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Temperatures
+        cards:
+          - type: glance
+            show_name: true
+            show_state: true
+            entities:
+              - entity: sensor.qvantum_heat_pump_bt1_outdoor
+                name: Outdoor
+              - entity: sensor.qvantum_heat_pump_bt2_indoor
+                name: Indoor
+              - entity: sensor.qvantum_heat_pump_calc_supply_heating
+                name: Supply (calc)
+              - entity: sensor.qvantum_heat_pump_bt30_dhw_tank
+                name: DHW tank
+              - entity: sensor.qvantum_heat_pump_bt31_dhw_inlet
+                name: DHW inlet
+              - entity: sensor.qvantum_heat_pump_heating_curve_offset
+                name: Curve offset
+
+          - type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: sensor.qvantum_heat_pump_bt1_outdoor
+                name: Outdoor
+              - entity: sensor.qvantum_heat_pump_bt2_indoor
+                name: Indoor
+              - entity: sensor.qvantum_heat_pump_calc_supply_heating
+                name: Supply
+              - entity: sensor.qvantum_heat_pump_bt30_dhw_tank
+                name: DHW tank
+
+      # -----------------------------------------------------------------------
+      # System status
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: System status
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.qvantum_heat_pump_unit_state
+                name: Unit state
+              - entity: sensor.qvantum_heat_pump_heatpump_state
+                name: Heat pump state
+              - entity: sensor.qvantum_heat_pump_compressor_state
+                name: Compressor state
+              - entity: sensor.qvantum_heat_pump_degree_minute
+                name: Degree minute
+              - entity: sensor.qvantum_heat_pump_compressor_power
+                name: Compressor power
+              - entity: sensor.qvantum_heat_pump_compressor_speed
+                name: Compressor speed
+              - entity: sensor.qvantum_heat_pump_qn8_position
+                name: QN8 valve position
+
+          - type: entities
+            title: Active demands
+            entities:
+              - entity: binary_sensor.qvantum_heat_pump_heating_demand
+                name: Heating demand
+              - entity: binary_sensor.qvantum_heat_pump_dhw_demand
+                name: DHW demand
+              - entity: binary_sensor.qvantum_heat_pump_addition_demand
+                name: Addition (backup heater)
+              - entity: binary_sensor.qvantum_heat_pump_addition_demand_dhw
+                name: Addition for DHW
+              - entity: sensor.qvantum_heat_pump_heating_released
+                name: Heating released
+              - entity: sensor.qvantum_heat_pump_compressor_released
+                name: Compressor released
+              - entity: sensor.qvantum_heat_pump_addition_released
+                name: Addition released
+
+      # -----------------------------------------------------------------------
+      # Alerts
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Alerts
+        cards:
+          - type: entities
+            entities:
+              - entity: binary_sensor.qvantum_heat_pump_compressor_blocked
+                name: Compressor blocked
+              - entity: binary_sensor.qvantum_heat_pump_freeze_protection_active
+                name: Freeze protection active
+              - entity: sensor.qvantum_heat_pump_time_to_defrost
+                name: Defrost needed
+              - entity: sensor.qvantum_heat_pump_bbr_locked
+                name: BBR locked
+              - entity: binary_sensor.qvantum_heat_pump_vacation_mode
+                name: Vacation mode
+              - entity: sensor.qvantum_heat_pump_active_alarm_count
+                name: Active alarms
+              - type: button
+                entity: button.qvantum_heat_pump_reset_alarms
+                name: Reset alarms
+                tap_action:
+                  action: toggle
+
+  # ===========================================================================
+  # Tab 2 — DHW: hot water status and smart DHW
+  # ===========================================================================
+  - title: Hot Water
+    path: dhw
+    icon: mdi:water-boiler
+    type: sections
+    sections:
+      # -----------------------------------------------------------------------
+      # DHW temperatures and flow
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Temperatures & flow
+        cards:
+          - type: glance
+            show_name: true
+            show_state: true
+            entities:
+              - entity: sensor.qvantum_heat_pump_bt30_dhw_tank
+                name: Tank
+              - entity: sensor.qvantum_heat_pump_bt31_dhw_inlet
+                name: Inlet
+              - entity: sensor.qvantum_heat_pump_bf1_dhw_flow
+                name: Flow
+              - entity: sensor.qvantum_heat_pump_bf1_rpm
+                name: Pump RPM
+              - entity: sensor.qvantum_heat_pump_gp2_pump_speed
+                name: Pump speed
+
+          - type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: sensor.qvantum_heat_pump_bt30_dhw_tank
+                name: Tank
+              - entity: sensor.qvantum_heat_pump_bt31_dhw_inlet
+                name: Inlet
+
+      # -----------------------------------------------------------------------
+      # DHW control and demand
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Control & demand
+        cards:
+          - type: entities
+            entities:
+              - entity: select.qvantum_heat_pump_dhw_mode
+                name: DHW mode
+              - entity: binary_sensor.qvantum_heat_pump_dhw_demand
+                name: DHW demand active
+              - entity: binary_sensor.qvantum_heat_pump_addition_demand_dhw
+                name: Backup heater active (DHW)
+
+      # -----------------------------------------------------------------------
+      # Smart DHW
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Smart DHW
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.qvantum_heat_pump_smart_dhw_mode
+                name: Smart DHW mode
+              - entity: sensor.qvantum_heat_pump_smart_dhw_control_status
+                name: Smart DHW status
+              - entity: binary_sensor.qvantum_heat_pump_smart_price_dhw_enabled
+                name: Smart price (DHW)
+
+      # -----------------------------------------------------------------------
+      # DHW energy
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: DHW energy
+        cards:
+          - type: statistic
+            entity: sensor.qvantum_heat_pump_dhw_energy_total
+            name: DHW energy (total)
+            period:
+              calendar:
+                period: month
+          - type: history-graph
+            hours_to_show: 168
+            entities:
+              - entity: sensor.qvantum_heat_pump_dhw_energy_total
+                name: DHW energy
+
+  # ===========================================================================
+  # Tab 3 — Energy: consumption and compressor stats
+  # ===========================================================================
+  - title: Energy
+    path: energy
+    icon: mdi:lightning-bolt
+    type: sections
+    sections:
+      # -----------------------------------------------------------------------
+      # Live power
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Live power
+        cards:
+          - type: gauge
+            entity: sensor.qvantum_heat_pump_compressor_power
+            name: Compressor power
+            min: 0
+            max: 6000
+            segments:
+              - from: 0
+                color: "#00c853"
+              - from: 2000
+                color: "#ffd600"
+              - from: 4000
+                color: "#ff6d00"
+          - type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: sensor.qvantum_heat_pump_compressor_power
+                name: Power
+
+      # -----------------------------------------------------------------------
+      # Energy totals (this month)
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Energy this month
+        cards:
+          - type: statistic
+            entity: sensor.qvantum_heat_pump_compressor_energy_total
+            name: Compressor input
+            period:
+              calendar:
+                period: month
+          - type: statistic
+            entity: sensor.qvantum_heat_pump_heating_energy_total
+            name: Heating output
+            period:
+              calendar:
+                period: month
+          - type: statistic
+            entity: sensor.qvantum_heat_pump_dhw_energy_total
+            name: DHW output
+            period:
+              calendar:
+                period: month
+          - type: statistic
+            entity: sensor.qvantum_heat_pump_additional_energy_total
+            name: Backup heater
+            period:
+              calendar:
+                period: month
+          - type: statistic
+            entity: sensor.qvantum_heat_pump_cooling_energy_total
+            name: Cooling output
+            period:
+              calendar:
+                period: month
+
+      # -----------------------------------------------------------------------
+      # Compressor lifetime stats
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Compressor lifetime stats
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.qvantum_heat_pump_compressor_run_time
+                name: Run time
+              - entity: sensor.qvantum_heat_pump_compressor_starts
+                name: Start count
+              - entity: sensor.qvantum_heat_pump_heat_emitter_type
+                name: Heat emitter type
+
+  # ===========================================================================
+  # Tab 4 — Smart Grid: SG ready signals and smart price
+  # ===========================================================================
+  - title: Smart Grid
+    path: smart-grid
+    icon: mdi:transmission-tower
+    type: sections
+    sections:
+      # -----------------------------------------------------------------------
+      # SG ready
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: SG Ready
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.qvantum_heat_pump_sg_mode
+                name: SG mode
+              - entity: binary_sensor.qvantum_heat_pump_sg_ready_a
+                name: SG Ready A (input)
+              - entity: binary_sensor.qvantum_heat_pump_sg_ready_b
+                name: SG Ready B (input)
+              - entity: binary_sensor.qvantum_heat_pump_energy_prices_available
+                name: Energy prices available
+
+      # -----------------------------------------------------------------------
+      # Smart price
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Smart price
+        cards:
+          - type: entities
+            entities:
+              - entity: binary_sensor.qvantum_heat_pump_smart_price_heating_enabled
+                name: Smart price (heating)
+              - entity: binary_sensor.qvantum_heat_pump_smart_price_dhw_enabled
+                name: Smart price (DHW)
+              - entity: sensor.qvantum_heat_pump_smart_dhw_mode
+                name: Smart DHW mode
+              - entity: sensor.qvantum_heat_pump_smart_dhw_control_status
+                name: Smart DHW control status
+
+  # ===========================================================================
+  # Tab 5 — Diagnostics: alarms, pumps, relays, device info
+  # ===========================================================================
+  - title: Diagnostics
+    path: diagnostics
+    icon: mdi:magnify
+    type: sections
+    sections:
+      # -----------------------------------------------------------------------
+      # Alarms
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Alarms
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.qvantum_heat_pump_active_alarm_count
+                name: Active alarms
+              - entity: sensor.qvantum_heat_pump_alarm_1_code
+                name: Alarm 1
+              - entity: sensor.qvantum_heat_pump_alarm_2_code
+                name: Alarm 2
+              - entity: sensor.qvantum_heat_pump_alarm_3_code
+                name: Alarm 3
+              - entity: sensor.qvantum_heat_pump_alarm_4_code
+                name: Alarm 4
+              - entity: sensor.qvantum_heat_pump_alarm_5_code
+                name: Alarm 5
+              - type: button
+                entity: button.qvantum_heat_pump_reset_alarms
+                name: Reset alarms
+                tap_action:
+                  action: toggle
+
+      # -----------------------------------------------------------------------
+      # Pumps & circulation
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Pumps & circulation
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.qvantum_heat_pump_gp1_pump_speed
+                name: GP1 distribution pump speed
+              - entity: sensor.qvantum_heat_pump_gp2_pump_speed
+                name: GP2 DHW pump speed
+              - entity: sensor.qvantum_heat_pump_bf1_dhw_flow
+                name: BF1 DHW flow
+              - entity: sensor.qvantum_heat_pump_bf1_rpm
+                name: BF1 pump RPM
+
+      # -----------------------------------------------------------------------
+      # Ventilation
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Ventilation
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.qvantum_heat_pump_ventilation_fan_run_time
+                name: Fan run time
+              - entity: sensor.qvantum_heat_pump_ventilation_filter_time_left
+                name: Filter time left
+
+      # -----------------------------------------------------------------------
+      # Relays
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Relays
+        cards:
+          - type: glance
+            show_name: true
+            show_state: true
+            entities:
+              - entity: binary_sensor.qvantum_heat_pump_relay_l1
+                name: L1
+              - entity: binary_sensor.qvantum_heat_pump_relay_l2
+                name: L2
+              - entity: binary_sensor.qvantum_heat_pump_relay_l3
+                name: L3
+              - entity: binary_sensor.qvantum_heat_pump_relay_gp10
+                name: GP10
+              - entity: binary_sensor.qvantum_heat_pump_relay_qm10
+                name: QM10
+              - entity: binary_sensor.qvantum_heat_pump_relay_qn8_1
+                name: QN8-1
+              - entity: binary_sensor.qvantum_heat_pump_relay_qn8_2
+                name: QN8-2
+              - entity: binary_sensor.qvantum_heat_pump_relay_gp3
+                name: GP3
+              - entity: binary_sensor.qvantum_heat_pump_relay_pump
+                name: Pump
+              - entity: binary_sensor.qvantum_heat_pump_relay_ha12
+                name: HA12
+
+      # -----------------------------------------------------------------------
+      # Device info & connectivity
+      # -----------------------------------------------------------------------
+      - type: grid
+        title: Device info
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.qvantum_heat_pump_serial_number
+                name: Serial number
+              - entity: sensor.qvantum_heat_pump_fw_version
+                name: Firmware version
+              - entity: sensor.qvantum_heat_pump_ip_address
+                name: IP address
+              - entity: sensor.qvantum_heat_pump_bt2_detected
+                name: BT2 sensor status
+              - entity: binary_sensor.qvantum_heat_pump_wifi_connected
+                name: Wi-Fi connected
+              - entity: binary_sensor.qvantum_heat_pump_cloud_connected
+                name: Cloud connected
