@@ -87,5 +87,8 @@ class QvantumModbusSelect(QvantumModbusEntity, SelectEntity):
                 translation_domain=DOMAIN,
                 translation_key="unknown_option",
             )
-        await self.coordinator.write_holding_register(desc.address, raw)
+        # If the description uses scaling, the map keys are scaled integers.
+        # Convert back to the raw register value before writing.
+        register_value = round(raw / desc.scale) if desc.scale != 1.0 else raw
+        await self.coordinator.write_holding_register(desc.address, register_value)
         await self.coordinator.async_request_refresh()

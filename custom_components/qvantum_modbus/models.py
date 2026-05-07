@@ -164,6 +164,11 @@ class ModbusSelectEntityDescription(SelectEntityDescription):
 
     options: list[str] | None = None
     value_map: dict[int, str]
+    # When scale != 1.0 the coordinator stores round(raw * scale) in
+    # coordinator.data instead of the raw register integer.  The value_map
+    # keys must then be the *scaled* integers (e.g. 15..25), and select.py
+    # divides by scale to recover the raw register value when writing.
+    scale: float = 1.0
 
     address: int = 0
     input_type: str = INPUT_TYPE_HOLDING
@@ -215,24 +220,12 @@ class ModbusButtonEntityDescription(ButtonEntityDescription):
 def _int_range_options(
     raw_min: int,
     raw_max: int,
-    scale: float = 1.0,
-    decimal_places: int = 0,
-    step: int = 1,
 ) -> tuple[list[str], dict[int, str]]:
-    """Build (options, value_map) for a numeric-range select.
+    """Build (options, value_map) for a consecutive-integer range select.
 
-    Each raw integer in [raw_min, raw_max] with the given step maps to a
-    display string with decimal_places after the decimal separator.
+    Each integer in [raw_min, raw_max] maps to its string representation.
     """
-    value_map: dict[int, str] = {}
-    for raw in range(raw_min, raw_max + 1, step):
-        native = raw * scale
-        opt = (
-            str(int(round(native)))
-            if decimal_places == 0
-            else f"{native:.{decimal_places}f}"
-        )
-        value_map[raw] = opt
+    value_map = {raw: str(raw) for raw in range(raw_min, raw_max + 1)}
     return list(value_map.values()), value_map
 
 
@@ -1221,16 +1214,12 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
 # ---------------------------------------------------------------------------
 # Pre-computed range options for numeric selects
 # ---------------------------------------------------------------------------
-_TEMP_SELECT_OPTS, _TEMP_SELECT_MAP = _int_range_options(
-    150, 250, scale=0.1, decimal_places=0, step=10
-)
+_TEMP_SELECT_OPTS, _TEMP_SELECT_MAP = _int_range_options(15, 25)
 
 # Room compensation has exactly four discrete values: 0, 0.5, 1, 2
 _ROOM_COMP_OPTS = ["0", "0.5", "1", "2"]
 _ROOM_COMP_MAP = {0: "0", 5: "0.5", 10: "1", 20: "2"}
-_OFFSET_OPTS, _OFFSET_MAP = _int_range_options(
-    -9, 9, scale=1.0, decimal_places=0, step=1
-)
+_OFFSET_OPTS, _OFFSET_MAP = _int_range_options(-9, 9)
 
 # ---------------------------------------------------------------------------
 # Switch descriptions (holding registers, 0=off 1=on)
@@ -1332,6 +1321,7 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
         translation_key="desired_indoor_temperature",
         address=12,
         data_type=DATA_TYPE_INT16,
+        scale=0.1,
         options=_TEMP_SELECT_OPTS,
         value_map=_TEMP_SELECT_MAP,
     ),

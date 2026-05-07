@@ -46,6 +46,7 @@ from .models import (
     SENSOR_DESCRIPTIONS,
     SWITCH_DESCRIPTIONS,
     ModbusNumberEntityDescription,
+    ModbusSelectEntityDescription,
     ModbusSensorEntityDescription,
 )
 
@@ -624,6 +625,20 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                             desc.address,
                             raw,
                             value,
+                        )
+                        data[desc.key] = value
+                    elif (
+                        isinstance(desc, ModbusSelectEntityDescription)
+                        and desc.scale != 1.0
+                    ):
+                        value = float(round(raw * desc.scale))
+                        _LOGGER.debug(
+                            "Read %s (address %d): raw=%d → %s (scale %.4f)",
+                            desc.key,
+                            desc.address,
+                            raw,
+                            value,
+                            desc.scale,
                         )
                         data[desc.key] = value
                     else:
