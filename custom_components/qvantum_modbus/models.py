@@ -450,7 +450,6 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         "bt22_evaporator_inlet", 13, entity_registry_enabled_default=False
     ),
     create_temp_sensor("bt23_suction_line", 14, entity_registry_enabled_default=False),
-    create_temp_sensor("bt24_crank_case", 15, entity_registry_enabled_default=False),
     # DHW tank temperatures
     create_temp_sensor("bt30_dhw_tank", 16),
     create_temp_sensor("bt31_dhw_inlet", 17),
@@ -1424,8 +1423,8 @@ SELECT_DESCRIPTIONS: tuple[ModbusSelectEntityDescription, ...] = (
         key="dhw_mode",
         translation_key="dhw_mode",
         address=53,
-        options=["eco", "normal", "extra", "smart"],
-        value_map={0: "eco", 1: "normal", 2: "extra", 3: "smart"},
+        options=["normal", "extra"],
+        value_map={1: "normal", 2: "extra"},
     ),
     ModbusSelectEntityDescription(
         key="ventilation_state",

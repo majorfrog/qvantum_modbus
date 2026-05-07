@@ -90,7 +90,6 @@
       "bt21_liquid_line": { "name": "Liquid line temperature" },
       "bt22_evaporator_inlet": { "name": "Evaporator inlet temperature" },
       "bt23_suction_line": { "name": "Suction line temperature" },
-      "bt24_crank_case": { "name": "Crankcase temperature" },
       "bt30_dhw_tank": { "name": "Hot water tank temperature" },
       "bt31_dhw_inlet": { "name": "Hot water inlet temperature" },
       "bt33_dhw_secondary_inlet": {
@@ -371,10 +370,8 @@
       "dhw_mode": {
         "name": "DHW mode",
         "state": {
-          "eco": "Eco",
           "normal": "Normal",
-          "extra": "Extra",
-          "smart": "Smart"
+          "extra": "Extra"
         }
       },
 

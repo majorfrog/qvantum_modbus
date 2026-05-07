@@ -118,9 +118,6 @@
       "bt23_suction_line": {
         "name": "Suggasledningens temperatur"
       },
-      "bt24_crank_case": {
-        "name": "Vevhustemperatur"
-      },
       "bt30_dhw_tank": {
         "name": "Ackumulatortankens temperatur"
       },
@@ -569,10 +566,8 @@
       "dhw_mode": {
         "name": "VV-läge",
         "state": {
-          "eco": "Eko",
           "normal": "Normal",
-          "extra": "Extra",
-          "smart": "Smart"
+          "extra": "Extra"
         }
       },
 

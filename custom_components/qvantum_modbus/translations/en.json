@@ -118,9 +118,6 @@
       "bt23_suction_line": {
         "name": "Suction line temperature"
       },
-      "bt24_crank_case": {
-        "name": "Crankcase temperature"
-      },
       "bt30_dhw_tank": {
         "name": "Hot water tank temperature"
       },
@@ -570,10 +567,8 @@
       "dhw_mode": {
         "name": "DHW mode",
         "state": {
-          "eco": "Eco",
           "normal": "Normal",
-          "extra": "Extra",
-          "smart": "Smart"
+          "extra": "Extra"
         }
       },
 
