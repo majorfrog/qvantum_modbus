@@ -38,16 +38,38 @@ Safe deployment guidelines:
 ## Features
 
 - Supports both **Modbus TCP** (over Ethernet/Wi-Fi) and **Modbus RTU** (over serial/RS-485)
-- Works on any device that exposes standard Modbus input or holding registers
+- Designed specifically for **Qvantum heat pumps** using their documented Modbus register map
 - Configurable via the **UI** (Settings → Integrations) or directly in **`configuration.yaml`**
 - Polling interval: 5 seconds (local Modbus TCP minimum)
 - Clean disconnect on integration unload/reload
 
-### Sensors
+### Entities
 
-| Entity ID | Register | Type | Unit | Description |
-|---|---|---|---|---|
-| `sensor.bt1_outdoor` | Input 0 | INT16 (÷10) | °C | BT1 temperature |
+The integration exposes entities across six platforms.
+
+**Summary by platform and category:**
+
+| Platform | Category | Examples |
+|---|---|---|
+| `sensor` | Temperatures | Outdoor (BT1), indoor (BT2), DHW tank (BT30/BT31), calculated supply |
+| `sensor` | Flow & pumps | DHW flow (BF1), pump RPM, pump speed (GP1/GP2), compressor speed |
+| `sensor` | Operating status | Unit state, heatpump state, compressor state, degree minute, time to defrost |
+| `sensor` | Runtime & maintenance | Compressor run time, start count, ventilation fan run time, filter time left |
+| `sensor` | Power & energy | Compressor power (W); MWh/kWh counters per category (compressor, heating, DHW, cooling, backup) |
+| `sensor` | Alarms | Active alarm count, alarm codes 1–5 |
+| `sensor` | Smart grid | SG mode, smart DHW mode and control status, BBR locked |
+| `sensor` | Device info | Serial number, IP address, firmware version |
+| `binary_sensor` | Demands | Heating, DHW, backup heater (heating and DHW) |
+| `binary_sensor` | Relays | 10 relay output states (L1–L3, GP10, QM10, QN8-1/2, GP3, Pump, HA12) |
+| `binary_sensor` | Protection | Compressor blocked, freeze protection active |
+| `binary_sensor` | Smart grid | SG Ready A/B inputs, smart price (heating/DHW), energy prices available |
+| `binary_sensor` | Connectivity | Wi-Fi connected, cloud connected, vacation mode |
+| `switch` | Power | Unit on/off |
+| `select` | Climate | Operation mode, desired indoor temperature, DHW mode, heating curve offset, room compensation factor |
+| `number` | Setpoints | Heating/cooling curve points, supply temp limits, DHW temperatures, pump speeds, room temp external |
+| `button` | Maintenance | Reset alarms |
+
+Entities that are **enabled by default** are those most commonly useful — temperatures, key demands, compressor status, and energy totals. More specialist entities (refrigerant sensors, individual energy counters, setpoint numbers) are disabled by default and can be enabled per-entity in **Settings → Devices & Services → Qvantum Modbus → Entities**.
 
 ---
 
@@ -90,7 +112,7 @@ You can set up the integration either through the UI or via `configuration.yaml`
    - **RTU (Serial)** → enter serial port path and serial parameters.
 4. The integration tests the connection before saving. If the test fails, correct the settings and try again.
 
-> **Note:** You can add multiple devices (one config entry per unit ID).
+> **Note:** You can add multiple devices. Each config entry is unique by connection (TCP: host + port + unit ID; RTU: serial port + unit ID), so the same unit ID on different hosts counts as separate entries.
 
 ### Option B — `configuration.yaml`
 
@@ -207,27 +229,29 @@ The Modbus interface of the Qvantum heat pump has a few known constraints. These
 
 ---
 
-## Heating curve dashboard
+## Dashboards
 
-The integration exposes seven `number` entities that represent the custom
-heating curve — one supply temperature target per outdoor temperature point
-(−30 °C to +30 °C). You can visualise and adjust the curve directly from a
-Home Assistant dashboard.
+Three ready-made Lovelace dashboards are included. All follow the same installation method described below.
 
-See **[HEAT_CURVE.md](HEAT_CURVE.md)** for the full guide, including:
+### Quick-start dashboard (defaults only)
 
-- Which entities to enable before use (disabled by default)
-- How to install the [Plotly Graph Card](https://github.com/dbuezas/lovelace-plotly-graph-card)
-- How to import the ready-made dashboard view ([`qvantum_heat_curve.yaml`](qvantum_heat_curve.yaml))
+[`dashboards/qvantum_heatpump_defaults.yaml`](dashboards/qvantum_heatpump_defaults.yaml)
 
----
+A clean five-tab dashboard that uses **only the entities that are enabled by default**. This is the best starting point — no extra entities need to be enabled before it works.
 
-## Full control dashboard
+| Tab | What it contains |
+|---|---|
+| **Overview** | Unit on/off, operation mode, key temperatures + 24-hour graph, system status, active demands, alerts |
+| **Hot Water** | DHW temperatures, flow, control, smart DHW status, monthly energy stat |
+| **Energy** | Compressor power gauge, monthly energy totals per category, lifetime compressor stats |
+| **Smart Grid** | SG Ready A/B, SG mode, smart price (heating & DHW), energy prices availability |
+| **Diagnostics** | Alarm codes, pump speeds, ventilation filter, relay states, device info & connectivity |
 
-A ready-made four-tab Lovelace dashboard is included at
-[`dashboards/qvantum_heatpump.yaml`](dashboards/qvantum_heatpump.yaml).
+### Full control dashboard
 
-### Tabs
+[`dashboards/qvantum_heatpump.yaml`](dashboards/qvantum_heatpump.yaml)
+
+A comprehensive four-tab dashboard that exposes the full range of entities, including those that are disabled by default. Enable the relevant entities before opening this dashboard.
 
 | Tab | What it contains |
 |---|---|
@@ -236,30 +260,35 @@ A ready-made four-tab Lovelace dashboard is included at
 | **Configuration** | Operation mode, manual mode permissions, DHW settings, sensor selection, alarms |
 | **Heat Curve** | Same interactive curve graph and sliders as the standalone heat curve dashboard |
 
-### How to add the dashboard
+> **Note:** The Overview tab uses the `qvantum_modbus.start_extra_hot_water` and
+> `qvantum_modbus.cancel_extra_hot_water` service actions described below.
+> The Heat Curve tab requires the
+> [Plotly Graph Card](https://github.com/dbuezas/lovelace-plotly-graph-card)
+> custom frontend card (install via HACS).
 
-1. Copy `dashboards/qvantum_heatpump.yaml` to your HA `config/dashboards/` folder.
-2. Add the following block under the `lovelace:` → `dashboards:` key in your `configuration.yaml`:
+### Heating curve dashboard
+
+[`dashboards/qvantum_heat_curve.yaml`](dashboards/qvantum_heat_curve.yaml)
+
+A focused dashboard for visualising and adjusting the custom heating curve. See **[HEAT_CURVE.md](HEAT_CURVE.md)** for the full guide, including which entities to enable before use and how to install the Plotly Graph Card.
+
+### How to add a dashboard
+
+1. Copy the dashboard YAML file to your HA `config/dashboards/` folder.
+2. Add an entry under `lovelace:` → `dashboards:` in `configuration.yaml`. For example, for the defaults dashboard:
 
 ```yaml
 lovelace:
   dashboards:
-    lovelace-qvantum-heatpump:
+    lovelace-qvantum-defaults:
       mode: yaml
-      filename: dashboards/qvantum_heatpump.yaml
+      filename: dashboards/qvantum_heatpump_defaults.yaml
       title: Qvantum Heat Pump
       icon: mdi:heat-pump
       show_in_sidebar: true
 ```
 
-3. Restart Home Assistant. The dashboard appears in the sidebar as **Qvantum Heat Pump**.
-
-> **Note:** The Overview tab uses the
-> `qvantum_modbus.start_extra_hot_water` and
-> `qvantum_modbus.cancel_extra_hot_water` service actions described below.
-> The Heat Curve tab requires the
-> [Plotly Graph Card](https://github.com/dbuezas/lovelace-plotly-graph-card)
-> custom frontend card (install via HACS).
+3. Restart Home Assistant. The dashboard appears in the sidebar.
 
 ---
 
@@ -370,10 +399,10 @@ to the heat pump via the `room_temp_external` register.
 
 Two settings must be configured on the heat pump first:
 
-1. **Enable the room temperature entities.** `room_temp_external` and
-   `room_compensation_factor` are disabled by default. Go to
+1. **Enable the `room_temp_external` number entity.** It is disabled by default. Go to
    **Settings → Devices & Services → Qvantum Modbus → Entities**, find
-   `Room temp external` and `Room compensation factor`, and enable them.
+   `Room temp external`, and enable it.
+   (`Room compensation factor` is already enabled by default and does not need this step.)
 
 2. **Set `use_operation_mode_sensor` to `external`.** This tells the heat
    pump to read the room temperature from the Modbus register rather than
