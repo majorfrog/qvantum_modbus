@@ -1216,9 +1216,9 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
 # ---------------------------------------------------------------------------
 _TEMP_SELECT_OPTS, _TEMP_SELECT_MAP = _int_range_options(15, 25)
 
-# Room compensation has exactly four discrete values: 0, 0.5, 1, 2
-_ROOM_COMP_OPTS = ["0", "0.5", "1", "2"]
-_ROOM_COMP_MAP = {0: "0", 5: "0.5", 10: "1", 20: "2"}
+# Room compensation has four discrete levels mapped to named options.
+_ROOM_COMP_OPTS = ["off", "minimal", "normal", "maximal"]
+_ROOM_COMP_MAP = {0: "off", 5: "minimal", 10: "normal", 20: "maximal"}
 _OFFSET_OPTS, _OFFSET_MAP = _int_range_options(-9, 9)
 
 # ---------------------------------------------------------------------------

@@ -346,7 +346,15 @@
         }
       },
       "desired_indoor_temperature": { "name": "Desired indoor temperature" },
-      "room_compensation_factor": { "name": "Room compensation factor" },
+      "room_compensation_factor": {
+        "name": "Room compensation factor",
+        "state": {
+          "off": "Off",
+          "minimal": "Minimal",
+          "normal": "Normal",
+          "maximal": "Maximal"
+        }
+      },
       "heating_curve_parallel_offset": {
         "name": "Heating curve parallel offset"
       },

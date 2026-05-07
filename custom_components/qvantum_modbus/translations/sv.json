@@ -83,7 +83,7 @@
         "name": "Inomhustemperatur"
       },
       "filtered_room": {
-        "name": "Filtrerad rumstemperatur"
+        "name": "Inomhustemperatur filtrerad"
       },
       "bt4": {
         "name": "BT4-temperatur"
@@ -545,7 +545,13 @@
         "name": "Önskad inomhustemperatur"
       },
       "room_compensation_factor": {
-        "name": "Rumskompensationsfaktor"
+        "name": "Rumskompensationsfaktor",
+        "state": {
+          "off": "Av",
+          "minimal": "Minimal",
+          "normal": "Normal",
+          "maximal": "Maximal"
+        }
       },
       "heating_curve_parallel_offset": {
         "name": "Värmekurvans parallellförskjutning"
@@ -589,13 +595,13 @@
         "name": "Filtertid utomhusgivare"
       },
       "allow_addition_temperature": {
-        "name": "Tillåtningstemperatur tillsatsvärme"
+        "name": "Tillsats gränstemperatur"
       },
       "room_temp_external": {
         "name": "Extern rumstemperatur"
       },
       "outdoor_temp_stop_heating": {
-        "name": "Utomhustemperatur — stopp uppvärmning"
+        "name": "Stopptemperatur värme"
       },
       "max_heating_supply_temp": {
         "name": "Maximal framledningstemperatur värme"
