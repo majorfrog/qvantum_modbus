@@ -358,6 +358,69 @@ automation:
 
 ---
 
+## Using an existing room temperature sensor as input to the heat pump
+
+The heat pump can use a measured indoor temperature to adjust the heating
+curve output in real time (room compensation). If you already have a
+temperature sensor in Home Assistant — such as a Zigbee thermometer, a
+smart thermostat, or any other `sensor` entity — you can forward its value
+to the heat pump via the `room_temp_external` register.
+
+### Prerequisites
+
+Two settings must be configured on the heat pump first:
+
+1. **Enable the room temperature entities.** `room_temp_external` and
+   `room_compensation_factor` are disabled by default. Go to
+   **Settings → Devices & Services → Qvantum Modbus → Entities**, find
+   `Room temp external` and `Room compensation factor`, and enable them.
+
+2. **Set `use_operation_mode_sensor` to `external`.** This tells the heat
+   pump to read the room temperature from the Modbus register rather than
+   from one of its own built-in sensors. Go to your dashboard (or
+   **Developer Tools → States**) and set the
+   `select.qvantum_heat_pump_use_operation_mode_sensor` entity to
+   **external**.
+
+> **Note:** Without step 2 the value written to `room_temp_external` is
+> accepted by the device but has no effect on the heating output.
+
+### Automation to forward a room sensor
+
+The example below triggers whenever your room sensor changes state and
+writes its temperature to the heat pump's `room_temp_external` number
+entity. Replace `sensor.living_room_temperature` with your actual sensor
+entity ID.
+
+```yaml
+automation:
+  - alias: "Qvantum — Forward room temperature to heat pump"
+    triggers:
+      - trigger: state
+        entity_id: sensor.living_room_temperature
+    conditions:
+      - condition: template
+        value_template: "{{ states('sensor.living_room_temperature') | is_number }}"
+    actions:
+      - action: number.set_value
+        target:
+          entity_id: number.qvantum_heat_pump_room_temp_external
+        data:
+          value: "{{ states('sensor.living_room_temperature') | float }}"
+```
+
+> **Tip:** Add a `numeric_state` condition if you want to guard against
+> unrealistic values, for example:
+> ```yaml
+> conditions:
+>   - condition: numeric_state
+>     entity_id: sensor.living_room_temperature
+>     above: 5
+>     below: 35
+> ```
+
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
