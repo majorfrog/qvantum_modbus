@@ -1,5 +1,7 @@
 # Qvantum Modbus — Home Assistant Custom Integration
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=majorfrog&repository=https%3A%2F%2Fgithub.com%2Fmajorfrog%2Fqvantum_modbus)
+
 A Home Assistant custom integration that polls a Modbus device over **TCP/IP** or **RTU (serial)** and exposes its registers as standard HA entities.
 
 The integration is built on top of [pymodbus](https://github.com/pymodbus-dev/pymodbus) and uses the fully async client, so it never blocks the HA event loop.
