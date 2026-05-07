@@ -189,11 +189,21 @@ qvantum_modbus:
 
 | Limitation | Notes |
 |---|---|
-| Read-only | Writing to holding registers is not yet supported |
 | Fixed polling interval | The 5-second polling interval is not user-configurable |
 | One unit per config entry | Each Modbus unit ID requires its own config entry |
 | No automatic reconnect delay | After a connection failure the integration retries on the next poll cycle (5 s) |
 | TCP only — no TLS | Modbus TCP has no encryption; see the security warning above |
+
+### Known register limitations (Modbus API)
+
+The Modbus interface of the Qvantum heat pump has a few known constraints. These are limitations of the device firmware, not of this integration. We can expect some of these to be resolved in future firmware updates, and/or modbus register map revisions. The integration will be updated accordingly when that happens.
+
+| Sensor / entity | Issue |
+|---|---|
+| `sensor.electricity_price_region` | Always reports `null`. The register holds only 2 ASCII bytes, which is not enough for 3-character Swedish region codes such as `SE4`. The cloud API exposes the full string; Modbus does not. |
+| `sensor.compressor_run_time`, `sensor.compressor_starts` | Report `0` on firmware 1.7.22 despite significant accumulated run time. These registers appear not to be populated by the current firmware. Values may become available on a future firmware release. |
+| `sensor.ventilation_fan_run_time` | Always `0` on **air-to-water** models, which have no ventilation fan. The register is only meaningful on **extract-air** heat pump models. |
+| `sensor.bt15_source_return` | Always `0.0 °C` on **air-to-water** models. BT15 measures the source-side return temperature, which I suspect only exists on **extract-air** models. Air-to-water units do not have this sensor installed and the firmware reports `0` with no sentinel value. |
 
 ---
 

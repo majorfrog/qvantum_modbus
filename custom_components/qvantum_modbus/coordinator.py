@@ -45,6 +45,7 @@ from .models import (
     SELECT_DESCRIPTIONS,
     SENSOR_DESCRIPTIONS,
     SWITCH_DESCRIPTIONS,
+    ModbusNumberEntityDescription,
     ModbusSensorEntityDescription,
 )
 
@@ -615,10 +616,21 @@ class QvantumModbusCoordinator(DataUpdateCoordinator[dict[str, float | str | Non
                     data[desc.key] = None
                 else:
                     raw = int(_decode_registers([raw_reg], desc.data_type))
-                    _LOGGER.debug(
-                        "Read raw %s (address %d): %d", desc.key, desc.address, raw
-                    )
-                    data[desc.key] = float(raw)
+                    if isinstance(desc, ModbusNumberEntityDescription):
+                        value = raw * desc.scale
+                        _LOGGER.debug(
+                            "Read %s (address %d): raw=%d → %s",
+                            desc.key,
+                            desc.address,
+                            raw,
+                            value,
+                        )
+                        data[desc.key] = value
+                    else:
+                        _LOGGER.debug(
+                            "Read raw %s (address %d): %d", desc.key, desc.address, raw
+                        )
+                        data[desc.key] = float(raw)
 
         except ConnectionException as err:
             self._apply_backoff()

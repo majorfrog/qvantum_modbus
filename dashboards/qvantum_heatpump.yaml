@@ -118,8 +118,6 @@ views:
             entities:
               - entity: binary_sensor.qvantum_heat_pump_heating_demand
                 name: Heating demand
-              - entity: binary_sensor.qvantum_heat_pump_cooling_demand
-                name: Cooling demand
               - entity: binary_sensor.qvantum_heat_pump_dhw_demand
                 name: Hot water demand
               - entity: binary_sensor.qvantum_heat_pump_addition_demand
@@ -162,8 +160,6 @@ views:
                 name: Auxiliary (BT-AUX)
               - entity: sensor.qvantum_heat_pump_calc_supply_heating
                 name: Target heating supply
-              - entity: sensor.qvantum_heat_pump_calc_supply_cooling
-                name: Target cooling supply
               - entity: sensor.qvantum_heat_pump_heating_curve_offset
                 name: Heating curve offset
               - entity: sensor.qvantum_heat_pump_degree_minute
@@ -268,16 +264,12 @@ views:
             entities:
               - entity: sensor.qvantum_heat_pump_heating_released
                 name: Heating enabled
-              - entity: sensor.qvantum_heat_pump_cooling_released
-                name: Cooling enabled
               - entity: sensor.qvantum_heat_pump_compressor_released
                 name: Compressor enabled
               - entity: sensor.qvantum_heat_pump_addition_released
                 name: Addition heater enabled
               - entity: binary_sensor.qvantum_heat_pump_heating_demand
                 name: Heating demand
-              - entity: binary_sensor.qvantum_heat_pump_cooling_demand
-                name: Cooling demand
               - entity: binary_sensor.qvantum_heat_pump_dhw_demand
                 name: Hot water demand
               - entity: binary_sensor.qvantum_heat_pump_addition_demand
@@ -300,8 +292,6 @@ views:
                 name: DHW total
               - entity: sensor.qvantum_heat_pump_additional_energy_total
                 name: Additional heater total
-              - entity: sensor.qvantum_heat_pump_cooling_energy_total
-                name: Cooling total
 
   # ===========================================================================
   # Tab 3 — Configuration: pump operation, DHW, sensor selection, on/off
@@ -339,8 +329,6 @@ views:
             entities:
               - entity: switch.qvantum_heat_pump_manual_allow_heating
                 name: Allow heating
-              - entity: switch.qvantum_heat_pump_manual_allow_cooling
-                name: Allow cooling
               - entity: switch.qvantum_heat_pump_manual_allow_addition
                 name: Allow addition heater
               - entity: switch.qvantum_heat_pump_manual_allow_dhw
@@ -371,8 +359,6 @@ views:
                 name: Stop temperature — extra/boost mode
               - entity: number.qvantum_heat_pump_dhw_priority_time
                 name: DHW priority duration (min, 0=no priority)
-              - entity: switch.qvantum_heat_pump_dhw_uninterrupted_cooling
-                name: DHW uninterrupted cooling
 
       # -----------------------------------------------------------------------
       # Sensor selection

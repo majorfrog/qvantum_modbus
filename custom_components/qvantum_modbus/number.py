@@ -72,11 +72,8 @@ class QvantumModbusNumber(QvantumModbusEntity, NumberEntity):
 
     @property
     def native_value(self) -> float | None:
-        """Return the current value, applying scale from the raw register integer."""
-        raw = self.coordinator.data.get(self.entity_description.key)
-        if raw is None:
-            return None
-        return raw * self.entity_description.scale
+        """Return the current value as stored by the coordinator."""
+        return self.coordinator.data.get(self.entity_description.key)
 
     async def async_set_native_value(self, value: float) -> None:
         """Write the value to the holding register."""

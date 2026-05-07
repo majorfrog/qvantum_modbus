@@ -1459,7 +1459,9 @@ NUMBER_DESCRIPTIONS: tuple[ModbusNumberEntityDescription, ...] = (
     # --- Pump speeds (%, min 1) ---
     create_percent_number("pump_speed_heating", 63, min_value=1),
     create_percent_number("pump_speed_cooling", 64, min_value=1),
-    create_percent_number("dhw_pump_speed", 65, min_value=1),
+    create_percent_number(
+        "dhw_pump_speed", 65, min_value=0
+    ),  # DHW pump can be 0% (off)
     create_percent_number("pump_speed_idle", 66, min_value=1),
     # --- Fan speeds (%, min 0) ---
     create_percent_number("ventilation_fan_speed_reduced", 69),
