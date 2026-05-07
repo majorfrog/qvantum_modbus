@@ -8,5 +8,5 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/majorfrog/qvantum_modbus/issues",
   "requirements": ["pymodbus>=3.11,<4"],
-  "version": "2026.5.1"
+  "version": "2026.5.2"
 }
