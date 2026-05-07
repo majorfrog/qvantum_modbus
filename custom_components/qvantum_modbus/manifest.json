@@ -1,16 +1,12 @@
 {
   "domain": "qvantum_modbus",
   "name": "Qvantum Modbus",
-  "codeowners": [
-    "@majorfrog"
-  ],
+  "codeowners": ["@majorfrog"],
   "config_flow": true,
   "documentation": "https://github.com/majorfrog/qvantum_modbus",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/majorfrog/qvantum_modbus/issues",
-  "requirements": [
-    "pymodbus>=3.11,<4"
-  ],
-  "version": "0.0.21"
+  "requirements": ["pymodbus>=3.11,<4"],
+  "version": "2026.5.1"
 }
