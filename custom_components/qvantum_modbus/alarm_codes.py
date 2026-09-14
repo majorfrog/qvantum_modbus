@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class AlarmInfo:
-    friendly_name: str
+    label: str
     trigger: str
     possible_cause: str
     product_action: str
@@ -11,6 +11,13 @@ class AlarmInfo:
 
 
 ALARM_CODES: dict[int, AlarmInfo] = {
+    0: AlarmInfo(
+        "No Alarm",
+        "No alarm condition is present.",
+        "N/A",
+        "N/A",
+        "N/A",
+    ),
     1: AlarmInfo(
         "Outdoor Sensor Error (BT1)",
         "Outdoor temperature sensor BT1 is outside the allowed range.",

@@ -62,6 +62,14 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
         self._attr_device_info = create_device_info(coordinator)
         self._attr_suggested_display_precision = description.precision
 
+    @staticmethod
+    def _alarm_display_name(code: int) -> str:
+        """Return the user-facing title for an alarm code."""
+        info = ALARM_CODES.get(code)
+        if info is None:
+            return f"Unknown alarm code ({code})"
+        return info.label
+
     @property
     def available(self) -> bool:
         """Return True when coordinator succeeded and the register has a value."""
@@ -71,6 +79,18 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
             self.coordinator.data is not None
             and self.coordinator.data.get(self.entity_description.key) is not None
         )
+
+    @property
+    def name(self) -> str | None:
+        """Use the current alarm metadata as the entity name for alarm sensors."""
+        if not self.entity_description.alarm_code:
+            return super().name
+
+        raw = self.coordinator.data.get(self.entity_description.key)
+        if raw is None:
+            return super().name
+
+        return self._alarm_display_name(int(raw))
 
     @property
     def native_value(self) -> str | float | None:
@@ -107,7 +127,7 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
         if info is None:
             return {
                 "code": code,
-                "friendly_name": f"Unknown alarm code ({code})",
+                "label": f"Unknown alarm code ({code})",
                 "trigger": None,
                 "possible_cause": None,
                 "product_action": None,
@@ -116,7 +136,7 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
 
         return {
             "code": code,
-            "friendly_name": info.friendly_name,
+            "label": info.label,
             "trigger": info.trigger,
             "possible_cause": info.possible_cause,
             "product_action": info.product_action,

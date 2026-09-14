@@ -264,7 +264,7 @@ def test_alarm_sensor_keeps_code_and_exposes_metadata() -> None:
     assert entity.native_value == 33.0
     assert entity.extra_state_attributes == {
         "code": 33,
-        "friendly_name": "High Pressure Alarm",
+        "label": "High Pressure Alarm",
         "trigger": "Pressure envelope exceeded (high-pressure transmitter, BP2).",
         "possible_cause": "Insufficient flow.",
         "product_action": "Manual reset required; block compressor; force immersion heater.",
@@ -291,12 +291,32 @@ def test_alarm_sensor_unknown_code_keeps_raw_value() -> None:
     assert entity.native_value == 999.0
     assert entity.extra_state_attributes == {
         "code": 999,
-        "friendly_name": "Unknown alarm code (999)",
+        "label": "Unknown alarm code (999)",
         "trigger": None,
         "possible_cause": None,
         "product_action": None,
         "service_action": None,
     }
+    assert entity.name == "Unknown alarm code (999)"
+
+
+def test_alarm_sensor_no_active_alarm_uses_catalog_name() -> None:
+    """Code 0 should resolve via the alarm catalog entry."""
+    coordinator = MagicMock()
+    coordinator.last_update_success = True
+    coordinator.data = {"alarm_1_code": 0.0}
+    coordinator.config_entry = MagicMock()
+    coordinator.config_entry.entry_id = "test"
+
+    from custom_components.qvantum_modbus.models import SENSOR_DESCRIPTIONS
+
+    desc = next(d for d in SENSOR_DESCRIPTIONS if d.key == "alarm_1_code")
+    entity = QvantumModbusSensor(coordinator, desc)
+    entity._attr_device_info = MagicMock()
+
+    assert entity.native_value == 0.0
+    assert entity.extra_state_attributes["label"] == "No Alarm"
+    assert entity.name == "No Alarm"
 
 
 # ---------------------------------------------------------------------------
