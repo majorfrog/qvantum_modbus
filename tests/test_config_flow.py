@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
@@ -26,12 +27,42 @@ from custom_components.qvantum_modbus.const import (
 )
 from homeassistant.const import CONF_HOST, CONF_PORT
 
-from .fixtures import MOCK_RTU_ENTRY_DATA, MOCK_TCP_ENTRY_DATA
+from .fixtures import MOCK_RTU_ENTRY_DATA, MOCK_TCP_ENTRY_DATA, mock_register_result
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+@pytest.fixture(autouse=True)
+def mock_coordinator_clients() -> None:
+    """Prevent newly created config entries from opening real connections."""
+    with (
+        patch(
+            "custom_components.qvantum_modbus.coordinator.AsyncModbusTcpClient"
+        ) as tcp_client_class,
+        patch(
+            "custom_components.qvantum_modbus.coordinator.AsyncModbusSerialClient"
+        ) as serial_client_class,
+    ):
+        client = MagicMock()
+        client.connected = True
+        client.connect = AsyncMock(return_value=True)
+        client.close = MagicMock()
+        client.read_input_registers = AsyncMock(
+            side_effect=lambda **kwargs: mock_register_result(
+                count=kwargs.get("count", 1)
+            )
+        )
+        client.read_holding_registers = AsyncMock(
+            side_effect=lambda **kwargs: mock_register_result(
+                count=kwargs.get("count", 1)
+            )
+        )
+        tcp_client_class.return_value = client
+        serial_client_class.return_value = client
+        yield
 
 
 def _tcp_connect_patch(connected: bool = True):
@@ -374,6 +405,7 @@ async def test_reconfigure_tcp_success(
             CONF_UNIT_ID: new_unit,
         },
     )
+    await hass.async_block_till_done()
 
     assert result["type"] == FlowResultType.ABORT
     assert result["reason"] == "reconfigure_successful"
@@ -414,6 +446,7 @@ async def test_reconfigure_rtu_success(
             CONF_STOPBITS: str(MOCK_RTU_ENTRY_DATA["stopbits"]),
         },
     )
+    await hass.async_block_till_done()
 
     assert result["type"] == FlowResultType.ABORT
     assert result["reason"] == "reconfigure_successful"

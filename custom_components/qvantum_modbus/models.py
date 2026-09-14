@@ -79,6 +79,8 @@ class ModbusSensorEntityDescription(SensorEntityDescription):
     # For ENUM sensors: maps raw integer register values to translation key strings.
     # When set, native_value returns the mapped string instead of the raw float.
     value_map: dict[int, str] | None = None
+    # Alarm-code sensors keep the numeric value and expose alarm metadata as attributes.
+    alarm_code: bool = False
     # Re-declared from SensorEntityDescription for type-checker visibility.
     options: list[str] | None = None
 
@@ -394,6 +396,7 @@ def create_generic_sensor(
     device_class: SensorDeviceClass | None = None,
     options: list[str] | None = None,
     value_map: dict[int, str] | None = None,
+    alarm_code: bool = False,
     entity_registry_enabled_default: bool = True,
     entity_category: EntityCategory | None = None,
 ) -> ModbusSensorEntityDescription:
@@ -410,6 +413,7 @@ def create_generic_sensor(
         device_class=device_class,
         options=options,
         value_map=value_map,
+        alarm_code=alarm_code,
         entity_registry_enabled_default=entity_registry_enabled_default,
         entity_category=entity_category,
     )
@@ -786,6 +790,7 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         state_class=None,
         scale=1.0,
         precision=0,
+        alarm_code=True,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     create_generic_sensor(
@@ -794,6 +799,7 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         state_class=None,
         scale=1.0,
         precision=0,
+        alarm_code=True,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     create_generic_sensor(
@@ -802,6 +808,7 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         state_class=None,
         scale=1.0,
         precision=0,
+        alarm_code=True,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     create_generic_sensor(
@@ -810,6 +817,7 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         state_class=None,
         scale=1.0,
         precision=0,
+        alarm_code=True,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     create_generic_sensor(
@@ -818,6 +826,7 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         state_class=None,
         scale=1.0,
         precision=0,
+        alarm_code=True,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     # -------------------------------------------------------------------------

@@ -64,6 +64,7 @@ def test_validate_device_config_valid_tcp_returns_config() -> None:
 
 async def test_async_setup_with_yaml_config_imports_entry(
     hass: HomeAssistant,
+    mock_tcp_client,
 ) -> None:
     """async_setup triggers a config-flow import for each entry in configuration.yaml."""
     from custom_components.qvantum_modbus import async_setup

@@ -11,6 +11,7 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .alarm_codes import ALARM_CODES
 from .entity import QvantumModbusEntity, create_device_info
 from .models import (
     COMBINED_SENSOR_DESCRIPTIONS,
@@ -77,6 +78,8 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
         raw = self.coordinator.data.get(self.entity_description.key)
         if raw is None:
             return None
+        if self.entity_description.alarm_code:
+            return raw
         value_map = self.entity_description.value_map
         if value_map is not None:
             mapped = value_map.get(int(raw))
@@ -88,6 +91,37 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
                 )
             return mapped
         return raw
+
+    @property
+    def extra_state_attributes(self) -> dict[str, object] | None:
+        """Return descriptive metadata for alarm-code sensors."""
+        if not self.entity_description.alarm_code:
+            return None
+
+        raw = self.coordinator.data.get(self.entity_description.key)
+        if raw is None:
+            return None
+
+        code = int(raw)
+        info = ALARM_CODES.get(code)
+        if info is None:
+            return {
+                "code": code,
+                "friendly_name": f"Unknown alarm code ({code})",
+                "trigger": None,
+                "possible_cause": None,
+                "product_action": None,
+                "service_action": None,
+            }
+
+        return {
+            "code": code,
+            "friendly_name": info.friendly_name,
+            "trigger": info.trigger,
+            "possible_cause": info.possible_cause,
+            "product_action": info.product_action,
+            "service_action": info.service_action,
+        }
 
 
 class QvantumModbusCombinedSensor(QvantumModbusEntity, SensorEntity):

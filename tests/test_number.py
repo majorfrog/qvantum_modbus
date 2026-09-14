@@ -25,6 +25,18 @@ def _entity_id(hass: HomeAssistant, entry_id: str, key: str) -> str | None:
     return er.async_get(hass).async_get_entity_id("number", DOMAIN, f"{entry_id}_{key}")
 
 
+async def _enable_number_entity(
+    hass: HomeAssistant, entry_id: str, key: str
+) -> str:
+    """Enable a number entity that is disabled by default."""
+    entity_id = _entity_id(hass, entry_id, key)
+    assert entity_id is not None
+    er.async_get(hass).async_update_entity(entity_id, disabled_by=None)
+    await hass.config_entries.async_reload(entry_id)
+    await hass.async_block_till_done()
+    return entity_id
+
+
 # Use the first number description with a scale of 1.0 for simple integer tests
 _DESC = next(d for d in NUMBER_DESCRIPTIONS if d.scale == 1.0)
 
@@ -71,8 +83,9 @@ async def test_number_native_value(
     mock_tcp_config_entry.add_to_hass(hass)
     await hass.config_entries.async_setup(mock_tcp_config_entry.entry_id)
     await hass.async_block_till_done()
-    entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
-    assert entity_id is not None
+    entity_id = await _enable_number_entity(
+        hass, mock_tcp_config_entry.entry_id, _DESC.key
+    )
     state = hass.states.get(entity_id)
     assert state is not None
     # scale=1.0 → native_value == raw
@@ -91,8 +104,9 @@ async def test_number_set_value_writes_scaled_raw(
 ) -> None:
     """Setting a value writes round(value / scale) to the register."""
     mock_client = setup_integration
-    entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
-    assert entity_id is not None
+    entity_id = await _enable_number_entity(
+        hass, mock_tcp_config_entry.entry_id, _DESC.key
+    )
 
     # Pick a value within the allowed range for _DESC
     target = (_DESC.native_min_value + _DESC.native_max_value) / 2
@@ -119,8 +133,9 @@ async def test_number_set_value_raises_on_write_error(
 ) -> None:
     """HomeAssistantError is raised when the device returns a write error."""
     mock_client = setup_integration
-    entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
-    assert entity_id is not None
+    entity_id = await _enable_number_entity(
+        hass, mock_tcp_config_entry.entry_id, _DESC.key
+    )
 
     mock_client.write_register.return_value = mock_error_result()
     target = (_DESC.native_min_value + _DESC.native_max_value) / 2
@@ -141,8 +156,9 @@ async def test_number_set_value_raises_on_out_of_range(
 ) -> None:
     """HomeAssistantError is raised when the raw value exceeds register bounds."""
     mock_client = setup_integration
-    entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
-    assert entity_id is not None
+    entity_id = await _enable_number_entity(
+        hass, mock_tcp_config_entry.entry_id, _DESC.key
+    )
 
     # Force a value beyond max to bypass HA frontend validation
     over_max = _DESC.native_max_value + 1000.0
@@ -173,8 +189,9 @@ async def test_number_unavailable_when_register_is_none(
     mock_tcp_config_entry.add_to_hass(hass)
     await hass.config_entries.async_setup(mock_tcp_config_entry.entry_id)
     await hass.async_block_till_done()
-    entity_id = _entity_id(hass, mock_tcp_config_entry.entry_id, _DESC.key)
-    assert entity_id is not None
+    entity_id = await _enable_number_entity(
+        hass, mock_tcp_config_entry.entry_id, _DESC.key
+    )
     state = hass.states.get(entity_id)
     assert state is not None
     assert state.state == "unavailable"
