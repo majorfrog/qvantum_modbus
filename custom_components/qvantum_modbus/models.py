@@ -53,7 +53,8 @@ from .const import (
 
 # Shared by every alarm-code sensor so their translated state labels only need
 # to be defined once (see strings.json entity.sensor.alarm_code.state).
-ALARM_CODE_OPTIONS = [str(code) for code in sorted(ALARM_CODES)]
+ALARM_CODE_UNKNOWN = "unknown"
+ALARM_CODE_OPTIONS = [str(code) for code in sorted(ALARM_CODES)] + [ALARM_CODE_UNKNOWN]
 
 
 @dataclass(frozen=True, kw_only=True)

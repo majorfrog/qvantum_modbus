@@ -277,7 +277,7 @@ def test_alarm_sensor_keeps_code_and_exposes_metadata() -> None:
 
 
 def test_alarm_sensor_unknown_code_keeps_raw_value() -> None:
-    """Unknown alarm codes remain available without fabricated metadata."""
+    """Unknown alarm codes stay available via a dedicated enum option."""
     coordinator = MagicMock()
     coordinator.last_update_success = True
     coordinator.data = {"alarm_1_code": 999.0}
@@ -290,7 +290,7 @@ def test_alarm_sensor_unknown_code_keeps_raw_value() -> None:
     entity = QvantumModbusSensor(coordinator, desc)
     entity._attr_device_info = MagicMock()
 
-    assert entity.native_value == "999"
+    assert entity.native_value == "unknown"
     assert entity.extra_state_attributes == {
         "code": 999,
         "label": "Unknown alarm code (999)",

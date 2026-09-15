@@ -444,7 +444,8 @@
           "326": "High-pressure protection for low-pressure",
           "327": "Fault of water flow switch on the ground source side",
           "333": "Com W2W Module 1 Error",
-          "334": "Com W2W Module 2 Error"
+          "334": "Com W2W Module 2 Error",
+          "unknown": "Unknown alarm code"
         }
       },
       "sg_mode": {

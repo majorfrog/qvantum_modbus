@@ -444,7 +444,8 @@
           "326": "Högtrycksskydd för lågtryckssidan",
           "327": "Fel flödesvakt köldbärarsida",
           "333": "Kommunikationsfel W2W-modul 1",
-          "334": "Kommunikationsfel W2W-modul 2"
+          "334": "Kommunikationsfel W2W-modul 2",
+          "unknown": "Okänd larmkod"
         }
       },
       "sg_mode": {

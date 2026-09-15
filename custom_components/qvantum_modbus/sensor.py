@@ -14,6 +14,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .alarm_codes import ALARM_CODES
 from .entity import QvantumModbusEntity, create_device_info
 from .models import (
+    ALARM_CODE_UNKNOWN,
     COMBINED_SENSOR_DESCRIPTIONS,
     SENSOR_DESCRIPTIONS,
     ModbusCombinedSensorEntityDescription,
@@ -79,7 +80,8 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
         if raw is None:
             return None
         if self.entity_description.alarm_code:
-            return str(int(raw))
+            code = int(raw)
+            return str(code) if code in ALARM_CODES else ALARM_CODE_UNKNOWN
         value_map = self.entity_description.value_map
         if value_map is not None:
             mapped = value_map.get(int(raw))
