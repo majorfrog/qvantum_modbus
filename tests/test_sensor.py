@@ -261,7 +261,7 @@ def test_alarm_sensor_keeps_code_and_exposes_metadata() -> None:
     entity = QvantumModbusSensor(coordinator, desc)
     entity._attr_device_info = MagicMock()
 
-    assert entity.native_value == 33.0
+    assert entity.native_value == "33"
     assert entity.extra_state_attributes == {
         "code": 33,
         "label": "High Pressure Alarm",
@@ -272,6 +272,8 @@ def test_alarm_sensor_keeps_code_and_exposes_metadata() -> None:
             "Check circulation pump; ensure sufficient flow in heating system."
         ),
     }
+    assert desc.translation_key == "alarm_code"
+    assert desc.translation_placeholders == {"number": "1"}
 
 
 def test_alarm_sensor_unknown_code_keeps_raw_value() -> None:
@@ -288,7 +290,7 @@ def test_alarm_sensor_unknown_code_keeps_raw_value() -> None:
     entity = QvantumModbusSensor(coordinator, desc)
     entity._attr_device_info = MagicMock()
 
-    assert entity.native_value == 999.0
+    assert entity.native_value == "999"
     assert entity.extra_state_attributes == {
         "code": 999,
         "label": "Unknown alarm code (999)",
@@ -297,7 +299,6 @@ def test_alarm_sensor_unknown_code_keeps_raw_value() -> None:
         "product_action": None,
         "service_action": None,
     }
-    assert entity.name == "Unknown alarm code (999)"
 
 
 def test_alarm_sensor_no_active_alarm_uses_catalog_name() -> None:
@@ -314,9 +315,8 @@ def test_alarm_sensor_no_active_alarm_uses_catalog_name() -> None:
     entity = QvantumModbusSensor(coordinator, desc)
     entity._attr_device_info = MagicMock()
 
-    assert entity.native_value == 0.0
+    assert entity.native_value == "0"
     assert entity.extra_state_attributes["label"] == "No Alarm"
-    assert entity.name == "No Alarm"
 
 
 # ---------------------------------------------------------------------------

@@ -62,14 +62,6 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
         self._attr_device_info = create_device_info(coordinator)
         self._attr_suggested_display_precision = description.precision
 
-    @staticmethod
-    def _alarm_display_name(code: int) -> str:
-        """Return the user-facing title for an alarm code."""
-        info = ALARM_CODES.get(code)
-        if info is None:
-            return f"Unknown alarm code ({code})"
-        return info.label
-
     @property
     def available(self) -> bool:
         """Return True when coordinator succeeded and the register has a value."""
@@ -81,25 +73,13 @@ class QvantumModbusSensor(QvantumModbusEntity, SensorEntity):
         )
 
     @property
-    def name(self) -> str | None:
-        """Use the current alarm metadata as the entity name for alarm sensors."""
-        if not self.entity_description.alarm_code:
-            return super().name
-
-        raw = self.coordinator.data.get(self.entity_description.key)
-        if raw is None:
-            return super().name
-
-        return self._alarm_display_name(int(raw))
-
-    @property
     def native_value(self) -> str | float | None:
         """Return the sensor value, mapped to a string for ENUM sensors."""
         raw = self.coordinator.data.get(self.entity_description.key)
         if raw is None:
             return None
         if self.entity_description.alarm_code:
-            return raw
+            return str(int(raw))
         value_map = self.entity_description.value_map
         if value_map is not None:
             mapped = value_map.get(int(raw))

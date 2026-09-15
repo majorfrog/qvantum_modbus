@@ -340,20 +340,112 @@
       "active_alarm_count": {
         "name": "Aktiva larm"
       },
-      "alarm_1_code": {
-        "name": "Larmkod 1"
-      },
-      "alarm_2_code": {
-        "name": "Larmkod 2"
-      },
-      "alarm_3_code": {
-        "name": "Larmkod 3"
-      },
-      "alarm_4_code": {
-        "name": "Larmkod 4"
-      },
-      "alarm_5_code": {
-        "name": "Larmkod 5"
+      "alarm_code": {
+        "name": "Larmkod {number}",
+        "state": {
+          "0": "Inget larm",
+          "1": "Utomhusgivarfel (BT1)",
+          "2": "Inomhusgivarfel (BT2)",
+          "3": "Poolgivarfel (BT4)",
+          "4": "Framledningsgivarfel (BT11)",
+          "5": "Extern framledningsgivarfel (BT12)",
+          "6": "Tanktemperaturgivarfel (BT30)",
+          "7": "Värmemedium PHEX-ingivarfel (BT31)",
+          "9": "Varmvatten PHEX-utgivarfel (BT34)",
+          "10": "Fel på extrainmatning (BTX)",
+          "11": "Kondensorutgivarfel (BT10)",
+          "13": "Källflödesgivarfel (BT14)",
+          "14": "Källreturflödesgivarfel (BT15)",
+          "15": "Utloppsgivarfel (BT20)",
+          "19": "Sugledningsgivarfel (BT23)",
+          "21": "Lågtrycksgivarfel (BP1)",
+          "22": "Högtrycksgivarfel (BP2)",
+          "27": "Kommunikationsfel EA2W-modul",
+          "29": "Växelriktarfel 5 ggr på 3 timmar",
+          "30": "Larm filterbyte",
+          "31": "Hetgaslarm",
+          "33": "Högtryckslarm",
+          "35": "Lågtryckslarm",
+          "37": "Källtemperaturlarm",
+          "39": "Fel på EEV-ventil",
+          "42": "Låg temperatur BT23-larm",
+          "43": "Ingen kommunikation med utomhusmodul",
+          "44": "Lågt flöde vid avfrostning",
+          "45": "Fläktfel (inget varvtalssignal)",
+          "47": "Inkompatibel mjukvara i utomhusmodulen",
+          "53": "Kyla blockerad - låg utomhustemperatur",
+          "60": "Frysskydd",
+          "61": "Lågt vattenflödesskydd",
+          "64": "Överskyddstemperatur avgasledning",
+          "69": "Skydd för hög temperaturdifferens",
+          "70": "Övertemperatur utgående vatten",
+          "84": "Högtrycksskydd 3 gånger",
+          "86": "Lågtrycksskydd 3 gånger",
+          "90": "Lågt vattenflödesskydd 3+ gånger",
+          "92": "Frysskydd 3 gånger",
+          "96": "Övertemperaturskydd avgas 3 gånger",
+          "98": "Skydd för hög temperaturdifferens 3 gånger",
+          "99": "Låg utgående vattentemperatur 3 gånger",
+          "100": "Övertemperaturskydd utgående vatten 3 gånger",
+          "112": "Fel ingående vattentemperatur",
+          "113": "Fel utgående vattentemperatur",
+          "114": "Fel förångartemperatur",
+          "115": "Fel omgivningstemperatur",
+          "116": "Fel sugledningstemperatur",
+          "123": "Fel avgastemperatur",
+          "126": "Fel låg omgivningstemperatur",
+          "127": "Låg utgående vattentemperatur",
+          "139": "Fel fläkt 1",
+          "140": "Fel fläkt 2",
+          "141": "Kommunikationsfel (huvudkort med fläktmotorkort)",
+          "143": "Kommunikationsfel (huvudkort med fläktmotor 2-kort)",
+          "144": "IPM övertemperatur",
+          "145": "Fel vid kompressorstart",
+          "146": "Överström kompressor",
+          "147": "Fasbortfall ingående spänning",
+          "148": "Fel vid IPM-strömavläsning",
+          "149": "Övertemperaturskydd drivkortskomponenter",
+          "150": "Fel vid förladdning",
+          "151": "Överspänning DC-buss",
+          "152": "Underspänning DC-buss",
+          "153": "Underspänning ingående AC",
+          "154": "Överström ingående AC - avstängning",
+          "155": "Fel vid avläsning av ingående spänning",
+          "156": "Kommunikationsfel DSP och PFC",
+          "157": "Fel drivkortstemperatur",
+          "158": "Kommunikationsfel DSP och kommunikationskort",
+          "159": "Kommunikationsfel huvudkort",
+          "161": "Fasfel kompressor",
+          "163": "Fel vid avläsning av ingående ström",
+          "166": "EEPROM-fel",
+          "167": "Skydd mot för hög ingående spänning",
+          "175": "Skydd mot överhastighet kompressor",
+          "247": "Fel returvattengivare",
+          "248": "Fel utgående vattengivare",
+          "253": "Fel ingivare vattenkälla",
+          "254": "Fel utgivare vattenkälla",
+          "256": "Fel avgastemperaturgivare",
+          "257": "Fel sugledningstemperaturgivare",
+          "269": "Kommunikationsfel mellan styrkort och kompressordrivenhet",
+          "274": "Skydd mot över-/underspänning DC-buss (drivenhet)",
+          "275": "Fel lågtrycksgivare",
+          "276": "Fel högtrycksgivare",
+          "279": "Fel flödesvakt köldbärarsida",
+          "306": "Skydd drivmodul (FO)",
+          "307": "Kompressor ur synk/startfel/fasbortfall",
+          "308": "Överströmsskydd drivenhet/fasström/strömavkänningsfel",
+          "309": "Hårdvaruskydd drivmodul/fel IPM-temperaturgivare",
+          "310": "Lågtrycksbrytarskydd (extra lågt tryck)",
+          "311": "Högtrycksbrytarskydd",
+          "312": "Skydd mot för hög avgastemperatur",
+          "313": "Övertemperaturskydd IPM (drivenhet)",
+          "315": "Övertrycksskydd (högtryck)",
+          "325": "Lågtrycksskydd för högtryckssidan",
+          "326": "Högtrycksskydd för lågtryckssidan",
+          "327": "Fel flödesvakt köldbärarsida",
+          "333": "Kommunikationsfel W2W-modul 1",
+          "334": "Kommunikationsfel W2W-modul 2"
+        }
       },
       "sg_mode": {
         "name": "SG-läge",
@@ -570,7 +662,6 @@
           "extra": "Extra"
         }
       },
-
       "ventilation_state": {
         "name": "Ventilationsläge",
         "state": {
@@ -582,7 +673,9 @@
       }
     },
     "number": {
-      "dhw_outlet_temperature": { "name": "VV-utloppstemperatur" },
+      "dhw_outlet_temperature": {
+        "name": "VV-utloppstemperatur"
+      },
       "time_between_heating_cooling": {
         "name": "Tid mellan värme och kylning"
       },

@@ -32,9 +32,9 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.components.switch import SwitchEntityDescription
 from homeassistant.const import (
-    EntityCategory,
     PERCENTAGE,
     REVOLUTIONS_PER_MINUTE,
+    EntityCategory,
     UnitOfEnergy,
     UnitOfPower,
     UnitOfTemperature,
@@ -42,6 +42,7 @@ from homeassistant.const import (
     UnitOfVolumeFlowRate,
 )
 
+from .alarm_codes import ALARM_CODES
 from .const import (
     DATA_TYPE_ASCII,
     DATA_TYPE_INT16,
@@ -49,6 +50,10 @@ from .const import (
     INPUT_TYPE_HOLDING,
     INPUT_TYPE_INPUT,
 )
+
+# Shared by every alarm-code sensor so their translated state labels only need
+# to be defined once (see strings.json entity.sensor.alarm_code.state).
+ALARM_CODE_OPTIONS = [str(code) for code in sorted(ALARM_CODES)]
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -419,6 +424,26 @@ def create_generic_sensor(
     )
 
 
+def create_alarm_code_sensor(
+    key: str, address: int, number: int
+) -> ModbusSensorEntityDescription:
+    """Create an alarm-code sensor with a translated, enum-based state."""
+    return ModbusSensorEntityDescription(
+        key=key,
+        translation_key="alarm_code",
+        translation_placeholders={"number": str(number)},
+        address=address,
+        data_type=DATA_TYPE_UINT16,
+        state_class=None,
+        scale=1.0,
+        precision=0,
+        device_class=SensorDeviceClass.ENUM,
+        options=ALARM_CODE_OPTIONS,
+        alarm_code=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Sensor definitions
 # Add new sensors here; coordinator and platform pick them up automatically.
@@ -784,51 +809,11 @@ SENSOR_DESCRIPTIONS: tuple[ModbusSensorEntityDescription, ...] = (
         precision=0,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    create_generic_sensor(
-        "alarm_1_code",
-        151,
-        state_class=None,
-        scale=1.0,
-        precision=0,
-        alarm_code=True,
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    create_generic_sensor(
-        "alarm_2_code",
-        152,
-        state_class=None,
-        scale=1.0,
-        precision=0,
-        alarm_code=True,
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    create_generic_sensor(
-        "alarm_3_code",
-        153,
-        state_class=None,
-        scale=1.0,
-        precision=0,
-        alarm_code=True,
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    create_generic_sensor(
-        "alarm_4_code",
-        154,
-        state_class=None,
-        scale=1.0,
-        precision=0,
-        alarm_code=True,
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    create_generic_sensor(
-        "alarm_5_code",
-        155,
-        state_class=None,
-        scale=1.0,
-        precision=0,
-        alarm_code=True,
-        entity_category=EntityCategory.DIAGNOSTIC,
-    ),
+    create_alarm_code_sensor("alarm_1_code", 151, 1),
+    create_alarm_code_sensor("alarm_2_code", 152, 2),
+    create_alarm_code_sensor("alarm_3_code", 153, 3),
+    create_alarm_code_sensor("alarm_4_code", 154, 4),
+    create_alarm_code_sensor("alarm_5_code", 155, 5),
     # -------------------------------------------------------------------------
     # Smart grid and DHW features — Input registers 157–166
     # (sg_ready_a/b, smart_price_*, energy_prices_available → binary_sensor platform)
@@ -1166,8 +1151,9 @@ COMBINED_SENSOR_DESCRIPTIONS: tuple[ModbusCombinedSensorEntityDescription, ...] 
                 key="_sn_5", address=184, data_type=DATA_TYPE_UINT16
             ),
         ),
-        format_fn=lambda vals: str(int(vals[0]))
-        + "".join(f"{int(v):03d}" for v in vals[1:]),
+        format_fn=lambda vals: (
+            str(int(vals[0])) + "".join(f"{int(v):03d}" for v in vals[1:])
+        ),
     ),
     # -------------------------------------------------------------------------
     # Combined energy totals — MWh * 1000 + kWh → total kWh
