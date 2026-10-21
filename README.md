@@ -89,10 +89,9 @@ Entities that are **enabled by default** are those most commonly useful — temp
 
 ### HACS (recommended)
 
-1. Open **HACS** → **Integrations** → three-dot menu → **Custom repositories**.
-2. Add `https://github.com/majorfrog/qvantum_modbus` with category **Integration**.
-3. Search for **Qvantum Modbus** and click **Download**.
-4. Restart Home Assistant.
+1. Open **HACS** → **Integrations** → **Explore & Download Repositories**.
+2. Search for **Qvantum Modbus** and select it.
+3. Click **Download** and restart Home Assistant.
 
 ### Manual
 
