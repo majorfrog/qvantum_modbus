@@ -10,9 +10,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
 try:
-    from pytest_homeassistant_custom_component.common import MockConfigEntry  # noqa: F401
+    from pytest_homeassistant_custom_component.common import MockConfigEntry
 except ImportError:
-    from tests.common import MockConfigEntry  # type: ignore[no-redef]  # noqa: F401
+    from tests.common import MockConfigEntry  # type: ignore[no-redef]
 
 from custom_components.qvantum_modbus.const import (
     CONF_BAUDRATE,
@@ -374,6 +374,37 @@ async def test_import_duplicate_aborts(hass: HomeAssistant) -> None:
     )
     assert result["type"] == FlowResultType.ABORT
     assert result["reason"] == "already_configured"
+
+
+@pytest.mark.parametrize(
+    ("entry_data", "stale_unique_id"),
+    [
+        (MOCK_TCP_ENTRY_DATA, "tcp_192.168.1.99_502_1"),
+        (MOCK_RTU_ENTRY_DATA, "rtu__dev_ttyUSB9_1"),
+    ],
+)
+async def test_import_aborts_when_device_entry_has_stale_unique_id(
+    hass: HomeAssistant, entry_data: dict, stale_unique_id: str
+) -> None:
+    """YAML import must not duplicate an entry whose unique_id no longer matches its data.
+
+    An entry's unique_id can fall out of sync with its connection data (e.g. an
+    older reconfigure changed the host but kept the unique_id). A second entry
+    for the same device would then poll it alongside the first.
+    """
+    MockConfigEntry(domain=DOMAIN, unique_id=stale_unique_id, data=entry_data).add_to_hass(
+        hass
+    )
+
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_IMPORT},
+        data=entry_data,
+    )
+
+    assert result["type"] == FlowResultType.ABORT
+    assert result["reason"] == "already_configured"
+    assert len(hass.config_entries.async_entries(DOMAIN)) == 1
 
 
 # ---------------------------------------------------------------------------

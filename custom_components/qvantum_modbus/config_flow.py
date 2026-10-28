@@ -190,6 +190,12 @@ class QvantumModbusConfigFlow(ConfigFlow, domain=DOMAIN):
                 CONF_STOPBITS: import_data.get(CONF_STOPBITS, DEFAULT_STOPBITS),
             }
 
+        # Match on the connection data too: an entry's unique_id can be stale
+        # (e.g. host changed by an older reconfigure), and a second entry for
+        # the same device would poll it in parallel.
+        self._async_abort_entries_match(
+            {key: data[key] for key in (CONF_HOST, CONF_PORT, CONF_UNIT_ID) if key in data}
+        )
         await self.async_set_unique_id(unique_id)
         self._abort_if_unique_id_configured()
         return self.async_create_entry(title=title, data=data)
