@@ -351,6 +351,7 @@
           "5": "Extern framledningsgivarfel (BT12)",
           "6": "Tanktemperaturgivarfel (BT30)",
           "7": "Värmemedium PHEX-ingivarfel (BT31)",
+          "8": "Kallvatten PHEX-ingivarfel (BT33) eller rumsgivare saknas",
           "9": "Varmvatten PHEX-utgivarfel (BT34)",
           "10": "Fel på extrainmatning (BTX)",
           "11": "Kondensorutgivarfel (BT10)",

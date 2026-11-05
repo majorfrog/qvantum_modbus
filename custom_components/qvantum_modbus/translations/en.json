@@ -351,6 +351,7 @@
           "5": "External Flow Line Sensor Error (BT12)",
           "6": "Tank Temperature Sensor Error (BT30)",
           "7": "Heating Medium PHEX Inlet Sensor Error (BT31)",
+          "8": "Cold Water PHEX Inlet Sensor Error (BT33) or Room Sensor Unavailable",
           "9": "Hot Water PHEX Outlet Sensor Error (BT34)",
           "10": "Auxiliary Input Error (BTX)",
           "11": "Condenser Outlet Sensor Error (BT10)",

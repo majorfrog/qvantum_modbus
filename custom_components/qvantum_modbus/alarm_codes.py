@@ -67,6 +67,21 @@ ALARM_CODES: dict[int, AlarmInfo] = {
         "Manual reset; block DHW pump GP2.",
         "Check connections; replace sensor if needed.",
     ),
+    # Code 8 has two meanings. Qvantum's alarm list (cloud API, HEATPUMP-8)
+    # gives the BT33 sensor fault, but the pump also reports the cloud's
+    # INTEGRATION-8 ("Controlling room temperature sensor(s) unavailable",
+    # seen 2026-11-04 with sensor control on external Modbus) as plain 8.
+    # The register carries no family, so the text covers both.
+    8: AlarmInfo(
+        "Cold Water PHEX Inlet Sensor Error (BT33) or Room Sensor Unavailable",
+        "Cold water PHEX inlet sensor BT33 is outside the allowed range, or the "
+        "controlling room temperature sensor (sensor control) is unavailable.",
+        "BT33 failure or bad connection; or the room sensor used for sensor "
+        "control, such as external Modbus, has stopped reporting.",
+        "Room sensor: sensor control is switched off.",
+        "Check BT33 if it reads out of range; otherwise check the room sensor "
+        "feeding sensor control.",
+    ),
     9: AlarmInfo(
         "Hot Water PHEX Outlet Sensor Error (BT34)",
         "Hot water PHEX outlet sensor BT34 is outside the allowed range.",
